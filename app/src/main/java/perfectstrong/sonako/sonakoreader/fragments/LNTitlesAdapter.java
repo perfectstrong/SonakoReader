@@ -45,7 +45,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                 }
                 ((TextView) view.findViewById(R.id.lnCategories)).setText("Thể loại: " + genresStr);
             } else {
-                ((TextView) view.findViewById(R.id.lnCategories)).setText("");
+                view.findViewById(R.id.lnCategories).setVisibility(View.GONE);
             }
             // Status
             switch (ln.getStatus()) {
