@@ -5,6 +5,10 @@ import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +20,9 @@ import java.util.regex.Pattern;
 
 import fastily.jwiki.core.MQuery;
 import fastily.jwiki.core.Wiki;
+import fastily.jwiki.util.GSONP;
 import okhttp3.HttpUrl;
+import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.Categorization;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
@@ -49,14 +55,23 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         if (titles.size() == 0) {
             // Not download yet
             downloadTitles();
+            orderTitlesAlphabetically();
+            removeTitleDuplications();
             cacheTitles();
             downloadStatusAndCategories();
         }
     }
 
     private void downloadTitles() {
-        // Official projects
-        // Download unparsed text then parse into list
+        downloadOfficialProjects();
+        downloadTeaserProjects();
+        downloadOLNProjects();
+    }
+
+    /**
+     * Download unparsed text from project list then parse
+     */
+    private void downloadOfficialProjects() {
         String unparsedOfficialList = wikiClient.getPageText(Config.OFFICIAL_PROJECTS_LIST);
         //noinspection RegExpRedundantEscape
         Pattern p = Pattern.compile("\\[\\[([^|]*?)\\]\\]|\\[\\[([^|]*?)\\|[^|]*?\\]\\]", Pattern.UNICODE_CASE);
@@ -71,10 +86,79 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
             ln.setStatus(LightNovel.ProjectType.OFFICIAL);
             titles.add(ln);
         }
-        // Teaser projects
-        // TODO
-        // OLN projects
-        // TODO
+    }
+
+    /**
+     * Get projects with category "Teaser"
+     */
+    private void downloadTeaserProjects() {
+        Response res = wikiClient.basicGET("query",
+                "list", "categorymembers",
+                "cmtitle", "Category:Teaser",
+                "cmnamespace", "0",
+                "cmsort", "timestamp",
+                "cmdir", "desc",
+                "cmlimit", "max");
+        try {
+            assert res.body() != null;
+            JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
+            JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
+            for (JsonElement ele : teasers) {
+                LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
+                teaser.setType(LightNovel.ProjectType.TEASER);
+                titles.add(teaser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Get projects with category "Original Light Novel"
+     */
+    private void downloadOLNProjects() {
+        Response res = wikiClient.basicGET("query",
+                "list", "categorymembers",
+                "cmtitle", "Category:Original Light Novel",
+                "cmnamespace", "0",
+                "cmsort", "timestamp",
+                "cmdir", "desc",
+                "cmlimit", "max");
+        try {
+            assert res.body() != null;
+            JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
+            JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
+            for (JsonElement ele : teasers) {
+                LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
+                teaser.setType(LightNovel.ProjectType.TEASER);
+                titles.add(teaser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void orderTitlesAlphabetically() {
+        for (int i = 0; i < titles.size() - 1; i++) {
+            for (int j = i + 1; j < titles.size(); j++) {
+                if (titles.get(i).getTitle().compareTo(titles.get(j).getTitle()) > 0) {
+                    LightNovel ln = titles.get(i);
+                    titles.set(i, titles.get(j));
+                    titles.set(j, ln);
+                }
+            }
+        }
+    }
+
+    private void removeTitleDuplications() {
+        int i = 0;
+        while (i < titles.size() - 1) {
+            if (titles.get(i + 1).equals(titles.get(i))) {
+                titles.remove(i + 1);
+            } else {
+                i++;
+            }
+        }
     }
 
     private void cacheTitles() {
@@ -86,7 +170,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         for (LightNovel lightNovel : titles) {
             lightNovel.setGenres(lndb.lnDao().getGenres(lightNovel.getTitle()));
         }
-        // Status is set beforehand
+        // Status is set in advance
     }
 
     private void downloadStatusAndCategories() {
@@ -130,7 +214,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
                 }
             }
         }
-        // Bulk update
+        // Bulk update type and status db
         lndb.lnDao().update(titles.toArray(new LightNovel[0]));
     }
 

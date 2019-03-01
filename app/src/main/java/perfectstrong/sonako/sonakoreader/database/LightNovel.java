@@ -24,6 +24,14 @@ public class LightNovel {
         this.title = title;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LightNovel that = (LightNovel) o;
+        return title.equals(that.getTitle());
+    }
+
     @NonNull
     public String getTitle() {
         return title;
