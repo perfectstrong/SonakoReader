@@ -14,14 +14,25 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 
 public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitleViewHolder> {
+    private List<LightNovel> _lnList = new ArrayList<>();
     private List<LightNovel> lnList = new ArrayList<>();
 
     LNTitlesAdapter() {
     }
 
     void setDatalist(List<LightNovel> titles) {
-        lnList.addAll(titles);
-        notifyDataSetChanged();
+        _lnList.addAll(titles);
+        loadByChunk();
+    }
+
+    private void loadByChunk() {
+        int currentIndex = 0;
+        int chunksize = 25;
+        while (currentIndex < _lnList.size()) {
+            lnList.addAll(_lnList.subList(currentIndex, Math.min(currentIndex + chunksize - 1, _lnList.size() - 1)));
+            currentIndex += chunksize;
+            notifyDataSetChanged();
+        }
     }
 
     class LNTitleViewHolder extends RecyclerView.ViewHolder {

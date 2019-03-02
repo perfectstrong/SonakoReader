@@ -5,5 +5,15 @@
     android:layout_height="match_parent"
     tools:context=".fragments.LNShowcaseFragment">
 
-    <include layout="@layout/lntitles_scrolling" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/LNTitlesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:scrollbarSize="5dp"
+        android:scrollbarThumbVertical="@android:color/darker_gray"
+        android:scrollbars="vertical" />
 </FrameLayout>
