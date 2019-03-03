@@ -47,6 +47,17 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
             LightNovel ln = lnList.get(position);
             // Title
             ((TextView) view.findViewById(R.id.lnTitle)).setText(ln.getTitle());
+            // Type
+            switch (ln.getType()) {
+                case LightNovel.ProjectType.TEASER:
+                case LightNovel.ProjectType.OLN:
+                    ((TextView) view.findViewById(R.id.lnType)).setText(ln.getType());
+                    view.findViewById(R.id.lnType).setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    view.findViewById(R.id.lnType).setVisibility(View.GONE);
+                    break;
+            }
             // Genres
             List<String> genres = ln.getGenres();
             if (genres.size() > 0) {
@@ -76,15 +87,6 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                 default:
                     ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Không cập nhật trong 1 năm qua");
                     break;
-            }
-            // Type
-            switch (ln.getType()) {
-                case LightNovel.ProjectType.TEASER:
-                case LightNovel.ProjectType.OLN:
-                    ((TextView) view.findViewById(R.id.lnType)).setText(ln.getType());
-                    break;
-                default:
-                    view.findViewById(R.id.lnType).setVisibility(View.GONE);
             }
         }
     }

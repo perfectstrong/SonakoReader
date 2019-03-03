@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/lnTitle"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/lnTitle"
         android:gravity="center_vertical"
@@ -23,10 +23,8 @@
 
     <TextView
         android:id="@+id/lnCategories"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/lnCategoriesLabel"
-        android:ellipsize="marquee"
         android:textSize="@dimen/subtitle" />
 
     <TextView
