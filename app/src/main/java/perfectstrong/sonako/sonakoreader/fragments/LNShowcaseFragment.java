@@ -16,7 +16,9 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 /**
  * List of all LNs (including teaser, OLN)
  */
-public class LNShowcaseFragment extends Fragment {
+public class LNShowcaseFragment extends Fragment implements LNFilterable {
+
+    private LNTitlesAdapter mAdapter;
 
     public LNShowcaseFragment() {
         // Required empty public constructor
@@ -34,12 +36,11 @@ public class LNShowcaseFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_lnshowcase, container, false);
         RecyclerView recyclerView = rootView.findViewById(R.id.LNTitlesRecyclerView);
-        recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        LNTitlesAdapter mAdapter = new LNTitlesAdapter();
+        mAdapter = new LNTitlesAdapter();
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
@@ -52,7 +53,17 @@ public class LNShowcaseFragment extends Fragment {
         return rootView;
     }
 
-//    @Override
+    @Override
+    public void filterLNList(String keyword, String type, String status, String[] genres) {
+        mAdapter.filterLNList(keyword, type, status, genres);
+    }
+
+    @Override
+    public void showAll() {
+        mAdapter.showAll();
+    }
+
+    //    @Override
 //    public void onAttach(Context context) {
 //        super.onAttach(context);
 //        if (context instanceof OnFragmentInteractionListener) {

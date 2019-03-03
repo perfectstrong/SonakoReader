@@ -12,7 +12,7 @@ import perfectstrong.sonako.sonakoreader.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteLNsFragment extends Fragment {
+public class FavoriteLNsFragment extends Fragment implements LNFilterable {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -60,6 +60,16 @@ public class FavoriteLNsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favorites_ln, container, false);
+    }
+
+    @Override
+    public void filterLNList(String keyword, String type, String status, String[] genres) {
+        // TODO
+    }
+
+    @Override
+    public void showAll() {
+        // TODO
     }
 
 //    @Override

@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -22,7 +23,8 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
+    @NonNull
+    public String getPageTitle(int position) {
         return fragmentsTitles.get(position);
     }
 

@@ -78,12 +78,14 @@ public class LightNovel {
     }
 
     public static class ProjectType {
+        public static final String[] ALL = {"Bất kỳ",  "Chính thức", "Teaser", "OLN"};
         public static final String OFFICIAL = "Official";
         public static final String TEASER = "Teaser";
         public static final String OLN = "Original Light Novel";
     }
 
     public static class ProjectStatus {
+        public static final String[] ALL = {"Bất kỳ", "Active", "Idle", "Stalled", "Completed", "Inactive"};
         public static final String ACTIVE = "Active Projects";
         public static final String IDLE = "Idle Projects";
         public static final String STALLED = "Stalled Projects";
