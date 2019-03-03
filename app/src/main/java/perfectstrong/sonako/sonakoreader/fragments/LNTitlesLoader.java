@@ -54,6 +54,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         titles = lndb.lnDao().getAll();
         if (titles.size() == 0) {
             // Not download yet
+            this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             downloadTitles();
             orderTitlesAlphabetically();
             removeTitleDuplications();
@@ -230,7 +231,6 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             fetchTitles();
             fetchStatusAndCategories();
         } catch (Exception e) {
