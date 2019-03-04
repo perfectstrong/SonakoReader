@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         this.adapter = new WeakReference<>(adapter);
     }
 
-    private void fetchTitles() {
+    private void fetchTitles() throws IOException {
         // Check db first
         titles = lndb.lnDao().getAll();
         if (titles.size() == 0) {
@@ -63,7 +64,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private void downloadTitles() {
+    private void downloadTitles() throws IOException {
         downloadOfficialProjects();
         downloadTeaserProjects();
         downloadOLNProjects();
@@ -92,7 +93,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
     /**
      * Get projects with category "Teaser"
      */
-    private void downloadTeaserProjects() {
+    private void downloadTeaserProjects() throws IOException {
         Response res = wikiClient.basicGET("query",
                 "list", "categorymembers",
                 "cmtitle", "Category:Teaser",
@@ -100,24 +101,20 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
                 "cmsort", "timestamp",
                 "cmdir", "desc",
                 "cmlimit", "max");
-        try {
-            assert res.body() != null;
-            JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
-            JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
-            for (JsonElement ele : teasers) {
-                LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
-                teaser.setType(LightNovel.ProjectType.TEASER);
-                titles.add(teaser);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        assert res.body() != null;
+        JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
+        JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
+        for (JsonElement ele : teasers) {
+            LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
+            teaser.setType(LightNovel.ProjectType.TEASER);
+            titles.add(teaser);
         }
     }
 
     /**
      * Get projects with category "Original Light Novel"
      */
-    private void downloadOLNProjects() {
+    private void downloadOLNProjects() throws IOException {
         Response res = wikiClient.basicGET("query",
                 "list", "categorymembers",
                 "cmtitle", "Category:Original Light Novel",
@@ -125,17 +122,13 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
                 "cmsort", "timestamp",
                 "cmdir", "desc",
                 "cmlimit", "max");
-        try {
-            assert res.body() != null;
-            JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
-            JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
-            for (JsonElement ele : teasers) {
-                LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
-                teaser.setType(LightNovel.ProjectType.TEASER);
-                titles.add(teaser);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        assert res.body() != null;
+        JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
+        JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
+        for (JsonElement ele : teasers) {
+            LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
+            teaser.setType(LightNovel.ProjectType.TEASER);
+            titles.add(teaser);
         }
     }
 
@@ -224,7 +217,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
         progressDialog = ProgressDialog.show(fragment.get().getContext(),
                 "",
-                fragment.get().getString(R.string.loading_titles)
+                fragment.get().getString(R.string.loading)
         );
     }
 
