@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader.helper;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -24,6 +25,8 @@ import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 
 public class PageLoader extends AsyncTask<Void, String, Void> {
+
+    private static final String TAG = PageLoader.class.getSimpleName();
 
     private WeakReference<PageReadingActivity> readingActivity;
     private final String title;
@@ -55,6 +58,12 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
             exception = e;
         }
         return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        Log.i(TAG, values[0]);
+        progressDialog.setMessage(values[0]);
     }
 
     @Override
@@ -95,6 +104,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void download() throws IOException {
+        publishProgress("Tải nội dung");
         Wiki wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
         Response res = wiki.basicGET(
                 "parse",
@@ -106,6 +116,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                 "prop", "text",
                 "useskin", "mercury"
         );
+        publishProgress("Phân tích nội dung");
         assert res.body() != null;
         JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
         // Check error
@@ -125,6 +136,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void preprocess() {
+        publishProgress("Xử lý nội dung");
         Document doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
         // Remove unrelated section
         doc.getElementsByClass("entry-unrelated").remove();
@@ -140,6 +152,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         }
         // TODO more
         // Add head
+        publishProgress("Xử lý giao diện");
         doc.head()
                 .appendElement("meta")
                 .attr("charset", "utf-8");
@@ -153,10 +166,11 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                 .attr("type", "text/css")
                 .attr("href", Config.SKIN);
         text = doc.outerHtml();
-        System.out.println(text);
+        Log.v(TAG, text);
     }
 
     private void cache() {
-        // TODO cache preprocessed html and images, with _text
+        publishProgress("Lưu vào bộ nhớ");
+        // TODO cache preprocessed html and images, with text
     }
 }
