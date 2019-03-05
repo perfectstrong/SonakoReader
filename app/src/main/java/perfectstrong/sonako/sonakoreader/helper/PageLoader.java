@@ -145,10 +145,16 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         // Fix images
         for (Element figure: doc.getElementsByTag("figure")) {
             Element a = figure.getElementsByTag("a").first();
+            if (a == null) continue;
             a.attr("href", a.attr("href").replace("/wiki/", ""));
             Element realImg = a.selectFirst("noscript > img");
-            realImg.attr("href", realImg.attr("href").replace("\\?cb=.*", ""));
-            a.empty().appendChild(realImg);
+            realImg.attr("src",
+                    realImg.attr("src").replaceAll("/revision.*", ""));
+            Log.v(TAG, realImg.attr("src"));
+            realImg.attr("width", "100%");
+            realImg.attr("height", "auto");
+            figure.empty().appendChild(realImg);
+            figure.attr("width", "80%");
         }
         // TODO more
         // Add head
