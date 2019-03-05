@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +12,6 @@ import perfectstrong.sonako.sonakoreader.helper.Config;
 /**
  * General class for reading a page
  */
-@SuppressLint("StaticFieldLeak")
 public class PageReadingActivity extends AppCompatActivity {
 
     protected String title = "";
