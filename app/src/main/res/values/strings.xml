@@ -89,7 +89,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Tùy chỉnh</string>
     <string name="lnPreview">LN Preview</string>
     <string name="lnTitle">LN Title</string>
     <string name="lnCategories">LN Categories</string>
@@ -105,4 +105,6 @@
     <string name="ln_title_keyword">Từ khóa trong tiêu đề</string>
     <string name="genres_selection_label">Thể loại</string>
     <string name="filter_reset">Toàn bộ</string>
+    <string name="action_refresh_page">Tải lại trang</string>
+    <string name="action_purge_cache_page">Xóa cache trang</string>
 </resources>
