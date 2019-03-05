@@ -94,7 +94,7 @@
     <string name="lnTitle">LN Title</string>
     <string name="lnCategories">LN Categories</string>
     <string name="wikiname">Sonako Light Novel</string>
-    <string name="loading_titles">Đang tải tên truyện</string>
+    <string name="loading">Đang tải</string>
     <string name="error_occurred">Đã có lỗi xảy ra:</string>
     <string name="lnCategoriesLabel">Thể loại:</string>
 
