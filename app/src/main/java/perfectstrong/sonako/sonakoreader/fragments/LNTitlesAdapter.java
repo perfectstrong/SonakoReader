@@ -1,5 +1,7 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,14 +13,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import perfectstrong.sonako.sonakoreader.LNMainpageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.helper.Config;
 
 public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitleViewHolder> {
+    private Context context;
     private List<LightNovel> _lnList = new ArrayList<>();
     private List<LightNovel> lnList = new ArrayList<>();
 
     LNTitlesAdapter() {
+    }
+
+    public LNTitlesAdapter(Context context) {
+        this.context = context;
     }
 
     void setDatalist(List<LightNovel> titles) {
@@ -41,23 +50,25 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         }
     }
 
-    class LNTitleViewHolder extends RecyclerView.ViewHolder {
+    class LNTitleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View view;
+        private LightNovel lightNovel;
 
         LNTitleViewHolder(View v) {
             super(v);
             view = v;
+            v.setOnClickListener(this);
         }
 
         void initAt(int position) {
-            LightNovel ln = lnList.get(position);
+            lightNovel = lnList.get(position);
             // Title
-            ((TextView) view.findViewById(R.id.lnTitle)).setText(ln.getTitle());
+            ((TextView) view.findViewById(R.id.lnTitle)).setText(lightNovel.getTitle());
             // Type
-            switch (ln.getType()) {
+            switch (lightNovel.getType()) {
                 case LightNovel.ProjectType.TEASER:
                 case LightNovel.ProjectType.OLN:
-                    ((TextView) view.findViewById(R.id.lnType)).setText(ln.getType());
+                    ((TextView) view.findViewById(R.id.lnType)).setText(lightNovel.getType());
                     view.findViewById(R.id.lnType).setVisibility(View.VISIBLE);
                     break;
                 default:
@@ -65,7 +76,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                     break;
             }
             // Genres
-            List<String> genres = ln.getGenres();
+            List<String> genres = lightNovel.getGenres();
             if (genres.size() > 0) {
                 StringBuilder genresStr = new StringBuilder(genres.get(0));
                 for (int i = 1; i < genres.size(); i++) {
@@ -76,7 +87,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                 view.findViewById(R.id.lnCategories).setVisibility(View.GONE);
             }
             // Status
-            switch (ln.getStatus()) {
+            switch (lightNovel.getStatus()) {
                 case LightNovel.ProjectStatus.ACTIVE:
                     ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Liên tục cập nhật");
                     break;
@@ -94,6 +105,15 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                     ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Không cập nhật trong 1 năm qua");
                     break;
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (lightNovel == null) return;
+            // Open page reader for lightnovel
+            Intent intent = new Intent(context, LNMainpageReadingActivity.class);
+            intent.putExtra(Config.EXTRA_TITLE, lightNovel.getTitle());
+            context.startActivity(intent);
         }
     }
 

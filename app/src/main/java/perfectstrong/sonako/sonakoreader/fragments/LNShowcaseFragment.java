@@ -40,7 +40,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        mAdapter = new LNTitlesAdapter();
+        mAdapter = new LNTitlesAdapter(this.getContext());
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
