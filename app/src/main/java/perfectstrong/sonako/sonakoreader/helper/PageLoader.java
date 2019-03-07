@@ -243,7 +243,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     private void downloadImages() {
         for (String imageName : imagesLinks.keySet()) {
             String url = imagesLinks.get(imageName);
-            Log.d(TAG, "imageName = " + imageName + ", link = " + url);
+            publishProgress(readingActivity.get().getString(R.string.downloading_image) + " " + imageName);
             Bitmap bitmap = null;
             try (InputStream inputStream = new URL(url).openStream()) {
                 bitmap = BitmapFactory.decodeStream(inputStream);
