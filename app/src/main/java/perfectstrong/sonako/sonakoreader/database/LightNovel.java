@@ -16,7 +16,6 @@ public class LightNovel {
     private String tag;
     private String type = ProjectType.OFFICIAL;
     private String status = ProjectStatus.ACTIVE;
-    private String URI = "";
     @Ignore
     private List<String> genres;
 
@@ -43,14 +42,6 @@ public class LightNovel {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getURI() {
-        return URI;
-    }
-
-    public void setURI(String URI) {
-        this.URI = URI;
     }
 
     public String getType() {

@@ -113,6 +113,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
             // Open page reader for lightnovel
             Intent intent = new Intent(context, LNMainpageReadingActivity.class);
             intent.putExtra(Config.EXTRA_TITLE, lightNovel.getTitle());
+            intent.putExtra(Config.EXTRA_TAG, lightNovel.getTag());
             context.startActivity(intent);
         }
     }

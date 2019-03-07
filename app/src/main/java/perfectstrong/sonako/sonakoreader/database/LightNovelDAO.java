@@ -14,7 +14,7 @@ public interface LightNovelDAO {
     @Query("SELECT * FROM lightnovel")
     List<LightNovel> getAll();
 
-    @Query("SELECT * FROM lightnovel WHERE title = :title LIMIT 1")
+    @Query("SELECT * FROM lightnovel WHERE title = :title")
     LightNovel get(String title);
 
     /**

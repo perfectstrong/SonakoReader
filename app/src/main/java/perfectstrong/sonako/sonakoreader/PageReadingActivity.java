@@ -14,7 +14,11 @@ import perfectstrong.sonako.sonakoreader.helper.Config;
  */
 public class PageReadingActivity extends AppCompatActivity {
 
-    protected String title = "";
+    private static final String TAG = PageReadingActivity.class.getSimpleName();
+    protected static final String UNDEFINED = "Undefined";
+
+    protected String title;
+    protected String tag;
     protected WebView pageview = null;
 
     @Override
@@ -23,7 +27,10 @@ public class PageReadingActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             title = bundle.getString(Config.EXTRA_TITLE);
+            tag = bundle.getString(Config.EXTRA_TAG);
         }
+        if (title == null) title = UNDEFINED;
+        if (tag == null) tag = UNDEFINED;
 
         // New title to load
         setContentView(R.layout.activity_page_reading);
@@ -34,7 +41,6 @@ public class PageReadingActivity extends AppCompatActivity {
         pageview = findViewById(R.id.page_viewer);
         pageview.setInitialScale(1);
         pageview.setScrollContainer(false);
-//        pageview.setOnTouchListener((v, event) -> (event.getAction() == MotionEvent.ACTION_MOVE));
         pageview.getSettings().setJavaScriptEnabled(false);
         pageview.getSettings().setLoadWithOverviewMode(true);
         pageview.getSettings().setUseWideViewPort(true);

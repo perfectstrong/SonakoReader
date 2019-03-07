@@ -11,6 +11,6 @@ public class LNMainpageReadingActivity extends PageReadingActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        new PageLoader(this, title).execute();
+        new PageLoader(this, title, tag).execute();
     }
 }

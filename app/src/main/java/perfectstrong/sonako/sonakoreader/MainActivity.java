@@ -1,10 +1,13 @@
 package perfectstrong.sonako.sonakoreader;
 
+import android.Manifest;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,14 +29,22 @@ import perfectstrong.sonako.sonakoreader.fragments.RecentActivitiesFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static Context contextOfApplication;
+
     private static final String LN_SHOW_CASE = "Danh sách";
     private static final String FAVORITE_LNs = "Yêu thích";
     private static final String RECENT_ACTIVITIES = "Hoạt động";
     private static final String HISTORY = "Lịch sử";
 
+    public static Context getContextOfApplication() {
+        return contextOfApplication;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        contextOfApplication = getApplicationContext();
+
         setContentView(R.layout.main_activity);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
     }
 
     @Override
@@ -108,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                LightNovel.ProjectType.ALL
+                LightNovel.ProjectType.CHOICES
         );
         typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner typesSpinner = view.findViewById(R.id.type_selection);
@@ -118,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,
-                LightNovel.ProjectStatus.ALL
+                LightNovel.ProjectStatus.CHOICES
         );
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         Spinner statusSpinner = view.findViewById(R.id.status_selection);
