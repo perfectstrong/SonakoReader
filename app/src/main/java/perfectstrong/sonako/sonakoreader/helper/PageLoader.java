@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -52,6 +54,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
      */
     private String tag;
     private Map<String, String> imagesLinks = new HashMap<>();
+    private Wiki wiki;
 
     public PageLoader(PageReadingActivity readingActivity, String title, String tag) {
         this.readingActivity = new WeakReference<>(readingActivity);
@@ -74,9 +77,12 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
+            wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+            if (!wiki.exists(title))
+                throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + title);
             fetch();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Unknown exception", e);
             exception = e;
         }
         return null;
@@ -132,7 +138,6 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
 
     private void downloadText() throws IOException {
         publishProgress(readingActivity.get().getString(R.string.downloading_content));
-        Wiki wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
         Response res = wiki.basicGET(
                 "parse",
                 "page", title,
@@ -195,6 +200,8 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
             String src = img.attr("src");
             if (src.startsWith("http:")) //noinspection ResultOfMethodCallIgnored
                 src = src.replaceFirst("http", "https");
+            if (src.contains("wikia.nocookie")) // direct link from wikia
+                src = src.replaceAll("/revision.*", "");
             img.attr("data-src", src); // Backup
             String imgName = Config.getFileNameFromURL(src);
             if (!imgName.equals("")) {
@@ -205,6 +212,11 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         // Fix empty tags
         for (Element element : doc.getElementsByTag("div")) {
             if (element.childNodeSize() == 0) element.remove();
+        }
+        // Fix internal links
+        for (Element element : doc.getElementsByTag("a")) {
+            if (element.attr("href").startsWith("/wiki/")) // internal link
+                element.attr("href", element.attr("href").replace("/wiki/", ""));
         }
         // Add head
         publishProgress(readingActivity.get().getString(R.string.preprocessing_display));
@@ -240,19 +252,30 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         }
     }
 
+    private static final List<String> supportedImageExtensions = Arrays.asList("jpg", "jpeg", "png", "webp");
+
     private void downloadImages() {
         for (String imageName : imagesLinks.keySet()) {
             String url = imagesLinks.get(imageName);
+            File file = new File(saveLocation, imageName);
+            if (file.exists()) // already cached
+                continue;
+
             publishProgress(readingActivity.get().getString(R.string.downloading_image) + " " + imageName);
+            String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
+            if (!supportedImageExtensions.contains(mime)) {
+                Log.e(TAG, "Unsupported image extension " + imageName);
+                continue;
+            }
+
             Bitmap bitmap = null;
             try (InputStream inputStream = new URL(url).openStream()) {
                 bitmap = BitmapFactory.decodeStream(inputStream);
             } catch (IOException e) {
                 Log.e(TAG, imageName + " downloading failed", e);
             }
+
             if (bitmap == null) continue;
-            String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
-            File file = new File(saveLocation, imageName);
             try (FileOutputStream fo = new FileOutputStream(file)) {
                 switch (mime) {
                     case "jpg":

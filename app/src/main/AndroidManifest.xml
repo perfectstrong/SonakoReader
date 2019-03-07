@@ -24,12 +24,8 @@
         tools:targetApi="m">
         <activity
             android:name=".PageReadingActivity"
-            android:label="PageReading"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".LNMainpageReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="LNMainpageReading"
+            android:label="PageReading"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"

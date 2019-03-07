@@ -1,25 +1,34 @@
 package perfectstrong.sonako.sonakoreader;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.helper.PageLoader;
 
 /**
  * General class for reading a page
  */
 public class PageReadingActivity extends AppCompatActivity {
 
+    private static final String UNDEFINED = "Undefined";
     private static final String TAG = PageReadingActivity.class.getSimpleName();
-    protected static final String UNDEFINED = "Undefined";
 
-    protected String title;
-    protected String tag;
-    protected WebView pageview = null;
+    private String title;
+    private String tag;
+    private WebView pageview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,8 @@ public class PageReadingActivity extends AppCompatActivity {
         if (tag == null) tag = UNDEFINED;
 
         // New title to load
+        title = Config.removeSubtrait(title);
+        tag = Config.removeSubtrait(tag);
         setContentView(R.layout.activity_page_reading);
         setTitle(title);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -45,6 +56,36 @@ public class PageReadingActivity extends AppCompatActivity {
         pageview.getSettings().setLoadWithOverviewMode(true);
         pageview.getSettings().setUseWideViewPort(true);
         pageview.getSettings().setBuiltInZoomControls(true);
+        pageview.setWebViewClient(new WebViewClient() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return shouldOverrideUrlLoading(view, request.getUrl().toString());
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                String u = Uri.decode(url);
+                Log.d(TAG, "Opening link " + u);
+                Context context = view.getContext();
+                if (u.startsWith("file://" + Config.getSaveLocationForTag(tag))) {
+                    // Maybe this is an internal page, indicating a chapter
+                    String newTitle = u.replace("file://" + Config.getSaveLocationForTag(tag), "");
+                    Log.d(TAG, "Opening internal link " + newTitle);
+                    Intent i = new Intent(context, PageReadingActivity.class);
+                    i.putExtra(Config.EXTRA_TITLE, newTitle);
+                    i.putExtra(Config.EXTRA_TAG, tag);
+                    context.startActivity(i);
+                    return true;
+                } else {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    context.startActivity(i);
+                }
+                return true;
+            }
+        });
+
+        new PageLoader(this, title, tag).execute();
     }
 
     @Override

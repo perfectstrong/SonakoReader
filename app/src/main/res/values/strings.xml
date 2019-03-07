@@ -117,4 +117,5 @@
     <string name="caching_ln_list">Lưu danh sách</string>
     <string name="downloading_tags">Tải tag</string>
     <string name="downloading_image">Tải ảnh</string>
+    <string name="not_having">Sonako không có</string>
 </resources>

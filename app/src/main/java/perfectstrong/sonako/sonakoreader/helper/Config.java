@@ -29,10 +29,14 @@ public class Config {
         return SAVE_LOCATION + sanitize(tag) + "/";
     }
 
-    private static final String REPLACEMENT_CHAR = "_";
+    private static final String REPLACEMENT_CHAR = " ";
 
     public static String sanitize(String tag) {
-        return tag.replaceAll("[|?*<\":>+\\[\\]/']", REPLACEMENT_CHAR);
+        return tag.replaceAll("[|?*<\":>+\\[\\]/'_]", REPLACEMENT_CHAR);
+    }
+
+    public static String removeSubtrait(String tag) {
+        return tag.replaceAll("_", REPLACEMENT_CHAR);
     }
 
     public static String getFileNameFromURL(String url) {

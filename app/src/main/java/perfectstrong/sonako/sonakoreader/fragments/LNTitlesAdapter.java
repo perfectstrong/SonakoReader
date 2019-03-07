@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import perfectstrong.sonako.sonakoreader.LNMainpageReadingActivity;
+import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.helper.Config;
@@ -111,7 +111,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         public void onClick(View v) {
             if (lightNovel == null) return;
             // Open page reader for lightnovel
-            Intent intent = new Intent(context, LNMainpageReadingActivity.class);
+            Intent intent = new Intent(context, PageReadingActivity.class);
             intent.putExtra(Config.EXTRA_TITLE, lightNovel.getTitle());
             intent.putExtra(Config.EXTRA_TAG, lightNovel.getTag());
             context.startActivity(intent);

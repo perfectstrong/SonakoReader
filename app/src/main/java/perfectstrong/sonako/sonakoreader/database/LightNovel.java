@@ -92,6 +92,6 @@ public class LightNovel {
     }
 
     public static class ExceptionTag {
-        public static final List<String> ALL = Arrays.asList("MF Bunko J", "Event Xuân 2015", "Licensed", "Host Project", "Event 4K");
+        public static final List<String> ALL = Arrays.asList("MF Bunko J", "Event Xuân 2015", "Licensed", "Host Project", "Event 4K", "Spoiler", "Mature content", "Full Text", "Minh họa", "Poll", "Sonako", "Sonako Mainpage", "Wiki");
     }
 }
