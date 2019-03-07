@@ -107,4 +107,13 @@
     <string name="filter_reset">Toàn bộ</string>
     <string name="action_refresh_page">Tải lại trang</string>
     <string name="action_purge_cache_page">Xóa cache trang</string>
+    <string name="downloading_content">Tải nội dung</string>
+    <string name="analyzing_content">Phân tích nội dung</string>
+    <string name="preprocessing_content">Xử lý nội dung</string>
+    <string name="preprocessing_display">Xử lý giao diện</string>
+    <string name="caching">Lưu vào bộ nhớ</string>
+    <string name="downloading_ln_list">Tải danh sách từ internet</string>
+    <string name="ordering_ln_list">Sắp xếp danh sách</string>
+    <string name="caching_ln_list">Lưu danh sách</string>
+    <string name="downloading_tags">Tải tag</string>
 </resources>

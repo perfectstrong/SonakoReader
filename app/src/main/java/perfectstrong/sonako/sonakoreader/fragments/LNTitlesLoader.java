@@ -33,7 +33,7 @@ import perfectstrong.sonako.sonakoreader.helper.Config;
 /**
  * Load titles from cache. If not downloaded yet, it will fetch from server then cache it.
  */
-public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
+public class LNTitlesLoader extends AsyncTask<Void, String, Void> {
     private final LightNovelsDatabase lndb;
     private List<LightNovel> titles;
     private Wiki wikiClient;
@@ -56,10 +56,14 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
         if (titles.size() == 0) {
             // Not download yet
             this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+            publishProgress(fragment.get().getString(R.string.downloading_ln_list));
             downloadTitles();
+            publishProgress(fragment.get().getString(R.string.ordering_ln_list));
             orderTitlesAlphabetically();
             removeTitleDuplications();
+            publishProgress(fragment.get().getString(R.string.caching_ln_list));
             cacheTitles();
+            publishProgress(fragment.get().getString(R.string.downloading_tags));
             downloadStatusAndCategories();
         }
     }
@@ -202,6 +206,7 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
                         if (LightNovel.ProjectGenre.ALL.contains(category))
                             lndb.lnDao().insert(new Categorization(lntitle, category));
                         else {
+                            if (LightNovel.ExceptionTag.ALL.contains(category)) continue;
                             title.setTag(category);
                         }
                         break;
@@ -231,6 +236,11 @@ public class LNTitlesLoader extends AsyncTask<Void, Void, Void> {
             this.exception = e;
         }
         return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(String... values) {
+        progressDialog.setMessage(values[0]);
     }
 
     @Override
