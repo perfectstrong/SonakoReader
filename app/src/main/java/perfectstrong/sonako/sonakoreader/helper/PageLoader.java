@@ -60,8 +60,8 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         this.readingActivity = new WeakReference<>(readingActivity);
         this.title = title;
         this.tag = tag;
-        this.saveLocation = Config.getSaveLocationForTag(tag);
-        this.filename = Config.sanitize(title) + ".html";
+        this.saveLocation = Utils.getSaveLocationForTag(tag);
+        this.filename = Utils.sanitize(title) + ".html";
     }
 
     @Override
@@ -203,7 +203,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
             if (src.contains("wikia.nocookie")) // direct link from wikia
                 src = src.replaceAll("/revision.*", "");
             img.attr("data-src", src); // Backup
-            String imgName = Config.getFileNameFromURL(src);
+            String imgName = Utils.getFileNameFromURL(src);
             if (!imgName.equals("")) {
                 imagesLinks.put(imgName, src);
                 img.attr("src", imgName); // To load from local

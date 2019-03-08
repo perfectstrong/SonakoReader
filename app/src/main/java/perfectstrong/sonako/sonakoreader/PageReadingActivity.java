@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.PageLoader;
+import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 /**
  * General class for reading a page
@@ -28,7 +29,6 @@ public class PageReadingActivity extends AppCompatActivity {
 
     private String title;
     private String tag;
-    private WebView pageview = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +42,14 @@ public class PageReadingActivity extends AppCompatActivity {
         if (tag == null) tag = UNDEFINED;
 
         // New title to load
-        title = Config.removeSubtrait(title);
-        tag = Config.removeSubtrait(tag);
+        title = Utils.removeSubtrait(title);
+        tag = Utils.removeSubtrait(tag);
         setContentView(R.layout.activity_page_reading);
         setTitle(title);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        pageview = findViewById(R.id.page_viewer);
+        WebView pageview = findViewById(R.id.page_viewer);
         pageview.setInitialScale(1);
         pageview.setScrollContainer(false);
         pageview.getSettings().setJavaScriptEnabled(false);
@@ -68,9 +68,9 @@ public class PageReadingActivity extends AppCompatActivity {
                 String u = Uri.decode(url);
                 Log.d(TAG, "Opening link " + u);
                 Context context = view.getContext();
-                if (u.startsWith("file://" + Config.getSaveLocationForTag(tag))) {
+                if (u.startsWith("file://" + Utils.getSaveLocationForTag(tag))) {
                     // Maybe this is an internal page, indicating a chapter
-                    String newTitle = u.replace("file://" + Config.getSaveLocationForTag(tag), "");
+                    String newTitle = u.replace("file://" + Utils.getSaveLocationForTag(tag), "");
                     Log.d(TAG, "Opening internal link " + newTitle);
                     Intent i = new Intent(context, PageReadingActivity.class);
                     i.putExtra(Config.EXTRA_TITLE, newTitle);
