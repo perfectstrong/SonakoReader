@@ -34,9 +34,11 @@ public class PageReadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
+        ACTION action = null;
         if (bundle != null) {
             title = bundle.getString(Config.EXTRA_TITLE);
             tag = bundle.getString(Config.EXTRA_TAG);
+            action = (ACTION) bundle.getSerializable(Config.EXTRA_ACTION);
         }
         if (title == null) title = UNDEFINED;
         if (tag == null) tag = UNDEFINED;
@@ -89,7 +91,7 @@ public class PageReadingActivity extends AppCompatActivity {
             }
         });
 
-        new PageLoader(this, title, tag).execute();
+        new PageLoader(this, title, tag, action).execute();
     }
 
     @Override
@@ -98,14 +100,29 @@ public class PageReadingActivity extends AppCompatActivity {
         return true;
     }
 
+    public enum ACTION {
+        REFRESH_ALL,
+        REFRESH_TEXT,
+    }
+
+    private void startIntent(String title, String tag, ACTION action) {
+        Intent i = new Intent(this, PageReadingActivity.class);
+        i.putExtra(Config.EXTRA_TITLE, title);
+        i.putExtra(Config.EXTRA_TAG, tag);
+        i.putExtra(Config.EXTRA_ACTION, action);
+        this.startActivity(i);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_refresh_page:
-                // TODO refresh page
-                break;
             case R.id.action_purge_cache_page:
-                // TODO purge cache
+                Log.d(TAG, "Reset " + title);
+                startIntent(title, tag, ACTION.REFRESH_ALL);
+                break;
+            case R.id.action_refresh_page:
+                Log.d(TAG, "Refresh text " + title);
+                startIntent(title, tag, ACTION.REFRESH_TEXT);
                 break;
             case R.id.action_settings:
                 // TODO change settings

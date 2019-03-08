@@ -56,13 +56,29 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     private String tag;
     private Map<String, String> imagesLinks = new HashMap<>();
     private Wiki wiki;
+    private boolean forceRefreshText = false;
+    private boolean forceRefreshImages = false;
 
-    public PageLoader(PageReadingActivity readingActivity, String title, String tag) {
+    public PageLoader(PageReadingActivity readingActivity,
+                      String title,
+                      String tag,
+                      PageReadingActivity.ACTION action) {
         this.readingActivity = new WeakReference<>(readingActivity);
         this.title = title;
         this.tag = tag;
         this.saveLocation = Utils.getSaveLocationForTag(tag);
         this.filename = Utils.sanitize(title) + ".html";
+        // action null <=> reading
+        if (action != null)
+            switch (action) {
+                case REFRESH_TEXT:
+                    forceRefreshText = true;
+                    break;
+                case REFRESH_ALL:
+                    forceRefreshText = true;
+                    forceRefreshImages = true;
+                    break;
+            }
     }
 
     @Override
@@ -78,11 +94,8 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
-            if (!wiki.exists(title))
-                throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + " " + title);
             fetch();
-        } catch (Exception e) {
+        } catch (IOException e) {
             Log.e(TAG, "Unknown exception", e);
             exception = e;
         }
@@ -121,7 +134,10 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     private void fetch() throws IOException {
         Log.d(TAG, "title = " + title + ", tag = " + tag);
         // Check cache
-        if (!hasCache()) {
+        if (!hasCache() || forceRefreshText) {
+            wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+            if (!wiki.exists(title))
+                throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + " " + title);
             // If not existed, download and cache
             downloadText();
             preprocess();
@@ -138,7 +154,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void downloadText() throws IOException {
-        publishProgress(readingActivity.get().getString(R.string.downloading_content));
+        publishProgress(readingActivity.get().getString(R.string.downloading_text));
         Response res = wiki.basicGET(
                 "parse",
                 "page", title,
@@ -149,7 +165,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                 "prop", "text|categories",
                 "useskin", "mercury"
         );
-        publishProgress(readingActivity.get().getString(R.string.analyzing_content));
+        publishProgress(readingActivity.get().getString(R.string.analyzing_text));
         assert res.body() != null;
         JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
         // Check error
@@ -179,7 +195,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void preprocess() {
-        publishProgress(readingActivity.get().getString(R.string.preprocessing_content));
+        publishProgress(readingActivity.get().getString(R.string.preprocessing_text));
         Document doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
         // Retain local navigator
         Element localNav = doc.selectFirst(".localNav");
@@ -308,7 +324,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         for (String imageName : imagesLinks.keySet()) {
             String url = imagesLinks.get(imageName);
             File file = new File(saveLocation, imageName);
-            if (file.exists()) // already cached
+            if (file.exists() && !forceRefreshImages) // already cached
                 continue;
 
             publishProgress(readingActivity.get().getString(R.string.downloading_image) + " " + imageName);
