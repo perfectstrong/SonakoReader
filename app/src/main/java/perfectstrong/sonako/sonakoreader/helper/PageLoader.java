@@ -10,12 +10,14 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -206,14 +208,35 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
             doc.body().appendChild(localNav);
         // Remove edit section link
         doc.getElementsByClass("editsection").remove();
-        // Fix direct wiki images
+        // Fix figures
         for (Element figure : doc.getElementsByTag("figure")) {
-            Element realImg = figure.selectFirst("noscript > img");
-            realImg.attr("src",
-                    realImg.attr("src").replaceAll("/revision.*", ""));
-            Log.d(TAG, realImg.attr("src"));
-            figure.empty().appendChild(realImg);
-            figure.attr("width", "80%");
+            // Fix gallery
+            if (figure.getElementsByTag("figcaption") != null) {
+                try {
+                    String text = figure.selectFirst("img.lazy.media").attr("data-params");
+                    JsonArray imageDescriptions = GSONP.jp.parse(
+                            Parser.unescapeEntities(text, true)
+                    ).getAsJsonArray();
+                    figure.empty();
+                    for (JsonElement id: imageDescriptions) {
+                        Element img = new Element("img");
+                        img.attr("src",
+                                id.getAsJsonObject().get("full").getAsString());
+                        figure.appendChild(img);
+                    }
+                    figure.attr("width", "80%");
+                } catch (Exception e) {
+                    Log.d(TAG, "Error on parsing gallery", e);
+                }
+            } else {
+                // Fix direct wiki images
+                Element realImg = figure.selectFirst("noscript > img");
+                realImg.attr("src",
+                        realImg.attr("src").replaceAll("/revision.*", ""));
+                Log.d(TAG, realImg.attr("src"));
+                figure.empty().appendChild(realImg);
+                figure.attr("width", "80%");
+            }
         }
         // Fix all images
         for (Element img : doc.getElementsByTag("img")) {
