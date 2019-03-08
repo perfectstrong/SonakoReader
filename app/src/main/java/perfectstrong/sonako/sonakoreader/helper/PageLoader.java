@@ -215,8 +215,48 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         }
         // Fix internal links
         for (Element element : doc.getElementsByTag("a")) {
-            if (element.attr("href").startsWith("/wiki/")) // internal link
-                element.attr("href", element.attr("href").replace("/wiki/", ""));
+            String href = element.attr("href");
+            if (href.startsWith("/wiki/")) {// internal link
+                // Check namespace
+                if (
+                        href.startsWith("/wiki/Blog:")
+                                || href.startsWith("/wiki/Blog_talk:")
+                                || href.startsWith("/wiki/Board:")
+                                || href.startsWith("/wiki/Board_Thread:")
+                                || href.startsWith("/wiki/Category:")
+                                || href.startsWith("/wiki/Category_talk:")
+                                || href.startsWith("/wiki/File:")
+                                || href.startsWith("/wiki/File_talk:")
+                                || href.startsWith("/wiki/Help:")
+                                || href.startsWith("/wiki/Help_talk:")
+                                || href.startsWith("/wiki/Image:")
+                                || href.startsWith("/wiki/Media:")
+                                || href.startsWith("/wiki/MediaWiki:")
+                                || href.startsWith("/wiki/MediaWiki_talk:")
+                                || href.startsWith("/wiki/Message_Wall:")
+                                || href.startsWith("/wiki/Message_Wall_Greeting:")
+                                || href.startsWith("/wiki/Module:")
+                                || href.startsWith("/wiki/Module_talk:")
+                                || href.startsWith("/wiki/Project:")
+                                || href.startsWith("/wiki/Project_talk:")
+                                || href.startsWith("/wiki/Related_Videos:")
+                                || href.startsWith("/wiki/Special:")
+                                || href.startsWith("/wiki/Talk:")
+                                || href.startsWith("/wiki/Template:")
+                                || href.startsWith("/wiki/Template_talk:")
+                                || href.startsWith("/wiki/Thread:")
+                                || href.startsWith("/wiki/Topic:")
+                                || href.startsWith("/wiki/User:")
+                                || href.startsWith("/wiki/User_talk:")
+                                || href.startsWith("/wiki/User_blog:")
+                                || href.startsWith("/wiki/User_blog_comment:")
+                ) {
+                    // Not main page
+                    element.attr("href", Config.WEBSITE + href);
+                } else
+                    // Main page
+                    element.attr("href", href.replace("/wiki/", ""));
+            }
         }
         // Add head
         publishProgress(readingActivity.get().getString(R.string.preprocessing_display));

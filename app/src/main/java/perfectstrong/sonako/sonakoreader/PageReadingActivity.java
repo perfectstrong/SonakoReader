@@ -57,6 +57,9 @@ public class PageReadingActivity extends AppCompatActivity {
         pageview.getSettings().setUseWideViewPort(true);
         pageview.getSettings().setBuiltInZoomControls(true);
         pageview.setWebViewClient(new WebViewClient() {
+
+            private final String LINK_PREFIX = "file://" + Utils.getSaveLocationForTag(tag);
+
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -68,9 +71,9 @@ public class PageReadingActivity extends AppCompatActivity {
                 String u = Uri.decode(url);
                 Log.d(TAG, "Opening link " + u);
                 Context context = view.getContext();
-                if (u.startsWith("file://" + Utils.getSaveLocationForTag(tag))) {
+                if (u.startsWith(LINK_PREFIX)) {
                     // Maybe this is an internal page, indicating a chapter
-                    String newTitle = u.replace("file://" + Utils.getSaveLocationForTag(tag), "");
+                    String newTitle = u.replace(LINK_PREFIX, "");
                     Log.d(TAG, "Opening internal link " + newTitle);
                     Intent i = new Intent(context, PageReadingActivity.class);
                     i.putExtra(Config.EXTRA_TITLE, newTitle);
