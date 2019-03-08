@@ -7,11 +7,14 @@ import android.arch.persistence.room.RoomDatabase;
         version = 1,
         entities = {
                 LightNovel.class,
-                Categorization.class
+                Categorization.class,
+                Page.class
         },
         exportSchema = false
 )
 public abstract class LightNovelsDatabase extends RoomDatabase {
     public abstract LightNovelDAO lnDao();
+
+    public abstract HistoryDAO historyDAO();
 }
 

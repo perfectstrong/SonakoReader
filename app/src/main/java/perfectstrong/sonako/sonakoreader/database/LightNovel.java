@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity()
-public class LightNovel extends Page {
+public class LightNovel {
     @PrimaryKey()
     @NonNull
     private String title;
@@ -20,7 +20,6 @@ public class LightNovel extends Page {
     private List<String> genres;
 
     public LightNovel(@NonNull String title) {
-        super(title);
         this.title = title;
     }
 
