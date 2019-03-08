@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Entity()
-public class LightNovel {
+public class LightNovel extends Page {
     @PrimaryKey()
     @NonNull
     private String title;
@@ -20,6 +20,7 @@ public class LightNovel {
     private List<String> genres;
 
     public LightNovel(@NonNull String title) {
+        super(title);
         this.title = title;
     }
 
@@ -86,7 +87,6 @@ public class LightNovel {
         public static final List<String> ALL = Arrays.asList(ACTIVE, IDLE, STALLED, INACTIVE, COMPLETED);
     }
 
-    @SuppressWarnings("unused")
     public static class ProjectGenre {
         public static final List<String> ALL = Arrays.asList("Action", "Adult", "Adventure", "Comedy", "Drama", "Ecchi", "Fantasy", "Game", "Gender Bender", "Harem", "Historical", "Horror", "Martial Arts", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "School Life", "Sci-fi", "Seinen", "Shotocon", "Shoujo", "Shounen", "Slice of life", "Supernatural", "Tragedy", "Yuri", "Magic", "Chinese", "Lolicon", "Sports", "Military", "Post-Apocalypse", "Reincarnation", "Transported", "Warfare", "Demons", "Josei", "Funny");
     }
