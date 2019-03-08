@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader.helper;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -79,7 +80,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
         try {
             wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             if (!wiki.exists(title))
-                throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + title);
+                throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + " " + title);
             fetch();
         } catch (Exception e) {
             Log.e(TAG, "Unknown exception", e);
@@ -255,7 +256,11 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                     element.attr("href", Config.WEBSITE + href);
                 } else
                     // Main page
-                    element.attr("href", href.replace("/wiki/", ""));
+                    element.attr("href",
+                            Utils.removeSubtrait(
+                                    Uri.decode(href.replace("/wiki/", "")))
+                                    + ".html"
+                    );
             }
         }
         // Add head

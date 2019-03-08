@@ -73,7 +73,8 @@ public class PageReadingActivity extends AppCompatActivity {
                 Context context = view.getContext();
                 if (u.startsWith(LINK_PREFIX)) {
                     // Maybe this is an internal page, indicating a chapter
-                    String newTitle = u.replace(LINK_PREFIX, "");
+                    String newTitle = u.replace(LINK_PREFIX, "")
+                            .replace(".html", "");
                     Log.d(TAG, "Opening internal link " + newTitle);
                     Intent i = new Intent(context, PageReadingActivity.class);
                     i.putExtra(Config.EXTRA_TITLE, newTitle);
