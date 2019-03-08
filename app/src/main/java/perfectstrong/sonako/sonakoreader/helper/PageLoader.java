@@ -181,8 +181,13 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     private void preprocess() {
         publishProgress(readingActivity.get().getString(R.string.preprocessing_content));
         Document doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
+        // Retain local navigator
+        Element localNav = doc.selectFirst(".localNav");
         // Remove unrelated section
         doc.getElementsByClass("entry-unrelated").remove();
+        // Reappend local nav at the end
+        if (localNav != null)
+            doc.body().appendChild(localNav);
         // Remove edit section link
         doc.getElementsByClass("editsection").remove();
         // Fix direct wiki images
