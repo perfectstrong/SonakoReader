@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="perfectstrong.sonako.sonakoreader.MainActivity">
+    <item
+        android:id="@+id/ln_title_context_menu_put_to_favorite"
+        android:title="@string/put_to_favorite"/>
+    <item
+        android:id="@+id/ln_title_context_menu_download_main_page"
+        android:title="@string/download_main_page"/>
+    <item
+        android:id="@+id/ln_title_context_menu_download_all_links"
+        android:title="@string/download_all_internal_links"/>
+</menu>

@@ -4,9 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -47,7 +51,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         }
     }
 
-    class LNTitleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class LNTitleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
         View view;
         private LightNovel lightNovel;
 
@@ -55,6 +59,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
             super(v);
             view = v;
             v.setOnClickListener(this);
+            v.setOnCreateContextMenuListener(this);
         }
 
         void initAt(int position) {
@@ -112,6 +117,32 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
             intent.putExtra(Config.EXTRA_TITLE, lightNovel.getTitle());
             intent.putExtra(Config.EXTRA_TAG, lightNovel.getTag());
             context.startActivity(intent);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            PopupMenu popupMenu;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
+            } else {
+                popupMenu = new PopupMenu(v.getContext(), v);
+            }
+            popupMenu.getMenuInflater().inflate(R.menu.ln_title_context_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.show();
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.ln_title_context_menu_put_to_favorite:
+                    break;
+                case R.id.ln_title_context_menu_download_main_page:
+                    break;
+                case R.id.ln_title_context_menu_download_all_links:
+                    break;
+            }
+            return true;
         }
     }
 

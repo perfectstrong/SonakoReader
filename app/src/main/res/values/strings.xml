@@ -118,4 +118,7 @@
     <string name="downloading_tags">Tải tag</string>
     <string name="downloading_image">Tải ảnh</string>
     <string name="not_having">Sonako không chứa</string>
+    <string name="download_main_page">Tải trang chủ</string>
+    <string name="put_to_favorite">Thêm vào Yêu Thích</string>
+    <string name="download_all_internal_links">Tải toàn bộ link</string>
 </resources>
