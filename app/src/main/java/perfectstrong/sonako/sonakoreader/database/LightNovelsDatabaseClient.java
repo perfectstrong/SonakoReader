@@ -22,7 +22,9 @@ public class LightNovelsDatabaseClient {
                 context,
                 LightNovelsDatabase.class,
                 DB_NAME
-        ).build();
+        )
+                .addMigrations(LightNovelsDatabase.MIGRATION_1_2)
+                .build();
     }
 
 }

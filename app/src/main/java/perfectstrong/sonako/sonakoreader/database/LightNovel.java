@@ -18,6 +18,7 @@ public class LightNovel {
     private String status = ProjectStatus.ACTIVE;
     @Ignore
     private List<String> genres;
+    private boolean isFavorite = false;
 
     public LightNovel(@NonNull String title) {
         this.title = title;
@@ -66,6 +67,14 @@ public class LightNovel {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     public static class ProjectType {
