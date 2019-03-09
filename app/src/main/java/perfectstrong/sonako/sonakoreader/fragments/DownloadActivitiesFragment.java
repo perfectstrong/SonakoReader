@@ -12,7 +12,7 @@ import perfectstrong.sonako.sonakoreader.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecentActivitiesFragment extends Fragment {
+public class DownloadActivitiesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -24,7 +24,7 @@ public class RecentActivitiesFragment extends Fragment {
 
 //    private OnFragmentInteractionListener mListener;
 
-    public RecentActivitiesFragment() {
+    public DownloadActivitiesFragment() {
         // Required empty public constructor
     }
 
@@ -37,8 +37,8 @@ public class RecentActivitiesFragment extends Fragment {
      * @return A new instance of fragment RecentActivitiesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecentActivitiesFragment newInstance(String param1, String param2) {
-        RecentActivitiesFragment fragment = new RecentActivitiesFragment();
+    public static DownloadActivitiesFragment newInstance(String param1, String param2) {
+        DownloadActivitiesFragment fragment = new DownloadActivitiesFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,7 +59,7 @@ public class RecentActivitiesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recent_activities, container, false);
+        return inflater.inflate(R.layout.fragment_download_activities, container, false);
     }
 
 //    @Override

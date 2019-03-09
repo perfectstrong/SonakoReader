@@ -25,7 +25,7 @@ import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
 import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
-import perfectstrong.sonako.sonakoreader.fragments.RecentActivitiesFragment;
+import perfectstrong.sonako.sonakoreader.fragments.DownloadActivitiesFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LN_SHOW_CASE = "Danh sách";
     private static final String FAVORITE_LNs = "Yêu thích";
-    private static final String RECENT_ACTIVITIES = "Hoạt động";
     private static final String HISTORY = "Lịch sử";
+    private static final String DOWNLOAD_ACTIVITIES = "Download";
 
     public static Context getContextOfApplication() {
         return contextOfApplication;
@@ -53,8 +53,8 @@ public class MainActivity extends AppCompatActivity {
         MainActivityPagerAdapter adapter = new MainActivityPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new LNShowcaseFragment(), LN_SHOW_CASE);
         adapter.addFragment(new FavoriteLNsFragment(), FAVORITE_LNs);
-        adapter.addFragment(new RecentActivitiesFragment(), RECENT_ACTIVITIES);
         adapter.addFragment(new HistoryFragment(), HISTORY);
+        adapter.addFragment(new DownloadActivitiesFragment(), DOWNLOAD_ACTIVITIES);
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 case FAVORITE_LNs:
                     showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
                     break;
-                case RECENT_ACTIVITIES:
+                case DOWNLOAD_ACTIVITIES:
                     break;
                 case HISTORY:
                     break;
