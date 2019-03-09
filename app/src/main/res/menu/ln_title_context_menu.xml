@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="perfectstrong.sonako.sonakoreader.MainActivity">
     <item
-        android:id="@+id/ln_title_context_menu_put_to_favorite"
-        android:title="@string/put_to_favorite"/>
+        android:id="@+id/ln_title_context_menu_register_favorite"
+        android:title="@string/register_favorite"/>
+    <item
+        android:id="@+id/ln_title_context_menu_unregister_favorite"
+        android:title="@string/unregister_favorite"/>
     <item
         android:id="@+id/ln_title_context_menu_download_main_page"
         android:title="@string/download_main_page"/>

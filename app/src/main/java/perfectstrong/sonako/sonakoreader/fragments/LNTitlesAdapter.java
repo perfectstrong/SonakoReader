@@ -19,7 +19,9 @@ import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.asyncTask.FavoriteLNsAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
 public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitleViewHolder> {
@@ -128,6 +130,15 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
                 popupMenu = new PopupMenu(v.getContext(), v);
             }
             popupMenu.getMenuInflater().inflate(R.menu.ln_title_context_menu, popupMenu.getMenu());
+            if (lightNovel.isFavorite()) {
+                popupMenu.getMenu()
+                        .findItem(R.id.ln_title_context_menu_register_favorite)
+                        .setVisible(false);
+            } else {
+                popupMenu.getMenu()
+                        .findItem(R.id.ln_title_context_menu_unregister_favorite)
+                        .setVisible(false);
+            }
             popupMenu.setOnMenuItemClickListener(this);
             popupMenu.show();
         }
@@ -135,9 +146,19 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.ln_title_context_menu_put_to_favorite:
-
+                case R.id.ln_title_context_menu_register_favorite:
+                    new FavoriteLNsAsyncTask(
+                            LightNovelsDatabaseClient.getInstance(context),
+                            lightNovel,
+                            FavoriteLNsAsyncTask.ACTION.REGISTER
+                    ).execute();
                     break;
+                case R.id.ln_title_context_menu_unregister_favorite:
+                    new FavoriteLNsAsyncTask(
+                            LightNovelsDatabaseClient.getInstance(context),
+                            lightNovel,
+                            FavoriteLNsAsyncTask.ACTION.UNREGISTER
+                    ).execute();
                 case R.id.ln_title_context_menu_download_main_page:
                     break;
                 case R.id.ln_title_context_menu_download_all_links:
