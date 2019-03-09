@@ -23,10 +23,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
     private List<LightNovel> _lnList = new ArrayList<>();
     private List<LightNovel> lnList = new ArrayList<>();
 
-    LNTitlesAdapter() {
-    }
-
-    public LNTitlesAdapter(Context context) {
+    LNTitlesAdapter(Context context) {
         this.context = context;
     }
 
