@@ -319,11 +319,6 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                 .appendElement("meta")
                 .attr("name", "viewport")
                 .attr("content", "width=device-width, initial-scale=1");
-        doc.head()
-                .appendElement("link")
-                .attr("rel", "stylesheet")
-                .attr("type", "text/css")
-                .attr("href", Config.SKIN);
         text = doc.outerHtml();
         Log.d(TAG, text);
     }
