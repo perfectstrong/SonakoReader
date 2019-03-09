@@ -11,7 +11,7 @@ public class Config {
     public static final String API_ENDPOINT = WEBSITE + "/api.php";
     public static final String OFFICIAL_PROJECTS_LIST = "Danh_sách_các_project";
     private static final String APP_PREFIX = "perfectstrong.sonako.sonakoreader";
-    private static final String APP_NAME = "Sonako Reader";
+    public static final String APP_NAME = "Sonako Reader";
     public static final String EXTRA_ACTION = APP_PREFIX + ".action";
     public static final String EXTRA_TITLE = APP_PREFIX + ".title";
     public static final String EXTRA_TAG = APP_PREFIX + ".tag";
