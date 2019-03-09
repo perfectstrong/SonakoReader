@@ -29,7 +29,7 @@ import perfectstrong.sonako.sonakoreader.database.Categorization;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
-import perfectstrong.sonako.sonakoreader.fragments.LNTitlesAdapter;
+import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
 /**
@@ -41,12 +41,12 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     private Wiki wikiClient;
     private ProgressDialog progressDialog;
     private WeakReference<LNShowcaseFragment> fragment;
-    private WeakReference<LNTitlesAdapter> adapter;
+    private WeakReference<LNShowcaseAdapter> adapter;
     private Exception exception;
 
     public LNShowcaseAsyncLoader(LightNovelsDatabase lndb,
                                  LNShowcaseFragment context,
-                                 LNTitlesAdapter adapter) {
+                                 LNShowcaseAdapter adapter) {
         this.lndb = lndb;
         this.fragment = new WeakReference<>(context);
         this.adapter = new WeakReference<>(adapter);

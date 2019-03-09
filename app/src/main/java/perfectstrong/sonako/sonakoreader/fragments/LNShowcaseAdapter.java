@@ -24,12 +24,12 @@ import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
-public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitleViewHolder> {
+public class LNShowcaseAdapter extends RecyclerView.Adapter<LNShowcaseAdapter.LNTitleViewHolder> {
     private Context context;
     private List<LightNovel> _lnList = new ArrayList<>();
     private List<LightNovel> lnList = new ArrayList<>();
 
-    LNTitlesAdapter(Context context) {
+    LNShowcaseAdapter(Context context) {
         this.context = context;
     }
 

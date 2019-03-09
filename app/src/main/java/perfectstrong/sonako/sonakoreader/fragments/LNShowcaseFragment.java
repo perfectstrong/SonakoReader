@@ -19,7 +19,7 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
  */
 public class LNShowcaseFragment extends Fragment implements LNFilterable {
 
-    private LNTitlesAdapter mAdapter;
+    private LNShowcaseAdapter mAdapter;
 
     public LNShowcaseFragment() {
         // Required empty public constructor
@@ -41,7 +41,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setLayoutManager(layoutManager);
 
         // specify an adapter
-        mAdapter = new LNTitlesAdapter(this.getContext());
+        mAdapter = new LNShowcaseAdapter(this.getContext());
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
