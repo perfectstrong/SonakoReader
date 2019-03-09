@@ -218,10 +218,13 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
                             Parser.unescapeEntities(text, true)
                     ).getAsJsonArray();
                     figure.empty();
-                    for (JsonElement id: imageDescriptions) {
+                    for (JsonElement id : imageDescriptions) {
                         Element img = new Element("img");
                         img.attr("src",
                                 id.getAsJsonObject().get("full").getAsString());
+                        if (id.getAsJsonObject().get("capt") != null)
+                            img.attr("data-capt",
+                                    id.getAsJsonObject().get("capt").getAsString());
                         figure.appendChild(img);
                     }
                     figure.attr("width", "80%");
