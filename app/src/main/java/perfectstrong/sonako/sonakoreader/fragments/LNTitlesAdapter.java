@@ -31,7 +31,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         this.context = context;
     }
 
-    void setDatalist(List<LightNovel> titles) {
+    public void setDatalist(List<LightNovel> titles) {
         _lnList.addAll(titles);
         loadByChunk(_lnList);
     }
@@ -136,6 +136,7 @@ public class LNTitlesAdapter extends RecyclerView.Adapter<LNTitlesAdapter.LNTitl
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.ln_title_context_menu_put_to_favorite:
+
                     break;
                 case R.id.ln_title_context_menu_download_main_page:
                     break;

@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader.fragments;
+package perfectstrong.sonako.sonakoreader.asyncTask;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -28,12 +28,14 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.Categorization;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
+import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
+import perfectstrong.sonako.sonakoreader.fragments.LNTitlesAdapter;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
 /**
  * Load titles from cache. If not downloaded yet, it will fetch from server then cache it.
  */
-public class LNTitlesLoader extends AsyncTask<Void, String, Void> {
+public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     private final LightNovelsDatabase lndb;
     private List<LightNovel> titles;
     private Wiki wikiClient;
@@ -42,9 +44,9 @@ public class LNTitlesLoader extends AsyncTask<Void, String, Void> {
     private WeakReference<LNTitlesAdapter> adapter;
     private Exception exception;
 
-    LNTitlesLoader(LightNovelsDatabase lndb,
-                   LNShowcaseFragment context,
-                   LNTitlesAdapter adapter) {
+    public LNShowcaseAsyncLoader(LightNovelsDatabase lndb,
+                                 LNShowcaseFragment context,
+                                 LNTitlesAdapter adapter) {
         this.lndb = lndb;
         this.fragment = new WeakReference<>(context);
         this.adapter = new WeakReference<>(adapter);

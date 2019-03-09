@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.asyncTask.LNShowcaseAsyncLoader;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
@@ -44,7 +45,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
-        new LNTitlesLoader(
+        new LNShowcaseAsyncLoader(
                 LightNovelsDatabaseClient.getInstance(getContext()),
                 this,
                 mAdapter
