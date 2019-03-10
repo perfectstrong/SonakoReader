@@ -1,23 +1,20 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class LightNovelsDatabaseViewModel extends AndroidViewModel {
+public class LightNovelsDatabaseViewModel extends ViewModel {
 
     private final LiveData<List<LightNovel>> liveLNList;
 
     private LightNovelsDatabase lndb;
 
-    public LightNovelsDatabaseViewModel(@NonNull Application application) {
-        super(application);
-        lndb = LightNovelsDatabaseClient.getInstance(application);
-        liveLNList = lndb.lnDao().getAllLive();
+    public LightNovelsDatabaseViewModel(LightNovelsDatabase lndb) {
+        this.lndb = lndb;
+        liveLNList = this.lndb.lnDao().getAllLive();
     }
 
     public LiveData<List<LightNovel>> getLiveLNList() {
