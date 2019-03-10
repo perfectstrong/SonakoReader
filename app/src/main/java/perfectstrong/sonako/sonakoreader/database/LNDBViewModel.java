@@ -10,11 +10,11 @@ import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.fragments.LNListAdapter;
 
-public class LightNovelsDatabaseViewModel extends AndroidViewModel {
+public class LNDBViewModel extends AndroidViewModel {
 
     private LightNovelsDatabase lndb;
 
-    public LightNovelsDatabaseViewModel(@NonNull Application application) {
+    public LNDBViewModel(@NonNull Application application) {
         super(application);
     }
 

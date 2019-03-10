@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNShowcaseAsyncLoader;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseViewModel;
+import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
 
 /**
@@ -43,8 +43,8 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setLayoutManager(layoutManager);
 
         // View model
-        LightNovelsDatabaseViewModel viewModel = ViewModelProviders.of(this)
-                .get(LightNovelsDatabaseViewModel.class);
+        LNDBViewModel viewModel = ViewModelProviders.of(this)
+                .get(LNDBViewModel.class);
         viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
 
         // Adapter

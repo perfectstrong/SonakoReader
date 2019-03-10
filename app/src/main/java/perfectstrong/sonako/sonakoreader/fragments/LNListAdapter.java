@@ -21,7 +21,7 @@ import java.util.List;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseViewModel;
+import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
 /**
@@ -31,9 +31,9 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
     private List<LightNovel> _lnList = new ArrayList<>();
     private List<LightNovel> lnList = new ArrayList<>();
     protected Context context;
-    private LightNovelsDatabaseViewModel viewModel;
+    private LNDBViewModel viewModel;
 
-    LNListAdapter(Context context, LightNovelsDatabaseViewModel viewModel) {
+    LNListAdapter(Context context, LNDBViewModel viewModel) {
         this.context = context;
         this.viewModel = viewModel;
     }
