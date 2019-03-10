@@ -83,10 +83,12 @@ public class PageReadingActivity extends AppCompatActivity {
                     String newTitle = u.replace(LINK_PREFIX, "")
                             .replace(".html", "");
                     Log.d(TAG, "Opening internal link " + newTitle);
-                    Intent i = new Intent(context, PageReadingActivity.class);
-                    i.putExtra(Config.EXTRA_TITLE, newTitle);
-                    i.putExtra(Config.EXTRA_TAG, tag);
-                    context.startActivity(i);
+                    Utils.loadCacheOrDownload(
+                            context,
+                            newTitle,
+                            tag,
+                            null
+                    );
                     return true;
                 } else {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -113,17 +115,12 @@ public class PageReadingActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * <tt>null</tt> to simply reading
+     */
     public enum ACTION {
         REFRESH_ALL,
         REFRESH_TEXT,
-    }
-
-    private void startIntent(String title, String tag, ACTION action) {
-        Intent i = new Intent(this, PageReadingActivity.class);
-        i.putExtra(Config.EXTRA_TITLE, title);
-        i.putExtra(Config.EXTRA_TAG, tag);
-        i.putExtra(Config.EXTRA_ACTION, action);
-        this.startActivity(i);
     }
 
     @Override
@@ -131,11 +128,11 @@ public class PageReadingActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_purge_cache_page:
                 Log.d(TAG, "Reset " + title);
-                startIntent(title, tag, ACTION.REFRESH_ALL);
+                Utils.startReadingActivity(this, title, tag, ACTION.REFRESH_ALL);
                 break;
             case R.id.action_refresh_page:
                 Log.d(TAG, "Refresh text " + title);
-                startIntent(title, tag, ACTION.REFRESH_TEXT);
+                Utils.startReadingActivity(this, title, tag, ACTION.REFRESH_TEXT);
                 break;
             case R.id.action_settings:
                 // TODO change settings

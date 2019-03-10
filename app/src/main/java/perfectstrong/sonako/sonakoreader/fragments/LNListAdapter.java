@@ -1,7 +1,6 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -18,11 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
-import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 /**
  * Generic adapter to show light novel list
@@ -210,10 +208,12 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         public void onClick(View v) {
             if (lightNovel == null) return;
             // Open page reader for lightnovel
-            Intent intent = new Intent(context, PageReadingActivity.class);
-            intent.putExtra(Config.EXTRA_TITLE, lightNovel.getTitle());
-            intent.putExtra(Config.EXTRA_TAG, lightNovel.getTag());
-            context.startActivity(intent);
+            Utils.loadCacheOrDownload(
+                    context,
+                    lightNovel.getTitle(),
+                    lightNovel.getTag(),
+                    null
+            );
         }
 
         @Override

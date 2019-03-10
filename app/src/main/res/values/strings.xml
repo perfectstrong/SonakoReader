@@ -122,4 +122,6 @@
     <string name="register_favorite">Thêm vào Yêu Thích</string>
     <string name="download_all_internal_links">Tải toàn bộ link</string>
     <string name="unregister_favorite">Bỏ khỏi Yêu Thích</string>
+    <string name="download_ok">Ok</string>
+    <string name="download_no">Thoai</string>
 </resources>

@@ -24,4 +24,5 @@ public class Config {
     public static String SKIN = PreferenceManager.getDefaultSharedPreferences(
             MainActivity.getContextOfApplication()).getString("SKIN", DEFAULT_SKIN);
 
+    public static final String PREF_AUTO_DOWNLOAD = APP_PREFIX + ".autoDownload";
 }
