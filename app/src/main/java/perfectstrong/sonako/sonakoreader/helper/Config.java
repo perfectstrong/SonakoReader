@@ -23,6 +23,5 @@ public class Config {
             MainActivity.getContextOfApplication()).getString("SAVE_LOCATION", DEFAULT_SAVE_LOCATION);
     public static String SKIN = PreferenceManager.getDefaultSharedPreferences(
             MainActivity.getContextOfApplication()).getString("SKIN", DEFAULT_SKIN);
-    public static int MAX_HISTORY = 20;
 
 }
