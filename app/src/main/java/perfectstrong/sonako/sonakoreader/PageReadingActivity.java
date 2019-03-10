@@ -15,6 +15,11 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.Calendar;
+
+import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
+import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.PageLoader;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
@@ -92,6 +97,14 @@ public class PageReadingActivity extends AppCompatActivity {
         });
 
         new PageLoader(this, title, tag, action).execute();
+
+        // Register to history
+        new HistoryAsyncTask.Register(LightNovelsDatabaseClient.getInstance(this))
+                .execute(new Page(
+                        title,
+                        tag,
+                        Calendar.getInstance().getTime()
+                ));
     }
 
     @Override

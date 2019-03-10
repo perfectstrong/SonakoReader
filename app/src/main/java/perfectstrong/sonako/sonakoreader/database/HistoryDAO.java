@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -10,9 +11,12 @@ import java.util.List;
 @Dao
 public interface HistoryDAO {
 
-    @Query("SELECT * FROM Page ORDER BY lastRead DESC LIMIT :lim")
-    List<Page> getRecentHistory(int lim);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Page page);
+    void insert(Page... pages);
+
+    @Query("SELECT * FROM Page ORDER BY lastRead DESC")
+    LiveData<List<Page>> getLiveHistory();
+
+    @Query("SELECT * FROM Page ORDER BY lastRead DESC")
+    List<Page> getHistory();
 }

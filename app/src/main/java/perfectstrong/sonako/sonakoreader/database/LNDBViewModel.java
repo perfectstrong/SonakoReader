@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
+import perfectstrong.sonako.sonakoreader.fragments.HistoryAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.LNListAdapter;
 
 public class LNDBViewModel extends AndroidViewModel {
@@ -27,11 +29,11 @@ public class LNDBViewModel extends AndroidViewModel {
     }
 
     public void registerFavorite(LightNovel... lightNovels) {
-        new FavoriteLNsAsyncTask(lndb, ACTION.REGISTER).execute(lightNovels);
+        new FavoriteLNsAsyncTask(lndb, ACTION.REGISTER_FAVORITE).execute(lightNovels);
     }
 
     public void unregisterFavorite(LightNovel... lightNovels) {
-        new FavoriteLNsAsyncTask(lndb, ACTION.UNREGISTER).execute(lightNovels);
+        new FavoriteLNsAsyncTask(lndb, ACTION.UNREGISTER_FAVORITE).execute(lightNovels);
     }
 
     public void initLoadFavorites(LNListAdapter adapter) {
@@ -42,10 +44,22 @@ public class LNDBViewModel extends AndroidViewModel {
         ).execute();
     }
 
+    public LiveData<List<Page>> getLiveHistory() {
+        return lndb.historyDAO().getLiveHistory();
+    }
+
+
+    public void initLoadHistory(HistoryAdapter mAdapter) {
+        new HistoryAsyncTask.InitLoad(
+                lndb,
+                mAdapter
+        ).execute();
+    }
+
     private enum ACTION {
         INIT_LOAD_FAVORITES,
-        REGISTER,
-        UNREGISTER
+        REGISTER_FAVORITE,
+        UNREGISTER_FAVORITE,
     }
 
     private static class FavoriteLNsAsyncTask extends AsyncTask<LightNovel, Void, Void> {
@@ -72,10 +86,10 @@ public class LNDBViewModel extends AndroidViewModel {
                 case INIT_LOAD_FAVORITES:
                     data = lndb.lnDao().getAllFavorites();
                     break;
-                case REGISTER:
+                case REGISTER_FAVORITE:
                     lndb.lnDao().registerFavorites(lightNovels);
                     break;
-                case UNREGISTER:
+                case UNREGISTER_FAVORITE:
                     lndb.lnDao().unregisterFavorites(lightNovels);
                     break;
             }
@@ -88,11 +102,12 @@ public class LNDBViewModel extends AndroidViewModel {
                 case INIT_LOAD_FAVORITES:
                     adapter.setDatalist(data);
                     break;
-                case REGISTER:
+                case REGISTER_FAVORITE:
                     break;
-                case UNREGISTER:
+                case UNREGISTER_FAVORITE:
                     break;
             }
         }
     }
+
 }
