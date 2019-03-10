@@ -7,10 +7,9 @@ import android.arch.persistence.room.migration.Migration;
 import android.support.annotation.NonNull;
 
 @Database(
-        version = 2,
+        version = 3,
         entities = {
                 LightNovel.class,
-                Categorization.class,
                 Page.class
         },
         exportSchema = false
@@ -24,6 +23,14 @@ public abstract class LightNovelsDatabase extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE LightNovel ADD COLUMN isFavorite INTEGER NOT NULL default 0");
+        }
+    };
+
+    static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE LightNovel ADD COLUMN genres TEXT default ''");
+            database.execSQL("DROP TABLE Categorization");
         }
     };
 }

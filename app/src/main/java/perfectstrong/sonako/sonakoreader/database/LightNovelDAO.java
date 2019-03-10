@@ -15,17 +15,8 @@ public abstract class LightNovelDAO {
     @Query("SELECT * FROM lightnovel")
     public abstract List<LightNovel> getAll();
 
-    @Query("SELECT * FROM lightnovel WHERE isFavorite = 1")
-    public abstract List<LightNovel> getAllFavorites();
-
-    @Query("SELECT genre FROM categorization WHERE lnTitle = :lnTitle")
-    public abstract List<String> getGenres(String lnTitle);
-
     @Insert
     public abstract void insert(LightNovel... lightNovels);
-
-    @Insert
-    public abstract void insert(Categorization... categorization);
 
     @Update
     public abstract void update(LightNovel... lightNovels);
@@ -46,6 +37,9 @@ public abstract class LightNovelDAO {
         update(lightNovels);
     }
 
-    @Query("SELECT * FROM lightnovel")
-    public abstract LiveData<List<LightNovel>> getAllLive();
+    @Query("SELECT * FROM lightnovel WHERE isFavorite = 1")
+    public abstract LiveData<List<LightNovel>> getAllFavoritesLive();
+
+    @Query("SELECT * FROM lightnovel WHERE isFavorite = 1")
+    public abstract List<LightNovel> getAllFavorites();
 }

@@ -1,14 +1,16 @@
 package perfectstrong.sonako.sonakoreader.database;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Entity()
+@TypeConverters(GenresConverter.class)
 public class LightNovel {
     @PrimaryKey()
     @NonNull
@@ -16,7 +18,6 @@ public class LightNovel {
     private String tag;
     private String type = ProjectType.OFFICIAL;
     private String status = ProjectStatus.ACTIVE;
-    @Ignore
     private List<String> genres;
     private boolean isFavorite = false;
 
@@ -54,6 +55,7 @@ public class LightNovel {
     }
 
     public List<String> getGenres() {
+        if (genres == null) genres = new ArrayList<>();
         return genres;
     }
 
