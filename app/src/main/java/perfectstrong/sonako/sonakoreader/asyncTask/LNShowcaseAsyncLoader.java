@@ -25,11 +25,10 @@ import fastily.jwiki.util.GSONP;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.database.Categorization;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
-import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
+import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 
 /**
@@ -58,19 +57,16 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
         if (titles.size() == 0) {
             // Not download yet
             this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
-            publishProgress(fragment.get().getString(R.string.downloading_ln_list));
             downloadTitles();
-            publishProgress(fragment.get().getString(R.string.ordering_ln_list));
             orderTitlesAlphabetically();
             removeTitleDuplications();
-            publishProgress(fragment.get().getString(R.string.caching_ln_list));
             cacheTitles();
-            publishProgress(fragment.get().getString(R.string.downloading_tags));
             downloadStatusAndCategories();
         }
     }
 
     private void downloadTitles() throws IOException {
+        publishProgress(fragment.get().getString(R.string.downloading_ln_list));
         downloadOfficialProjects();
         downloadTeaserProjects();
         downloadOLNProjects();
@@ -139,6 +135,7 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void orderTitlesAlphabetically() {
+        publishProgress(fragment.get().getString(R.string.ordering_ln_list));
         for (int i = 0; i < titles.size() - 1; i++) {
             for (int j = i + 1; j < titles.size(); j++) {
                 if (titles.get(i).getTitle().compareTo(titles.get(j).getTitle()) > 0) {
@@ -162,18 +159,12 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     }
 
     private void cacheTitles() {
+        publishProgress(fragment.get().getString(R.string.caching_ln_list));
         lndb.lnDao().insert(titles.toArray(new LightNovel[0]));
     }
 
-    private void fetchStatusAndCategories() {
-        // Categories
-        for (LightNovel lightNovel : titles) {
-            lightNovel.setGenres(lndb.lnDao().getGenres(lightNovel.getTitle()));
-        }
-        // Status is set in advance
-    }
-
     private void downloadStatusAndCategories() {
+        publishProgress(fragment.get().getString(R.string.downloading_tags));
         Map<String, LightNovel> mapLN = new HashMap<>();
         for (LightNovel lightNovel : titles) {
             mapLN.put(lightNovel.getTitle(), lightNovel);
@@ -206,7 +197,7 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
                     // Genres or tag
                     default:
                         if (LightNovel.ProjectGenre.ALL.contains(category))
-                            lndb.lnDao().insert(new Categorization(lntitle, category));
+                            title.getGenres().add(category);
                         else {
                             if (LightNovel.ExceptionTag.ALL.contains(category)) continue;
                             title.setTag(category);
@@ -232,7 +223,6 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     protected Void doInBackground(Void... voids) {
         try {
             fetchTitles();
-            fetchStatusAndCategories();
         } catch (Exception e) {
             e.printStackTrace();
             this.exception = e;

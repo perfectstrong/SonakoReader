@@ -1,24 +1,29 @@
 package perfectstrong.sonako.sonakoreader.database;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class LightNovelsDatabaseViewModel extends ViewModel {
+import perfectstrong.sonako.sonakoreader.fragments.LNListAdapter;
 
-    private final LiveData<List<LightNovel>> liveLNList;
+public class LightNovelsDatabaseViewModel extends AndroidViewModel {
 
     private LightNovelsDatabase lndb;
 
-    public LightNovelsDatabaseViewModel(LightNovelsDatabase lndb) {
-        this.lndb = lndb;
-        liveLNList = this.lndb.lnDao().getAllLive();
+    public LightNovelsDatabaseViewModel(@NonNull Application application) {
+        super(application);
     }
 
-    public LiveData<List<LightNovel>> getLiveLNList() {
-        return liveLNList;
+    public void setLndb(LightNovelsDatabase lndb) {
+        this.lndb = lndb;
+    }
+
+    public LiveData<List<LightNovel>> getLiveFavoritesLNList() {
+        return lndb.lnDao().getAllFavoritesLive();
     }
 
     public void registerFavorite(LightNovel... lightNovels) {
@@ -29,7 +34,16 @@ public class LightNovelsDatabaseViewModel extends ViewModel {
         new FavoriteLNsAsyncTask(lndb, ACTION.UNREGISTER).execute(lightNovels);
     }
 
+    public void initLoadFavorites(LNListAdapter adapter) {
+        new FavoriteLNsAsyncTask(
+                lndb,
+                ACTION.INIT_LOAD_FAVORITES,
+                adapter
+        ).execute();
+    }
+
     private enum ACTION {
+        INIT_LOAD_FAVORITES,
         REGISTER,
         UNREGISTER
     }
@@ -38,15 +52,26 @@ public class LightNovelsDatabaseViewModel extends ViewModel {
 
         private final ACTION action;
         private final LightNovelsDatabase lndb;
+        private LNListAdapter adapter;
+        private List<LightNovel> data;
+
 
         private FavoriteLNsAsyncTask(LightNovelsDatabase lndb, ACTION action) {
             this.lndb = lndb;
             this.action = action;
         }
 
+        private FavoriteLNsAsyncTask(LightNovelsDatabase lndb, ACTION action, LNListAdapter adapter) {
+            this(lndb, action);
+            this.adapter = adapter;
+        }
+
         @Override
         protected Void doInBackground(LightNovel... lightNovels) {
             switch (action) {
+                case INIT_LOAD_FAVORITES:
+                    data = lndb.lnDao().getAllFavorites();
+                    break;
                 case REGISTER:
                     lndb.lnDao().registerFavorites(lightNovels);
                     break;
@@ -55,6 +80,19 @@ public class LightNovelsDatabaseViewModel extends ViewModel {
                     break;
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            switch (action) {
+                case INIT_LOAD_FAVORITES:
+                    adapter.setDatalist(data);
+                    break;
+                case REGISTER:
+                    break;
+                case UNREGISTER:
+                    break;
+            }
         }
     }
 }

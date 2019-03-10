@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNShowcaseAsyncLoader;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseViewModel;
 
 
 /**
@@ -40,8 +42,16 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        // specify an adapter
-        mAdapter = new LNShowcaseAdapter(this.getContext());
+        // View model
+        LightNovelsDatabaseViewModel viewModel = ViewModelProviders.of(this)
+                .get(LightNovelsDatabaseViewModel.class);
+        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
+
+        // Adapter
+        mAdapter = new LNShowcaseAdapter(
+                this.getContext(),
+                viewModel
+        );
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
@@ -63,36 +73,4 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
     public void showAll() {
         mAdapter.showAll();
     }
-
-    //    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }
