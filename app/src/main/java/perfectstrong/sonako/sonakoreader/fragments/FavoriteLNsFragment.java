@@ -21,7 +21,6 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseViewModel;
 public class FavoriteLNsFragment extends Fragment implements LNFilterable {
 
     private FavoriteLNsAdapter mAdapter;
-    private LightNovelsDatabaseViewModel viewModel;
 
     public FavoriteLNsFragment() {
         // Required empty public constructor
@@ -43,7 +42,8 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
         recyclerView.setLayoutManager(layoutManager);
 
         // View model
-        viewModel = ViewModelProviders.of(this).get(LightNovelsDatabaseViewModel.class);
+        LightNovelsDatabaseViewModel viewModel = ViewModelProviders.of(this)
+                .get(LightNovelsDatabaseViewModel.class);
         viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
 
         // Adapter
@@ -54,10 +54,7 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
         recyclerView.setAdapter(mAdapter);
 
         // Observer
-        viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, lightNovels -> {
-            System.out.println(lightNovels);
-            mAdapter.setDatalist(lightNovels);
-        });
+        viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, mAdapter::setDatalist);
         viewModel.initLoadFavorites(mAdapter);
 
         return rootview;
