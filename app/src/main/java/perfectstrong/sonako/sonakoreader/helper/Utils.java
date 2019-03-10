@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader.helper;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -51,5 +52,12 @@ public class Utils {
         // calculate the end index
         int endIndex = Math.min(lastQMPos, lastHashPos);
         return url.substring(startIndex, endIndex);
+    }
+
+    public static boolean isCached(String title, String tag) {
+        return new File(
+                getSaveLocationForTag(tag),
+                sanitize(title) + ".html"
+        ).exists();
     }
 }

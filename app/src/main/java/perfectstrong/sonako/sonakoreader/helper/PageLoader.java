@@ -136,7 +136,7 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
     private void fetch() throws IOException {
         Log.d(TAG, "title = " + title + ", tag = " + tag);
         // Check cache
-        if (!hasCache() || forceRefreshText) {
+        if (!Utils.isCached(title, tag) || forceRefreshText) {
             wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             if (!wiki.exists(title))
                 throw new IllegalArgumentException(readingActivity.get().getString(R.string.not_having) + " " + title);
@@ -146,13 +146,6 @@ public class PageLoader extends AsyncTask<Void, String, Void> {
             cacheText();
             downloadImages();
         }
-    }
-
-    private boolean hasCache() {
-        if (tag == null) return false;
-        File f = new File(saveLocation, filename);
-        Log.d(TAG, f.toString());
-        return f.exists();
     }
 
     private void downloadText() throws IOException {
