@@ -23,7 +23,6 @@ public class LightNovelsDatabaseClient {
                 LightNovelsDatabase.class,
                 DB_NAME
         )
-                .addMigrations(LightNovelsDatabase.MIGRATION_1_2)
                 .build();
     }
 
