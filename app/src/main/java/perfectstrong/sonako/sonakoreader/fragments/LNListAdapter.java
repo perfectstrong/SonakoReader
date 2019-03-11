@@ -246,10 +246,6 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                     break;
                 case R.id.ln_title_context_menu_unregister_favorite:
                     viewModel.unregisterFavorite(lightNovel);
-                case R.id.ln_title_context_menu_download_main_page:
-                    break;
-                case R.id.ln_title_context_menu_download_all_links:
-                    break;
             }
             return true;
         }

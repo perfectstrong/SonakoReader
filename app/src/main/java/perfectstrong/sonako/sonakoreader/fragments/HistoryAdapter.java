@@ -85,7 +85,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
             ((TextView) view.findViewById(R.id.page_title)).setText(page.getTitle());
             // Last read
             ((TextView) view.findViewById(R.id.page_last_read))
-                    .setText("Đọc lần cuối : " +
+                    .setText(context.getString(R.string.last_read) +
                             format.format(page.getLastRead())
                     );
         }

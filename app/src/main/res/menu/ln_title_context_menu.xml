@@ -8,10 +8,4 @@
     <item
         android:id="@+id/ln_title_context_menu_unregister_favorite"
         android:title="@string/unregister_favorite"/>
-    <item
-        android:id="@+id/ln_title_context_menu_download_main_page"
-        android:title="@string/download_main_page"/>
-    <item
-        android:id="@+id/ln_title_context_menu_download_all_links"
-        android:title="@string/download_all_internal_links"/>
 </menu>

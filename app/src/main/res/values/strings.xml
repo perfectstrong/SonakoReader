@@ -38,4 +38,5 @@
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
     <string name="already_download">đã được tải.</string>
+    <string name="last_read">Lần đọc cuối :</string>
 </resources>
