@@ -11,6 +11,7 @@ import java.net.URL;
 
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 public class Utils {
     public static String getSaveLocationForTag(String tag) {
@@ -142,7 +143,9 @@ public class Utils {
     private static void startDownloadTask(Context context,
                                           String title,
                                           String tag) {
-        // TODO
-
+        Intent i = new Intent(context, PageDownloadService.class);
+        i.putExtra(Config.EXTRA_TITLE, title);
+        i.putExtra(Config.EXTRA_TAG, tag);
+        context.startService(i);
     }
 }
