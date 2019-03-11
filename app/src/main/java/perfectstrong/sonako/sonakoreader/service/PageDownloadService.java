@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -184,7 +183,8 @@ public class PageDownloadService extends IntentService {
         // Fix figures
         for (Element figure : doc.getElementsByTag("figure")) {
             // Fix gallery
-            if (figure.getElementsByTag("figcaption") != null) {
+            if (figure.selectFirst("img.lazy.media") != null
+                    && figure.selectFirst("img.lazy.media").attr("data-params") != null) {
                 try {
                     String text = figure.selectFirst("img.lazy.media").attr("data-params");
                     JsonArray imageDescriptions = GSONP.jp.parse(
@@ -239,16 +239,17 @@ public class PageDownloadService extends IntentService {
             String href = element.attr("href");
             if (href.startsWith("/wiki/")) {// internal link
                 // Check namespace
-                if (!Utils.isMainpage(href)) {
-                    // Not main page
-                    element.attr("href", Config.WEBSITE + href);
-                } else
+                href = href.substring("/wiki/".length());
+                if (Utils.isMainpage(href)) {
                     // Main page
                     element.attr("href",
-                            Utils.removeSubtrait(
-                                    Uri.decode(href.replace("/wiki/", "")))
-                                    + ".html"
+                            Utils.sanitize(href) + ".html"
                     );
+                    element.attr("data-ns", "0"); // Main page namespace
+                } else {
+                    // Not main page
+                    element.attr("href", Config.WEBSITE + "/wiki/" + href);
+                }
             }
         }
         // Add head
