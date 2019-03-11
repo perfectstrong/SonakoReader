@@ -208,7 +208,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         public void onClick(View v) {
             if (lightNovel == null) return;
             // Open page reader for lightnovel
-            Utils.loadCacheOrDownload(
+            Utils.openOrDownload(
                     context,
                     lightNovel.getTitle(),
                     lightNovel.getTag(),

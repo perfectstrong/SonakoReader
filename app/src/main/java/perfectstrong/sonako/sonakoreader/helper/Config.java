@@ -3,6 +3,9 @@ package perfectstrong.sonako.sonakoreader.helper;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import java.util.Arrays;
+import java.util.List;
+
 import perfectstrong.sonako.sonakoreader.MainActivity;
 
 public class Config {
@@ -19,6 +22,7 @@ public class Config {
     public static final String DEFAULT_SKIN = ASSETS_DIR + "mercury.css";
     public static final String DEFAULT_SAVE_LOCATION = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + APP_NAME + "/";
+    public static final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
     public static String SAVE_LOCATION = PreferenceManager.getDefaultSharedPreferences(
             MainActivity.getContextOfApplication()).getString("SAVE_LOCATION", DEFAULT_SAVE_LOCATION);
     public static String SKIN = PreferenceManager.getDefaultSharedPreferences(

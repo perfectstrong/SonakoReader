@@ -21,8 +21,8 @@ import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
-import perfectstrong.sonako.sonakoreader.helper.PageLoader;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
+import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 /**
  * General class for reading a page
@@ -39,11 +39,9 @@ public class PageReadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = getIntent().getExtras();
-        ACTION action = null;
         if (bundle != null) {
             title = bundle.getString(Config.EXTRA_TITLE);
             tag = bundle.getString(Config.EXTRA_TAG);
-            action = (ACTION) bundle.getSerializable(Config.EXTRA_ACTION);
         }
         if (title == null) title = UNDEFINED;
         if (tag == null) tag = UNDEFINED;
@@ -65,7 +63,7 @@ public class PageReadingActivity extends AppCompatActivity {
         pageview.getSettings().setBuiltInZoomControls(true);
         pageview.setWebViewClient(new WebViewClient() {
 
-            private final String LINK_PREFIX = "file://" + Utils.getSaveLocationForTag(tag);
+            private final String LINK_PREFIX = "file://" + Utils.getSavDirForTag(tag);
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
@@ -83,7 +81,7 @@ public class PageReadingActivity extends AppCompatActivity {
                     String newTitle = u.replace(LINK_PREFIX, "")
                             .replace(".html", "");
                     Log.d(TAG, "Opening internal link " + newTitle);
-                    Utils.loadCacheOrDownload(
+                    Utils.openOrDownload(
                             context,
                             newTitle,
                             tag,
@@ -98,7 +96,8 @@ public class PageReadingActivity extends AppCompatActivity {
             }
         });
 
-        new PageLoader(this, title, tag, action).execute();
+        // The file should be ready
+        pageview.loadUrl(Utils.getFilepath(title, tag));
 
         // Register to history
         new HistoryAsyncTask.Register(LightNovelsDatabaseClient.getInstance(this))
@@ -115,24 +114,16 @@ public class PageReadingActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * <tt>null</tt> to simply reading
-     */
-    public enum ACTION {
-        REFRESH_ALL,
-        REFRESH_TEXT,
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_purge_cache_page:
                 Log.d(TAG, "Reset " + title);
-                Utils.startReadingActivity(this, title, tag, ACTION.REFRESH_ALL);
+                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_ALL);
                 break;
             case R.id.action_refresh_page:
                 Log.d(TAG, "Refresh text " + title);
-                Utils.startReadingActivity(this, title, tag, ACTION.REFRESH_TEXT);
+                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_TEXT);
                 break;
             case R.id.action_settings:
                 // TODO change settings
