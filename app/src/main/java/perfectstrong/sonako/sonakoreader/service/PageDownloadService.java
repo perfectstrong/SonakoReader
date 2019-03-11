@@ -104,12 +104,12 @@ public class PageDownloadService extends IntentService {
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
         if (Utils.isNotCached(title, tag) || forceRefreshText)
             try {
+                postToast(getString(R.string.start_downloading) + " " + title);
                 // Check cache
                 wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
                 if (!wiki.exists(title)) {
                     throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
                 }
-                postToast(getString(R.string.start_downloading) + " " + title);
                 downloadText();
                 preprocess();
                 cacheText();
