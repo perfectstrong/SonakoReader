@@ -26,9 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -47,7 +45,6 @@ import perfectstrong.sonako.sonakoreader.helper.Utils;
 public class PageDownloadService extends IntentService {
 
     private static final String TAG = PageDownloadService.class.getSimpleName();
-    private static List<String> tasks = new ArrayList<>();
     private String title;
     private String tag;
     private String saveLocation;
@@ -79,16 +76,6 @@ public class PageDownloadService extends IntentService {
         );
     }
 
-    /**
-     * Check before realising download
-     *
-     * @param title of page to download
-     * @return <tt>true</tt> if task not done
-     */
-    public static boolean isDownloading(String title) {
-        return tasks.contains(title);
-    }
-
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
@@ -101,13 +88,7 @@ public class PageDownloadService extends IntentService {
             stopSelf();
             return;
         }
-        if (isDownloading(title)) {
-            postToast(title + " " + getString(R.string.downloading_patient));
-            stopSelf();
-            return;
-        }
         // Register
-        tasks.add(title);
         saveLocation = Utils.getSavDirForTag(tag);
         filename = Utils.sanitize(title) + ".html";
         if (action != null)
@@ -121,24 +102,25 @@ public class PageDownloadService extends IntentService {
                     break;
             }
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
-        postToast(getString(R.string.start_downloading) + " " + title);
-        try {
-            // Check cache
-            wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
-            if (!wiki.exists(title))
-                throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
-            downloadText();
-            preprocess();
-            cacheText();
-            downloadImages();
-            postToast(getString(R.string.download_finish) + " " + title);
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
-            postToast(e.getMessage());
-        }
-        // Unregister
-        tasks.remove(title);
-
+        if (Utils.isNotCached(title, tag) || forceRefreshText)
+            try {
+                // Check cache
+                wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+                if (!wiki.exists(title)) {
+                    throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
+                }
+                postToast(getString(R.string.start_downloading) + " " + title);
+                downloadText();
+                preprocess();
+                cacheText();
+                downloadImages();
+                postToast(getString(R.string.download_finish) + " " + title);
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+                postToast(e.getMessage());
+            }
+        else
+            postToast(title + " " + getString(R.string.already_download));
     }
 
     private void publishProgress(String str) {

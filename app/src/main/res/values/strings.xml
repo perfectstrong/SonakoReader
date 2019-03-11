@@ -37,4 +37,5 @@
     <string name="downloading_patient">đang được tải. Hãy bình tĩnh.</string>
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
+    <string name="already_download">đã được tải.</string>
 </resources>
