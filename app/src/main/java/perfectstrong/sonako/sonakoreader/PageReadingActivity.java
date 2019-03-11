@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -57,10 +58,12 @@ public class PageReadingActivity extends AppCompatActivity {
         WebView pageview = findViewById(R.id.page_viewer);
         pageview.setInitialScale(1);
         pageview.setScrollContainer(false);
-        pageview.getSettings().setJavaScriptEnabled(false);
-        pageview.getSettings().setLoadWithOverviewMode(true);
-        pageview.getSettings().setUseWideViewPort(true);
-        pageview.getSettings().setBuiltInZoomControls(true);
+        WebSettings settings = pageview.getSettings();
+        settings.setJavaScriptEnabled(false);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
         pageview.setWebViewClient(new WebViewClient() {
 
             private final String LINK_PREFIX = "file://" + Utils.getSavDirForTag(tag);
