@@ -3,11 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="perfectstrong.sonako.sonakoreader.PageReadingActivity">
     <item
-        android:id="@+id/action_purge_cache_page"
-        android:title="@string/action_purge_cache_page" />
+        android:id="@+id/action_download_all_chapters"
+        android:title="@string/download_all_chapters" />
     <item
-        android:id="@+id/action_refresh_page"
-        android:title="@string/action_refresh_page" />
+        android:id="@+id/action_refresh_text"
+        android:title="@string/action_refresh_text" />
+    <item
+        android:id="@+id/action_refresh_text_and_images"
+        android:title="@string/action_refresh_text_and_images" />
     <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings" />

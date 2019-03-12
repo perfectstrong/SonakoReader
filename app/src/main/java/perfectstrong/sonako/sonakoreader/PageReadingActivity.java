@@ -18,6 +18,7 @@ import android.webkit.WebViewClient;
 
 import java.util.Calendar;
 
+import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.Page;
@@ -120,12 +121,16 @@ public class PageReadingActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_purge_cache_page:
-                Log.d(TAG, "Reset " + title);
+            case R.id.action_download_all_chapters:
+                Log.d(TAG, "Download all chapters of " + title);
+                new AsyncMassLinkDownloader(this, title, tag).execute();
+                break;
+            case R.id.action_refresh_text_and_images:
+                Log.d(TAG, "Reset text and images of " + title);
                 Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_ALL);
                 break;
-            case R.id.action_refresh_page:
-                Log.d(TAG, "Refresh text " + title);
+            case R.id.action_refresh_text:
+                Log.d(TAG, "Refresh text of " + title);
                 Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_TEXT);
                 break;
             case R.id.action_settings:

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
@@ -71,10 +73,14 @@ public class Utils {
     }
 
     public static boolean isNotCached(String title, String tag) {
-        return !new File(
+        return !getTextFile(title, tag).exists();
+    }
+
+    public static File getTextFile(String title, String tag) {
+        return new File(
                 getSavDirForTag(tag),
                 sanitize(title) + ".html"
-        ).exists();
+        );
     }
 
     public static boolean isMainpage(String href) {
@@ -201,5 +207,15 @@ public class Utils {
         i.putExtra(Config.EXTRA_TAG, tag);
         i.putExtra(Config.EXTRA_ACTION, action);
         context.startService(i);
+    }
+
+    public static void massDownload(Context context,
+                                    List<String> selectedLinks,
+                                    String tag,
+                                    PageDownloadService.ACTION action) {
+        if (!selectedLinks.isEmpty()) {
+            Log.d(tag, selectedLinks.toString());
+            // TODO
+        }
     }
 }
