@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.widget.ListView;
 
 import org.jsoup.Jsoup;
 
@@ -62,17 +63,36 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
         if (!isCancelled() && context != null) {
             if (progressDialog != null) progressDialog.dismiss();
             final List<String> selectedLinks = new ArrayList<>();
-            if (links != null && !links.isEmpty())
+            if (links != null && !links.isEmpty()) {
+                links.add(0, "Chọn tất cả");
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.which_link_to_download)
                         .setMultiChoiceItems(
                                 links.toArray(new String[0]),
                                 null,
                                 (dialog, which, isChecked) -> {
-                                    if (isChecked)
-                                        selectedLinks.add(links.get(which));
-                                    else
-                                        selectedLinks.remove(links.get(which));
+                                    final AlertDialog alertDialog = (AlertDialog) dialog;
+                                    final ListView alertDialogList = alertDialog.getListView();
+                                    if (which == 0) {
+                                        if (isChecked) {
+                                            for (int i = 1; i < links.size(); i++) {
+                                                selectedLinks.add(links.get(i));
+                                                alertDialogList.setItemChecked(i, true);
+                                            }
+                                        } else {
+                                            selectedLinks.clear();
+                                            for (int i = 1; i < links.size(); i++) {
+                                                alertDialogList.setItemChecked(i, false);
+                                            }
+                                        }
+                                    } else {
+                                        if (isChecked) {
+                                            selectedLinks.add(links.get(which));
+                                        } else {
+                                            selectedLinks.remove(links.get(which));
+                                            alertDialogList.setItemChecked(0, false);
+                                        }
+                                    }
                                 }
                         )
                         .setPositiveButton(
@@ -83,16 +103,8 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
                                 R.string.download_no,
                                 null
                         )
-                        .setNeutralButton(
-                                R.string.download_all,
-                                (dialog, which) -> Utils.massDownload(
-                                        context,
-                                        links,
-                                        tag,
-                                        null)
-                        )
                         .show();
-            else
+            } else
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.no_links_download)
                         .setMessage(R.string.try_redownload_text)
