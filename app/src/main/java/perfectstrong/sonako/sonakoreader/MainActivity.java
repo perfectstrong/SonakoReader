@@ -25,7 +25,7 @@ import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
 import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
-import perfectstrong.sonako.sonakoreader.fragments.DownloadActivitiesFragment;
+import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new LNShowcaseFragment(), LN_SHOW_CASE);
         adapter.addFragment(new FavoriteLNsFragment(), FAVORITE_LNs);
         adapter.addFragment(new HistoryFragment(), HISTORY);
-        adapter.addFragment(new DownloadActivitiesFragment(), DOWNLOAD_ACTIVITIES);
+        adapter.addFragment(PageDownloadFragment.getInstance(), DOWNLOAD_ACTIVITIES);
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);

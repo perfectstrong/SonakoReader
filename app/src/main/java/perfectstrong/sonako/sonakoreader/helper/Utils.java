@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -214,8 +213,9 @@ public class Utils {
                                     String tag,
                                     PageDownloadService.ACTION action) {
         if (!selectedLinks.isEmpty()) {
-            Log.d(tag, selectedLinks.toString());
-            // TODO
+            for (String title : selectedLinks) {
+                startDownloadTask(context, title, tag, action);
+            }
         }
     }
 }

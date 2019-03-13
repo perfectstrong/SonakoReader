@@ -35,6 +35,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
@@ -56,6 +57,11 @@ public class PageDownloadService extends IntentService {
     private Map<String, String> imagesLinks = new HashMap<>();
     private Handler mHandler;
 
+    public static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
+    public static final String FLAG_DOWNLOAD_DUPLICATE = "DUPLICATE";
+
+    private static Map<String, String> tasks;
+
     public PageDownloadService() {
         super(TAG);
     }
@@ -64,6 +70,45 @@ public class PageDownloadService extends IntentService {
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler();
+        tasks = new HashMap<String, String>() {
+            @Override
+            public String put(String key, String value) {
+                if (this.containsKey(key)) {
+                    // An update status
+                    mHandler.post(() -> PageDownloadFragment.getInstance().updateJob(key, value));
+                } else {
+                    // New download
+                    mHandler.post(() -> PageDownloadFragment.getInstance().addJob(key));
+                }
+                return super.put(key, value);
+            }
+
+            @Override
+            public String remove(Object key) {
+                if (this.containsKey(key) && key instanceof String) {
+                    // Download complete
+                    mHandler.post(() -> PageDownloadFragment.getInstance().removeJob((String) key));
+                }
+                return super.remove(key);
+            }
+        };
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            String title = bundle.getString(Config.EXTRA_TITLE);
+            if (title != null)
+                if (!tasks.containsKey(title))
+                    tasks.put(title, getString(R.string.download_waiting));
+                else {
+                    postToast(title + " " + getString(R.string.download_already_scheduled));
+                    intent.putExtra(FLAG_DOWNLOAD, FLAG_DOWNLOAD_DUPLICATE);
+                }
+        }
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     private void postToast(String msg) {
@@ -78,16 +123,23 @@ public class PageDownloadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
+        String flag = null;
         if (bundle != null) {
             title = bundle.getString(Config.EXTRA_TITLE);
             tag = bundle.getString(Config.EXTRA_TAG);
             action = (ACTION) bundle.getSerializable(Config.EXTRA_ACTION);
+            flag = bundle.getString(FLAG_DOWNLOAD);
         }
         if (title == null) {
             stopSelf();
             return;
         }
+        if (FLAG_DOWNLOAD_DUPLICATE.equals(flag)) {
+            stopSelf();
+            return;
+        }
         // Register
+        publishProgress(getString(R.string.download_starting));
         saveLocation = Utils.getSavDirForTag(tag);
         filename = Utils.sanitize(title) + ".html";
         if (action != null)
@@ -118,13 +170,12 @@ public class PageDownloadService extends IntentService {
                 Log.e(TAG, e.getMessage(), e);
                 postToast(e.getMessage());
             }
-        else
-            postToast(title + " " + getString(R.string.already_download));
+        publishProgress(getString(R.string.download_terminated));
+        tasks.remove(title);
     }
 
     private void publishProgress(String str) {
-        // TODO
-        Log.d(TAG, str);
+        tasks.put(title, str);
     }
 
     private void downloadText() throws IOException {
@@ -262,7 +313,6 @@ public class PageDownloadService extends IntentService {
                 .attr("name", "viewport")
                 .attr("content", "width=device-width, initial-scale=1");
         text = doc.outerHtml();
-        Log.d(TAG, text);
     }
 
     private void cacheText() {

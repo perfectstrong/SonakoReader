@@ -64,7 +64,7 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
             if (progressDialog != null) progressDialog.dismiss();
             final List<String> selectedLinks = new ArrayList<>();
             if (links != null && !links.isEmpty()) {
-                links.add(0, "Chọn tất cả");
+                links.add(0, context.getString(R.string.download_select_all));
                 new AlertDialog.Builder(context)
                         .setTitle(R.string.which_link_to_download)
                         .setMultiChoiceItems(

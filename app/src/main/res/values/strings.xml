@@ -36,9 +36,8 @@
     <string name="downloading_patient">đang được tải. Hãy bình tĩnh.</string>
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
-    <string name="already_download">đã được tải.</string>
     <string name="last_read">Lần đọc cuối :</string>
-    <string name="download_all_chapters">Tải mọi chương truyện</string>
+    <string name="download_all_chapters">Tải nhiều chương truyện</string>
     <string name="download_all">Tải tuốt</string>
     <string name="all">Tất cả</string>
     <string name="loading_links">Đang tìm link</string>
@@ -46,4 +45,9 @@
     <string name="no_links_download">Không có link để tải</string>
     <string name="which_link_to_download">Bạn muốn tải link nào?</string>
     <string name="try_redownload_text">Hãy thử download trang chủ lại</string>
+    <string name="download_waiting">Đang chờ</string>
+    <string name="download_already_scheduled">đã ở sẵn trong lịch tải</string>
+    <string name="download_starting">Khởi động</string>
+    <string name="download_terminated">Kết thúc</string>
+    <string name="download_select_all">Chọn tất cả</string>
 </resources>
