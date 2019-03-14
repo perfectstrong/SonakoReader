@@ -2,7 +2,6 @@ package perfectstrong.sonako.sonakoreader;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
@@ -29,21 +28,14 @@ import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static Context contextOfApplication;
-
     private static final String LN_SHOW_CASE = "Danh sách";
     private static final String FAVORITE_LNs = "Yêu thích";
     private static final String HISTORY = "Lịch sử";
     private static final String DOWNLOAD_ACTIVITIES = "Download";
 
-    public static Context getContextOfApplication() {
-        return contextOfApplication;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        contextOfApplication = getApplicationContext();
 
         setContentView(R.layout.main_activity);
         Toolbar toolbar = findViewById(R.id.toolbar);

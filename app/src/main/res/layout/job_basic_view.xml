@@ -2,8 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="6dip">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/job_title"
@@ -14,7 +13,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:autoSizeMaxTextSize="@dimen/title"
+        android:textSize="@dimen/title"
         app:layout_constraintEnd_toStartOf="@+id/job_icon_progress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +26,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:autoSizeMaxTextSize="@dimen/subtitle"
+        android:textSize="@dimen/subtitle"
         app:layout_constraintEnd_toStartOf="@+id/job_icon_progress"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/job_title" />

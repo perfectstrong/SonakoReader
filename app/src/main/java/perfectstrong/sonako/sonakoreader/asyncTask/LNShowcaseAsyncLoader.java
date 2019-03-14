@@ -1,10 +1,10 @@
 package perfectstrong.sonako.sonakoreader.asyncTask;
 
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -39,7 +39,6 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     private final LightNovelsDatabase lndb;
     private List<LightNovel> titles;
     private Wiki wikiClient;
-    private ProgressDialog progressDialog;
     private WeakReference<LNShowcaseFragment> fragment;
     private WeakReference<LNShowcaseAdapter> adapter;
     private final boolean forceDownload;
@@ -222,10 +221,12 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = ProgressDialog.show(fragment.get().getContext(),
-                "",
-                fragment.get().getString(R.string.loading)
-        );
+        if (fragment.get().getContext() != null)
+            Toast.makeText(
+                    fragment.get().getContext(),
+                    fragment.get().getString(R.string.loading),
+                    Toast.LENGTH_SHORT
+            ).show();
     }
 
     @Override
@@ -241,19 +242,23 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onProgressUpdate(String... values) {
-        progressDialog.setMessage(values[0]);
+        if (fragment.get().getContext() != null)
+            Toast.makeText(
+                    fragment.get().getContext(),
+                    values[0],
+                    Toast.LENGTH_SHORT
+            ).show();
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        progressDialog.dismiss();
+        View fragmentView = fragment.get().getView();
+        if (fragmentView == null) return;
         if (exception != null) {
             // An error occurred
             Snackbar msgSnackbar = Snackbar.make(
-                    Objects.requireNonNull(fragment.get()
-                            .getView())
-                            .findViewById(R.id.LNTitlesRecyclerView),
+                    fragmentView.findViewById(R.id.LNTitlesRecyclerView),
                     fragment.get().getString(R.string.error_occurred)
                             + exception.getLocalizedMessage(),
                     Snackbar.LENGTH_INDEFINITE
@@ -264,8 +269,6 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
             msgSnackbar.show();
         } else {
             adapter.get().setDatalist(titles);
-            View fragmentView = fragment.get().getView();
-            if (fragmentView == null) return;
             if (forceDownload || titles.size() != 0) {
                 fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
                 fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
