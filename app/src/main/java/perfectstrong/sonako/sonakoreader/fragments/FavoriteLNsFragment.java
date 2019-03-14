@@ -16,7 +16,7 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * Represent all bookmarked LN
  */
 public class FavoriteLNsFragment extends Fragment implements LNFilterable {
 
@@ -29,18 +29,6 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootview = inflater.inflate(R.layout.fragment_favorites_ln, container, false);
-        RecyclerView recyclerView = rootview.findViewById(R.id.FavoriteLNsRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
         // View model
         LNDBViewModel viewModel = ViewModelProviders.of(this)
                 .get(LNDBViewModel.class);
@@ -51,12 +39,20 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
                 this.getContext(),
                 viewModel
         );
-        recyclerView.setAdapter(mAdapter);
-
         // Observer
         viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, mAdapter::setDatalist);
         viewModel.initLoadFavorites(mAdapter);
+    }
 
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootview = inflater.inflate(R.layout.fragment_favorites_ln, container, false);
+        RecyclerView recyclerView = rootview.findViewById(R.id.FavoriteLNsRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
         return rootview;
     }
 

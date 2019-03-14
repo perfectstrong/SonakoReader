@@ -16,9 +16,11 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * History of reading
  */
 public class HistoryFragment extends Fragment {
+
+    private HistoryAdapter mAdapter;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -27,6 +29,21 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // View model
+        LNDBViewModel viewModel = ViewModelProviders.of(this)
+                .get(LNDBViewModel.class);
+        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
+
+        // Adapter
+        mAdapter = new HistoryAdapter(this.getContext());
+
+        // Observer
+        viewModel.getLiveHistory().observe(
+                HistoryFragment.this,
+                mAdapter::setDatalist
+        );
+        viewModel.initLoadHistory(mAdapter);
+
     }
 
     @Override
@@ -38,22 +55,7 @@ public class HistoryFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.HistoryRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        // View model
-        LNDBViewModel viewModel = ViewModelProviders.of(this)
-                .get(LNDBViewModel.class);
-        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
-
-        // Adapter
-        HistoryAdapter mAdapter = new HistoryAdapter(this.getContext());
         recyclerView.setAdapter(mAdapter);
-
-        // Observer
-        viewModel.getLiveHistory().observe(
-                HistoryFragment.this,
-                mAdapter::setDatalist
-        );
-        viewModel.initLoadHistory(mAdapter);
 
         return rootView;
     }
