@@ -251,7 +251,6 @@ public class PageDownloadService extends IntentService {
                                     id.getAsJsonObject().get("capt").getAsString());
                         figure.appendChild(img);
                     }
-                    figure.attr("width", "80%");
                 } catch (Exception e) {
                     Log.d(TAG, "Error on parsing gallery", e);
                 }
@@ -262,13 +261,10 @@ public class PageDownloadService extends IntentService {
                         realImg.attr("src").replaceAll("/revision.*", ""));
                 Log.d(TAG, realImg.attr("src"));
                 figure.empty().appendChild(realImg);
-                figure.attr("width", "80%");
             }
         }
         // Fix all images
         for (Element img : doc.getElementsByTag("img")) {
-            img.attr("width", "100%");
-            img.attr("height", "auto");
             String src = img.attr("src");
             if (src.startsWith("http:")) //noinspection ResultOfMethodCallIgnored
                 src = src.replaceFirst("http", "https");

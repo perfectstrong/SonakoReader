@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.InputStream;
 import java.util.Calendar;
 
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
@@ -60,45 +62,12 @@ public class PageReadingActivity extends AppCompatActivity {
         pageview.setInitialScale(1);
         pageview.setScrollContainer(false);
         WebSettings settings = pageview.getSettings();
-        settings.setJavaScriptEnabled(false);
+        settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-        pageview.setWebViewClient(new WebViewClient() {
-
-            private final String LINK_PREFIX = "file://" + Utils.getSavDirForTag(tag);
-
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return shouldOverrideUrlLoading(view, request.getUrl().toString());
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                String u = Uri.decode(url);
-                Log.d(TAG, "Opening link " + u);
-                Context context = view.getContext();
-                if (u.startsWith(LINK_PREFIX)) {
-                    // Maybe this is an internal page, indicating a chapter
-                    String newTitle = u.replace(LINK_PREFIX, "")
-                            .replace(".html", "");
-                    Log.d(TAG, "Opening internal link " + newTitle);
-                    Utils.openOrDownload(
-                            context,
-                            newTitle,
-                            tag,
-                            null
-                    );
-                    return true;
-                } else {
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    context.startActivity(i);
-                }
-                return true;
-            }
-        });
+        pageview.setWebViewClient(new PageReadingWebViewClient());
 
         // The file should be ready
         pageview.loadUrl(Utils.getFilepath(title, tag));
@@ -140,5 +109,73 @@ public class PageReadingActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    private class PageReadingWebViewClient extends WebViewClient {
+
+        private final String LINK_PREFIX = "file://" + Utils.getSavDirForTag(tag);
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return shouldOverrideUrlLoading(view, request.getUrl().toString());
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            String u = Uri.decode(url);
+            Log.d(TAG, "Opening link " + u);
+            Context context = view.getContext();
+            if (u.startsWith(LINK_PREFIX)) {
+                // Maybe this is an internal page, indicating a chapter
+                String newTitle = u.replace(LINK_PREFIX, "")
+                        .replace(".html", "");
+                Log.d(TAG, "Opening internal link " + newTitle);
+                Utils.openOrDownload(
+                        context,
+                        newTitle,
+                        tag,
+                        null
+                );
+                return true;
+            } else {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                context.startActivity(i);
+            }
+            return true;
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            injectCSS(view, Config.SKIN_BASE);
+            injectCSS(view, Utils.getCurrentSkin());
+        }
+
+        void injectCSS(WebView view, String skinName) {
+            try {
+                InputStream inputStream = getAssets().open(skinName + ".css");
+                byte[] buffer = new byte[inputStream.available()];
+                //noinspection ResultOfMethodCallIgnored
+                inputStream.read(buffer);
+                inputStream.close();
+                String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
+                String js = "javascript:(function() {" +
+                        "var parent = document.getElementsByTagName('head').item(0);" +
+                        "var style = document.createElement('style');" +
+                        "style.type = 'text/css';" +
+                        // Tell the browser to BASE64-decode the string into your script !!!
+                        "style.innerHTML = window.atob('" + encoded + "');" +
+                        "parent.appendChild(style)" +
+                        "})()";
+                if (Build.VERSION.SDK_INT >= 19) {
+                    view.evaluateJavascript(js, null);
+                } else {
+                    view.loadUrl(js);
+                }
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+        }
     }
 }

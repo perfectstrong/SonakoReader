@@ -10,13 +10,21 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import perfectstrong.sonako.sonakoreader.MainActivity;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 public class Utils {
     public static String getSavDirForTag(String tag) {
-        return Config.SAVE_LOCATION + sanitize(tag) + "/";
+        return PreferenceManager.getDefaultSharedPreferences(MainActivity.getContextOfApplication())
+                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION)
+                + sanitize(tag) + "/";
+    }
+
+    public static String getCurrentSkin() {
+        return PreferenceManager.getDefaultSharedPreferences(MainActivity.getContextOfApplication())
+                .getString("SKIN", Config.DEFAULT_SKIN);
     }
 
     public static String getFilepath(String title, String tag) {

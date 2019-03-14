@@ -148,7 +148,9 @@ sup {
  */
 
 img {
-  border-style: none;
+    border-style: none;
+    width: 100%;
+    height: auto;
 }
 
 /* Forms
@@ -348,4 +350,8 @@ template {
 
 [hidden] {
   display: none;
+}
+
+figure {
+    width: 80%;
 }
