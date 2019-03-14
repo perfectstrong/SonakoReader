@@ -11,20 +11,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import perfectstrong.sonako.sonakoreader.MainActivity;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 public class Utils {
+
+    public static String getSaveDir() {
+        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
+                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
+    }
+
     public static String getSavDirForTag(String tag) {
-        return PreferenceManager.getDefaultSharedPreferences(MainActivity.getContextOfApplication())
-                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION)
-                + sanitize(tag) + "/";
+        return getSaveDir() + sanitize(tag) + "/";
     }
 
     public static String getCurrentSkin() {
-        return PreferenceManager.getDefaultSharedPreferences(MainActivity.getContextOfApplication())
+        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
                 .getString("SKIN", Config.DEFAULT_SKIN);
     }
 

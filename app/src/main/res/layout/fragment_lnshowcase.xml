@@ -1,14 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context=".fragments.LNShowcaseFragment">
+
+    <RelativeLayout
+        android:id="@+id/LNTitlesNoDatabaseGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="36dp">
+
+        <ImageView
+            android:minWidth="128dp"
+            android:minHeight="128dp"
+            android:id="@+id/LNTitlesLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/ic_sonakoreaderlogo" />
+
+        <TextView
+            android:id="@+id/LNTitlesNoDatabase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/LNTitlesLogo"
+            android:text="@string/download_db"
+            android:textSize="@dimen/title"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/LNTitlesNoDatabaseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/LNTitlesNoDatabase"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="@string/start_downloading"
+            android:visibility="visible" />
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/LNTitlesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:clickable="true"
         android:longClickable="true"
         android:paddingLeft="10dp"
@@ -16,5 +57,6 @@
         android:paddingBottom="10dp"
         android:scrollbarSize="5dp"
         android:scrollbarThumbVertical="@android:color/darker_gray"
-        android:scrollbars="vertical" />
-</FrameLayout>
+        android:scrollbars="vertical"
+        android:visibility="gone" />
+</RelativeLayout>

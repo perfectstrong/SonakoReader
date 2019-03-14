@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader.asyncTask;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.JsonArray;
@@ -41,28 +42,36 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
     private ProgressDialog progressDialog;
     private WeakReference<LNShowcaseFragment> fragment;
     private WeakReference<LNShowcaseAdapter> adapter;
+    private final boolean forceDownload;
     private Exception exception;
 
     public LNShowcaseAsyncLoader(LightNovelsDatabase lndb,
                                  LNShowcaseFragment context,
-                                 LNShowcaseAdapter adapter) {
+                                 LNShowcaseAdapter adapter,
+                                 boolean forceDownload) {
         this.lndb = lndb;
         this.fragment = new WeakReference<>(context);
         this.adapter = new WeakReference<>(adapter);
+        this.forceDownload = forceDownload;
     }
 
     private void fetchTitles() throws IOException {
         // Check db first
-        titles = lndb.lnDao().getAll();
-        if (titles.size() == 0) {
-            // Not download yet
-            this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
-            downloadTitles();
-            orderTitlesAlphabetically();
-            removeTitleDuplications();
-            cacheTitles();
-            downloadStatusAndCategories();
+        if (forceDownload)
+            downloadAll();
+        else {
+            titles = lndb.lnDao().getAll();
         }
+    }
+
+    private void downloadAll() throws IOException {
+        this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+        titles = new ArrayList<>();
+        downloadTitles();
+        orderTitlesAlphabetically();
+        removeTitleDuplications();
+        cacheTitles();
+        downloadStatusAndCategories();
     }
 
     private void downloadTitles() throws IOException {
@@ -255,6 +264,12 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
             msgSnackbar.show();
         } else {
             adapter.get().setDatalist(titles);
+            View fragmentView = fragment.get().getView();
+            if (fragmentView == null) return;
+            if (forceDownload || titles.size() != 0) {
+                fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
+                fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
+            }
         }
     }
 }

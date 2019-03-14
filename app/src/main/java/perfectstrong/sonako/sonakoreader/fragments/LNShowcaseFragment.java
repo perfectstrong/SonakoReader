@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNShowcaseAsyncLoader;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
 /**
@@ -30,6 +30,16 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // View model
+        LNDBViewModel viewModel = ViewModelProviders.of(this)
+                .get(LNDBViewModel.class);
+        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
+
+        // Adapter
+        mAdapter = new LNShowcaseAdapter(
+                this.getContext(),
+                viewModel
+        );
     }
 
     @Override
@@ -41,25 +51,19 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         RecyclerView recyclerView = rootView.findViewById(R.id.LNTitlesRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        // View model
-        LNDBViewModel viewModel = ViewModelProviders.of(this)
-                .get(LNDBViewModel.class);
-        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
-
-        // Adapter
-        mAdapter = new LNShowcaseAdapter(
-                this.getContext(),
-                viewModel
-        );
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
         new LNShowcaseAsyncLoader(
                 LightNovelsDatabaseClient.getInstance(getContext()),
                 this,
-                mAdapter
+                mAdapter,
+                false
         ).execute();
+
+        // Button to force download
+        rootView.findViewById(R.id.LNTitlesNoDatabaseButton)
+                .setOnClickListener(this::forceDownload);
 
         return rootView;
     }
@@ -72,5 +76,14 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
     @Override
     public void showAll() {
         mAdapter.showAll();
+    }
+
+    public void forceDownload(View v) {
+        new LNShowcaseAsyncLoader(
+                LightNovelsDatabaseClient.getInstance(getContext()),
+                this,
+                mAdapter,
+                true
+        ).execute();
     }
 }
