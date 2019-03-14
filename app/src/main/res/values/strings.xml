@@ -37,11 +37,11 @@
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
     <string name="last_read">Lần đọc cuối :</string>
-    <string name="download_all_chapters">Tải nhiều chương truyện</string>
+    <string name="download_all_chapters">Tải hàng loạt chương truyện</string>
     <string name="download_all">Tải tuốt</string>
     <string name="all">Tất cả</string>
     <string name="loading_links">Đang tìm link</string>
-    <string name="download_main_page">Tải trang chủ</string>
+    <string name="refresh_text">Tải lại trang chủ</string>
     <string name="no_links_download">Không có link để tải</string>
     <string name="which_link_to_download">Bạn muốn tải link nào?</string>
     <string name="try_redownload_text">Hãy thử download trang chủ lại</string>
@@ -52,4 +52,5 @@
     <string name="download_select_all">Chọn tất cả</string>
     <string name="app_name_short">SNK Reader</string>
     <string name="download_db">Cơ sở dữ liệu chưa có.</string>
+    <string name="refresh_missing_images">Tải lại hình ảnh bị thiếu</string>
 </resources>

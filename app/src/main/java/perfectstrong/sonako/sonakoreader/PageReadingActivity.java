@@ -102,6 +102,9 @@ public class PageReadingActivity extends AppCompatActivity {
                 Log.d(TAG, "Refresh text of " + title);
                 Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_TEXT);
                 break;
+            case R.id.action_refresh_missing_images:
+                Log.d(TAG, "Refresh missing images of " + title);
+                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_MISSING_IMAGES);
             case R.id.action_settings:
                 // TODO change settings
                 break;

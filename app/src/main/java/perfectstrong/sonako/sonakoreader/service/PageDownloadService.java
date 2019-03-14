@@ -61,6 +61,7 @@ public class PageDownloadService extends IntentService {
     public static final String FLAG_DOWNLOAD_DUPLICATE = "DUPLICATE";
 
     private static Map<String, String> tasks;
+    private boolean downloadFailedImages;
 
     public PageDownloadService() {
         super(TAG);
@@ -147,15 +148,18 @@ public class PageDownloadService extends IntentService {
                 case REFRESH_TEXT:
                     forceRefreshText = true;
                     break;
+                case REFRESH_MISSING_IMAGES:
+                    downloadFailedImages = true;
+                    break;
                 case REFRESH_ALL:
                     forceRefreshText = true;
                     forceRefreshImages = true;
                     break;
             }
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
-        if (Utils.isNotCached(title, tag) || forceRefreshText)
-            try {
-                postToast(getString(R.string.start_downloading) + " " + title);
+        try {
+            postToast(getString(R.string.start_downloading) + " " + title);
+            if (Utils.isNotCached(title, tag) || forceRefreshText) {
                 // Check cache
                 wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
                 if (!wiki.exists(title)) {
@@ -165,13 +169,31 @@ public class PageDownloadService extends IntentService {
                 preprocess();
                 downloadImages();
                 cacheText();
-                postToast(getString(R.string.download_finish) + " " + title);
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage(), e);
-                postToast(e.getMessage());
+            } else if (downloadFailedImages) {
+                loadImageLinksFromCachedText();
+                downloadImages();
             }
+            postToast(getString(R.string.download_finish) + " " + title);
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+            postToast(e.getMessage());
+        }
         publishProgress(getString(R.string.download_terminated));
         tasks.remove(title);
+    }
+
+    private void loadImageLinksFromCachedText() throws IOException {
+        publishProgress(getString(R.string.analyzing_text));
+        Document doc = Jsoup.parse(
+                Utils.getTextFile(title, tag),
+                "UTF-8");
+        for (Element img : doc.getElementsByTag("img")) {
+            String src = img.attr("data-src");
+            String imgName = img.attr("src");
+            if (!imgName.equals("")) {
+                imagesLinks.put(imgName, src);
+            }
+        }
     }
 
     private void publishProgress(String str) {
@@ -328,12 +350,18 @@ public class PageDownloadService extends IntentService {
     }
 
     private void downloadImages() {
+        Log.d(TAG, imagesLinks.toString());
+        // Save location
+        File dir = new File(saveLocation);
+        if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
+        // Saving images
         for (String imageName : imagesLinks.keySet()) {
             String url = imagesLinks.get(imageName);
-            File file = new File(saveLocation, imageName);
+            File file = new File(dir, imageName);
             if (file.exists() && !forceRefreshImages) // already cached
                 continue;
-
+            // Only download not cached images if not forced
             publishProgress(getString(R.string.downloading_image) + " " + imageName);
             String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
             if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime)) {
@@ -371,6 +399,10 @@ public class PageDownloadService extends IntentService {
     }
 
     public enum ACTION {
+        /**
+         * Redownload failed images
+         */
+        REFRESH_MISSING_IMAGES,
         /**
          * Reload text page
          */

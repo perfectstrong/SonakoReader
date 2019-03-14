@@ -9,8 +9,11 @@
         android:id="@+id/ln_title_context_menu_unregister_favorite"
         android:title="@string/unregister_favorite" />
     <item
-        android:id="@+id/ln_title_context_menu_download_mainpage"
-        android:title="@string/download_main_page" />
+        android:id="@+id/ln_title_context_menu_refresh_text"
+        android:title="@string/refresh_text" />
+    <item
+        android:id="@+id/ln_title_context_menu_refresh_missing_images"
+        android:title="@string/refresh_missing_images"/>
     <item
         android:id="@+id/ln_title_context_menu_download_all_chapters"
         android:title="@string/download_all_chapters" />

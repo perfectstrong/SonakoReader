@@ -9,6 +9,9 @@
         android:id="@+id/action_refresh_text"
         android:title="@string/action_refresh_text" />
     <item
+        android:id="@+id/action_refresh_missing_images"
+        android:title="@string/refresh_missing_images" />
+    <item
         android:id="@+id/action_refresh_text_and_images"
         android:title="@string/action_refresh_text_and_images" />
     <item

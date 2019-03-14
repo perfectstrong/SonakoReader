@@ -22,6 +22,7 @@ import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
+import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 /**
  * Generic adapter to show light novel list
@@ -248,14 +249,21 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                 case R.id.ln_title_context_menu_unregister_favorite:
                     viewModel.unregisterFavorite(lightNovel);
                     break;
-                case R.id.ln_title_context_menu_download_mainpage:
+                case R.id.ln_title_context_menu_refresh_text:
                     Utils.openOrDownload(
                             context,
                             lightNovel.getTitle(),
                             lightNovel.getTag(),
-                            null
+                            PageDownloadService.ACTION.REFRESH_TEXT
                     );
                     break;
+                case R.id.ln_title_context_menu_refresh_missing_images:
+                    Utils.openOrDownload(
+                            context,
+                            lightNovel.getTitle(),
+                            lightNovel.getTag(),
+                            PageDownloadService.ACTION.REFRESH_MISSING_IMAGES
+                    );
                 case R.id.ln_title_context_menu_download_all_chapters:
                     new AsyncMassLinkDownloader(
                             context,
