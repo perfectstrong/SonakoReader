@@ -1,0 +1,21 @@
+@font-face {
+  font-family: "Kanit";
+  src: url("file:///android_asset/fonts/Kanit-Light.ttf");
+}
+
+* {
+  font-family: Kanit, Verdana, Helvetica, sans-serif;
+}
+
+body {
+  color: white;
+  background-color: black;
+}
+
+a {
+  color: royalblue;
+}
+
+a:visited {
+  color: lightcoral;
+}

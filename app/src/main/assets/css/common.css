@@ -23,7 +23,7 @@ html {
  */
 
 body {
-  margin: 0;
+  margin: 0.5em;
 }
 
 /**
@@ -354,4 +354,6 @@ template {
 
 figure {
     width: 80%;
+    margin-left: auto;
+    margin-right: auto;
 }

@@ -154,7 +154,7 @@ public class PageReadingActivity extends AppCompatActivity {
 
         void injectCSS(WebView view, String skinName) {
             try {
-                InputStream inputStream = getAssets().open(skinName + ".css");
+                InputStream inputStream = getAssets().open("css/" + skinName + ".css");
                 byte[] buffer = new byte[inputStream.available()];
                 //noinspection ResultOfMethodCallIgnored
                 inputStream.read(buffer);
