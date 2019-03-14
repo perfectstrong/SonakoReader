@@ -2,6 +2,7 @@ package perfectstrong.sonako.sonakoreader.helper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 
@@ -32,6 +33,10 @@ public class Utils {
                 + Utils.getSavDirForTag(tag)
                 + Utils.sanitize(title)
                 + ".html";
+    }
+
+    public static String decode(String encodedString) {
+        return Uri.decode(encodedString);
     }
 
     private static final String REPLACEMENT_CHAR = " ";

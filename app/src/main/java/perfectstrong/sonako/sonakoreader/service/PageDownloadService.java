@@ -141,7 +141,7 @@ public class PageDownloadService extends IntentService {
         // Register
         publishProgress(getString(R.string.download_starting));
         saveLocation = Utils.getSavDirForTag(tag);
-        filename = Utils.sanitize(title) + ".html";
+        filename = Utils.sanitize(Utils.decode(title)) + ".html";
         if (action != null)
             switch (action) {
                 case REFRESH_TEXT:
@@ -163,8 +163,8 @@ public class PageDownloadService extends IntentService {
                 }
                 downloadText();
                 preprocess();
-                cacheText();
                 downloadImages();
+                cacheText();
                 postToast(getString(R.string.download_finish) + " " + title);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
@@ -271,10 +271,10 @@ public class PageDownloadService extends IntentService {
             if (src.contains("wikia.nocookie")) // direct link from wikia
                 src = src.replaceAll("/revision.*", "");
             img.attr("data-src", src); // Backup
-            String imgName = Utils.getFileNameFromURL(src);
+            String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(src)));
             if (!imgName.equals("")) {
-                imagesLinks.put(imgName, src);
                 img.attr("src", imgName); // To load from local
+                imagesLinks.put(imgName, src);
             }
         }
         // Fix empty tags
@@ -290,7 +290,7 @@ public class PageDownloadService extends IntentService {
                 if (Utils.isMainpage(href)) {
                     // Main page
                     element.attr("href",
-                            Utils.sanitize(href) + ".html"
+                            Utils.sanitize(Utils.decode(href)) + ".html"
                     );
                     element.attr("data-ns", "0"); // Main page namespace
                 } else {
