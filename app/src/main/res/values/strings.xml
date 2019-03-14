@@ -50,4 +50,5 @@
     <string name="download_starting">Khởi động</string>
     <string name="download_terminated">Kết thúc</string>
     <string name="download_select_all">Chọn tất cả</string>
+    <string name="app_name_short">SNK Reader</string>
 </resources>
