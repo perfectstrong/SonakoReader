@@ -1,11 +1,11 @@
 package perfectstrong.sonako.sonakoreader.asyncTask;
 
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -264,7 +264,7 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
                     Snackbar.LENGTH_INDEFINITE
             );
             ((TextView) msgSnackbar.getView()
-                    .findViewById(android.support.design.R.id.snackbar_text))
+                    .findViewById(R.id.snackbar_text))
                     .setMaxLines(5);
             msgSnackbar.show();
         } else {

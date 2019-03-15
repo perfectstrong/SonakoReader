@@ -1,18 +1,18 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
 /**
