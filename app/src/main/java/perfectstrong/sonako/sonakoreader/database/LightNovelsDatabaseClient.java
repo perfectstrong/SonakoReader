@@ -1,9 +1,8 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import androidx.room.Room;
 import android.content.Context;
 
-import perfectstrong.sonako.sonakoreader.helper.Utils;
+import androidx.room.Room;
 
 /**
  * Singleton class to access database
@@ -23,7 +22,7 @@ public class LightNovelsDatabaseClient {
         return Room.databaseBuilder(
                 context,
                 LightNovelsDatabase.class,
-                Utils.getSaveDir() + DB_NAME
+                DB_NAME
         )
                 .build();
     }

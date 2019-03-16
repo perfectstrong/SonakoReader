@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         setContentView(R.layout.main_activity);
@@ -72,9 +74,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
-
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
     }
 
     @Override
