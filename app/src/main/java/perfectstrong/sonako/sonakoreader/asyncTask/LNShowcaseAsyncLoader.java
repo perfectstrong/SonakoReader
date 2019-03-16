@@ -272,6 +272,9 @@ public class LNShowcaseAsyncLoader extends AsyncTask<Void, String, Void> {
             if (forceDownload || titles.size() != 0) {
                 fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
                 fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
+            } else {
+                fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
+                fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.GONE);
             }
         }
     }
