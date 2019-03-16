@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +17,9 @@ import android.webkit.WebViewClient;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
@@ -106,7 +106,8 @@ public class PageReadingActivity extends AppCompatActivity {
                 Log.d(TAG, "Refresh missing images of " + title);
                 Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_MISSING_IMAGES);
             case R.id.action_settings:
-                // TODO change settings
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

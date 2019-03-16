@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_grp_preferences">
+
+        <ListPreference
+            android:defaultValue="@string/default_download_when"
+            android:entries="@array/pref_download_when"
+            android:entryValues="@array/pref_download_when_values"
+            android:key="@string/key_pref_download_when"
+            android:summary="%s"
+            android:title="@string/title_pref_download_when" />
+        <ListPreference
+            android:defaultValue="@string/default_skin"
+            android:entries="@array/pref_skins"
+            android:entryValues="@array/pref_skins_values"
+            android:key="@string/key_pref_skins"
+            android:summary="%s"
+            android:title="@string/title_pref_skins" />
+        <CheckBoxPreference
+            android:id="@+id/pref_download_noncached_pages"
+            android:defaultValue="@bool/default_download_noncached_pages"
+            android:key="@string/key_pref_download_noncached_pages"
+            android:summary="@string/summary_download_noncached_pages"
+            android:title="@string/title_pref_download_noncached_pages" />
+        <ListPreference
+            android:defaultValue="@string/default_download_wikia_images"
+            android:entries="@array/pref_download_wikia_images"
+            android:entryValues="@array/pref_download_images_values"
+            android:summary="%s"
+            android:key="@string/key_pref_download_wikia_images"
+            android:title="@string/title_pref_download_wikia_images" />
+        <CheckBoxPreference
+            android:id="@+id/pref_download_external_images"
+            android:defaultValue="@bool/default_download_external_images"
+            android:key="@string/key_pref_download_external_images"
+            android:summary="@string/summary_download_external_images"
+            android:title="@string/title_pref_download_external_images" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_grp_database">
+        <Preference
+            android:title="@string/title_update_lndb"
+            android:selectable="true"/>
+        <Preference
+            android:title="@string/title_clear_history"
+            android:selectable="true"/>
+        <Preference
+            android:title="@string/title_clear_lndb"
+            android:selectable="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_grp_app_info">
+        <Preference
+            android:title="@string/app_name"
+            android:selectable="false"
+            android:summary="@string/summary_pref_about" />
+        <Preference
+            android:title="@string/title_app_version"
+            android:selectable="false"
+            android:summary="@string/app_version"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

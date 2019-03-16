@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader;
 import android.app.Application;
 import android.content.Context;
 
+import androidx.preference.PreferenceManager;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 public class SonakoReaderApp extends Application {

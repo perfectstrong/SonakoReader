@@ -2,15 +2,9 @@ package perfectstrong.sonako.sonakoreader;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +13,15 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.preference.PreferenceManager;
+import androidx.viewpager.widget.ViewPager;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         setContentView(R.layout.main_activity);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -89,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);

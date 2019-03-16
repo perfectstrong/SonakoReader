@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_skins">
+        <item>@string/skin_holy</item>
+        <item>@string/skin_dark</item>
+    </string-array>
+    <string-array name="pref_skins_values">
+        <item>@string/skin_holy_value</item>
+        <item>@string/skin_dark_value</item>
+    </string-array>
+    <string-array name="pref_download_when">
+        <item>@string/download_when_wifi</item>
+        <item>@string/download_when_cellular</item>
+    </string-array>
+    <string-array name="pref_download_when_values">
+        <item>@string/download_when_wifi_value</item>
+        <item>@string/download_when_cellular_value</item>
+    </string-array>
+    <string-array name="pref_download_wikia_images">
+        <item>@string/download_wikia_images_original</item>
+        <item>@string/download_wikia_images_adaptive</item>
+    </string-array>
+    <string-array name="pref_download_images_values">
+        <item>@string/download_wikia_images_original_value</item>
+        <item>@string/download_wikia_images_adaptive_value</item>
+    </string-array>
+</resources>
