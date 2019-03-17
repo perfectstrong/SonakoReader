@@ -10,6 +10,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+@SuppressWarnings("WeakerAccess")
 @Dao
 public abstract class LightNovelDAO {
 
@@ -46,4 +47,7 @@ public abstract class LightNovelDAO {
 
     @Query("DELETE FROM lightnovel")
     public abstract void clear();
+
+    @Query("SELECT * FROM lightnovel ORDER BY title ASC")
+    public abstract LiveData<List<LightNovel>> getLiveAll();
 }

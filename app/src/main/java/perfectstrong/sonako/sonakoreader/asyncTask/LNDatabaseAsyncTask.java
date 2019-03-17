@@ -4,11 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,10 +26,10 @@ import fastily.jwiki.util.GSONP;
 import okhttp3.HttpUrl;
 import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
-import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
@@ -40,54 +37,49 @@ public class LNDatabaseAsyncTask {
 
     private static final String TAG = LNDatabaseAsyncTask.class.getSimpleName();
 
+    @FunctionalInterface
+    public interface Callback {
+        void updateView();
+    }
+
     /**
      * Load titles from cache. If not downloaded yet, it will fetch from server then cache it.
      */
     public static class LoadCacheOrDownload extends AsyncTask<Void, String, Void> {
         private final LightNovelsDatabase lndb;
+        private final Callback callback;
         private List<LightNovel> titles;
         private Wiki wikiClient;
-        private WeakReference<LNShowcaseFragment> fragment;
         private WeakReference<LNShowcaseAdapter> adapter;
         private final boolean forceDownload;
         private Exception exception;
 
         public LoadCacheOrDownload(LightNovelsDatabase lndb,
-                                   LNShowcaseFragment fragment,
                                    LNShowcaseAdapter adapter,
-                                   boolean forceDownload) {
+                                   boolean forceDownload,
+                                   Callback callback) {
             this.lndb = lndb;
-            this.fragment = new WeakReference<>(fragment);
             this.adapter = new WeakReference<>(adapter);
             this.forceDownload = forceDownload;
-        }
-
-        private void fetchTitles() throws IOException {
-            // Check db first
-            titles = lndb.lnDao().getAll();
-            if (titles.size() == 0 && forceDownload) {
-                // Connection check
-                Utils.checkConnection(fragment.get().getContext());
-
-                downloadAll();
-                titles = lndb.lnDao().getAll();
-            }
+            this.callback = callback;
         }
 
         private void downloadAll() throws IOException {
             this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             titles = new ArrayList<>();
 
-            publishProgress(fragment.get().getString(R.string.downloading_ln_list));
+            Context context = SonakoReaderApp.getContext();
+
+            publishProgress(context.getString(R.string.downloading_ln_list));
             downloadTitles();
 
-            publishProgress(fragment.get().getString(R.string.downloading_tags));
+            publishProgress(context.getString(R.string.downloading_tags));
             downloadStatusAndCategories(wikiClient, titles);
 
-            publishProgress(fragment.get().getString(R.string.ordering_ln_list));
+            publishProgress(context.getString(R.string.ordering_ln_list));
             orderTitlesAlphabetically(titles);
 
-            publishProgress(fragment.get().getString(R.string.caching_ln_list));
+            publishProgress(context.getString(R.string.caching_ln_list));
             cacheLNDB(lndb, titles);
         }
 
@@ -100,7 +92,15 @@ public class LNDatabaseAsyncTask {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                fetchTitles();
+                // Check db first
+                titles = lndb.lnDao().getAll();
+                if (titles.size() == 0 && forceDownload) {
+                    // Connection check
+                    Utils.checkConnection(SonakoReaderApp.getContext());
+
+                    downloadAll();
+                    titles = lndb.lnDao().getAll();
+                }
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
                 this.exception = e;
@@ -110,40 +110,29 @@ public class LNDatabaseAsyncTask {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            if (fragment.get().getContext() != null)
-                Toast.makeText(
-                        fragment.get().getContext(),
-                        values[0],
-                        Toast.LENGTH_SHORT
-                ).show();
+            Toast.makeText(
+                    SonakoReaderApp.getContext(),
+                    values[0],
+                    Toast.LENGTH_SHORT
+            ).show();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            View fragmentView = fragment.get().getView();
-            if (fragmentView == null) return;
             if (exception != null) {
                 // An error occurred
-                Snackbar msgSnackbar = Snackbar.make(
-                        fragmentView.findViewById(R.id.LNTitlesRecyclerView),
-                        fragment.get().getString(R.string.error_occurred)
-                                + exception.getLocalizedMessage(),
-                        Snackbar.LENGTH_SHORT
-                );
-                ((TextView) msgSnackbar.getView()
-                        .findViewById(R.id.snackbar_text))
-                        .setMaxLines(5);
-                msgSnackbar.show();
+                Context context = SonakoReaderApp.getContext();
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.error_occurred) + " "
+                                + exception.getMessage(),
+                        Toast.LENGTH_SHORT
+                ).show();
             } else {
                 adapter.get().setDatalist(titles);
-                if (forceDownload || titles.size() != 0) {
-                    fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
-                    fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
-                } else {
-                    fragmentView.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
-                    fragmentView.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.GONE);
-                }
+                if (callback != null)
+                    this.callback.updateView();
             }
         }
     }
@@ -156,23 +145,18 @@ public class LNDatabaseAsyncTask {
         private final Handler mHandler;
         private List<LightNovel> titles;
         private Wiki wikiClient;
-        private final WeakReference<Context> _context;
         private Exception exception;
 
-        public Update(LightNovelsDatabase lndb,
-                      Context context) {
+        public Update(LightNovelsDatabase lndb) {
             this.lndb = lndb;
-            _context = new WeakReference<>(context);
             mHandler = new Handler();
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Context context = _context.get();
-            if (context == null) return;
             Toast.makeText(
-                    context,
+                    SonakoReaderApp.getContext(),
                     R.string.start_downloading,
                     Toast.LENGTH_SHORT
             ).show();
@@ -182,23 +166,24 @@ public class LNDatabaseAsyncTask {
         protected Void doInBackground(Void... voids) {
             try {
                 // Connection check
-                Utils.checkConnection(_context.get());
+                Utils.checkConnection(SonakoReaderApp.getContext());
 
                 // Real start
                 this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
                 titles = new ArrayList<>();
-                publishProgress(_context.get().getString(R.string.downloading_ln_list));
+                Context context = SonakoReaderApp.getContext();
+                publishProgress(context.getString(R.string.downloading_ln_list));
                 downloadOfficialProjects(wikiClient, titles);
                 downloadTeaserProjects(wikiClient, titles);
                 downloadOLNProjects(wikiClient, titles);
 
-                publishProgress(_context.get().getString(R.string.downloading_tags));
+                publishProgress(context.getString(R.string.downloading_tags));
                 downloadStatusAndCategories(wikiClient, titles);
 
-                publishProgress(_context.get().getString(R.string.ordering_ln_list));
+                publishProgress(context.getString(R.string.ordering_ln_list));
                 orderTitlesAlphabetically(titles);
 
-                publishProgress(_context.get().getString(R.string.caching_ln_list));
+                publishProgress(context.getString(R.string.caching_ln_list));
                 cacheLNDB(lndb, titles);
             } catch (Exception e) {
                 exception = e;
@@ -209,33 +194,29 @@ public class LNDatabaseAsyncTask {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            if (_context.get() != null)
-                mHandler.post(() -> Toast.makeText(
-                        _context.get(),
-                        values[0],
-                        Toast.LENGTH_SHORT
-                        ).show()
-                );
+            mHandler.post(() -> Toast.makeText(
+                    SonakoReaderApp.getContext(),
+                    values[0],
+                    Toast.LENGTH_SHORT
+            ).show());
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (_context.get() != null) {
-                Context context = _context.get();
-                if (exception == null) {
-                    Toast.makeText(
-                            context,
-                            R.string.update_completed,
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else {
-                    Toast.makeText(
-                            context,
-                            context.getString(R.string.error_occurred) + " " + exception.getMessage(),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
+            Context context = SonakoReaderApp.getContext();
+            if (exception == null) {
+                Toast.makeText(
+                        context,
+                        R.string.update_completed,
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else {
+                Toast.makeText(
+                        context,
+                        context.getString(R.string.error_occurred) + " " + exception.getMessage(),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         }
     }

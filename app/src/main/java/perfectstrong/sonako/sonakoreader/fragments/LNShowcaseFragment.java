@@ -40,6 +40,27 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
                 this.getContext(),
                 viewModel
         );
+
+        // Observer
+        viewModel.getLiveLNList().observe(
+                this,
+                titles -> {
+                    mAdapter.setDatalist(titles);
+                    this.updateView();
+                }
+        );
+    }
+
+    private void updateView() {
+        View view = this.getView();
+        if (view == null) return;
+        if (mAdapter.haveEmptyLNList()) {
+            view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.GONE);
+        } else {
+            view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
+            view.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -53,17 +74,17 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        // fetch data
-        new LNDatabaseAsyncTask.LoadCacheOrDownload(
-                LightNovelsDatabaseClient.getInstance(getContext()),
-                this,
-                mAdapter,
-                false
-        ).execute();
-
         // Button to force download
         rootView.findViewById(R.id.LNTitlesNoDatabaseButton)
                 .setOnClickListener(this::forceDownload);
+
+        // fetch initial data
+        new LNDatabaseAsyncTask.LoadCacheOrDownload(
+                LightNovelsDatabaseClient.getInstance(getContext()),
+                mAdapter,
+                false,
+                this::updateView
+        ).execute();
 
         return rootView;
     }
@@ -78,12 +99,12 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         mAdapter.showAll();
     }
 
-    public void forceDownload(View v) {
+    private void forceDownload(View v) {
         new LNDatabaseAsyncTask.LoadCacheOrDownload(
                 LightNovelsDatabaseClient.getInstance(getContext()),
-                this,
                 mAdapter,
-                true
+                true,
+                null
         ).execute();
     }
 }

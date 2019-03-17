@@ -8,4 +8,8 @@ public class LNShowcaseAdapter extends LNListAdapter {
     LNShowcaseAdapter(Context context, LNDBViewModel viewModel) {
         super(context, viewModel);
     }
+
+    boolean haveEmptyLNList() {
+        return lnList == null || lnList.isEmpty();
+    }
 }

@@ -1,13 +1,13 @@
 package perfectstrong.sonako.sonakoreader.database;
 
 import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import androidx.annotation.NonNull;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.LNListAdapter;
@@ -54,6 +54,10 @@ public class LNDBViewModel extends AndroidViewModel {
                 lndb,
                 mAdapter
         ).execute();
+    }
+
+    public LiveData<List<LightNovel>> getLiveLNList() {
+        return lndb.lnDao().getLiveAll();
     }
 
     private enum ACTION {

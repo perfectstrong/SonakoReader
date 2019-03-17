@@ -25,8 +25,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (context != null)
             if (getString(R.string.title_update_lndb).equals(title)) {
                 new LNDatabaseAsyncTask.Update(
-                        LightNovelsDatabaseClient.getInstance(context),
-                        context
+                        LightNovelsDatabaseClient.getInstance(context)
                 )
                         .execute();
                 return true;

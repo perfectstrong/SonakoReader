@@ -1,9 +1,6 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
@@ -29,7 +29,7 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
  */
 public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleViewHolder> {
     private List<LightNovel> _lnList = new ArrayList<>();
-    private List<LightNovel> lnList = new ArrayList<>();
+    List<LightNovel> lnList = new ArrayList<>();
     protected Context context;
     private LNDBViewModel viewModel;
 

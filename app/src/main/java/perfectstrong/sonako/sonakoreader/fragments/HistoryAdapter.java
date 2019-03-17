@@ -24,7 +24,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
     private List<Page> _plist = new ArrayList<>();
     private List<Page> plist = new ArrayList<>();
     private final Context context;
-    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm EEEE dd/MM/YY", new Locale("vi"));
+    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
     HistoryAdapter(Context context) {
         this.context = context;
