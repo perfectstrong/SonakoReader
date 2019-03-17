@@ -34,6 +34,7 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class LNDatabaseAsyncTask {
 
@@ -52,20 +53,23 @@ public class LNDatabaseAsyncTask {
         private Exception exception;
 
         public LoadCacheOrDownload(LightNovelsDatabase lndb,
-                                   LNShowcaseFragment context,
+                                   LNShowcaseFragment fragment,
                                    LNShowcaseAdapter adapter,
                                    boolean forceDownload) {
             this.lndb = lndb;
-            this.fragment = new WeakReference<>(context);
+            this.fragment = new WeakReference<>(fragment);
             this.adapter = new WeakReference<>(adapter);
             this.forceDownload = forceDownload;
         }
 
         private void fetchTitles() throws IOException {
             // Check db first
-            if (forceDownload)
+            if (forceDownload) {
+                // Connection check
+                Utils.checkConnection(fragment.get().getContext());
+
                 downloadAll();
-            else {
+            } else {
                 titles = lndb.lnDao().getAll();
             }
         }
@@ -138,7 +142,7 @@ public class LNDatabaseAsyncTask {
                         fragmentView.findViewById(R.id.LNTitlesRecyclerView),
                         fragment.get().getString(R.string.error_occurred)
                                 + exception.getLocalizedMessage(),
-                        Snackbar.LENGTH_INDEFINITE
+                        Snackbar.LENGTH_SHORT
                 );
                 ((TextView) msgSnackbar.getView()
                         .findViewById(R.id.snackbar_text))
@@ -190,6 +194,10 @@ public class LNDatabaseAsyncTask {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
+                // Connection check
+                Utils.checkConnection(_context.get());
+
+                // Real start
                 this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
                 titles = new ArrayList<>();
                 publishProgress(_context.get().getString(R.string.downloading_ln_list));

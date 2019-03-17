@@ -2,22 +2,28 @@ package perfectstrong.sonako.sonakoreader.helper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.AlertDialog;
 
 import java.io.File;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 
+import androidx.appcompat.app.AlertDialog;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
+@SuppressWarnings("WeakerAccess")
 public class Utils {
 
+    @SuppressWarnings("WeakerAccess")
     public static String getSaveDir() {
         return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
                 .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
@@ -28,8 +34,11 @@ public class Utils {
     }
 
     public static String getCurrentSkin() {
-        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
-                .getString("SKIN", Config.DEFAULT_SKIN);
+        Context context = SonakoReaderApp.getContext();
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.key_pref_skins),
+                        context.getResources().getString(R.string.default_skin)
+                );
     }
 
     public static String getFilepath(String title, String tag) {
@@ -151,34 +160,41 @@ public class Utils {
             // Read or first download
             if (isNotCached(title, tag)) {
                 if (PreferenceManager.getDefaultSharedPreferences(context)
-                        .getBoolean(Config.PREF_AUTO_DOWNLOAD, false)) {
+                        .getBoolean(
+                                context.getString(R.string.key_pref_download_noncached_pages),
+                                context.getResources().getBoolean(R.bool.default_download_noncached_pages)
+                        )) {
                     // If auto download, no need to create dialog
                     startDownloadTask(context, title, tag, null);
                 } else {
-                    final boolean[] autodownload = {false};
+                    final boolean[] autodownload = {
+                            context.getResources().getBoolean(R.bool.default_download_noncached_pages)
+                    };
                     // Demand before downloading
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("Trang này chưa được tải. Bạn có muốn tải?")
+                    builder.setTitle(context.getString(R.string.wanna_download))
                             .setMultiChoiceItems(
                                     AUTO_DOWNLOAD_CHOICES,
                                     null,
                                     (dialog, which, isChecked) -> autodownload[0] = which == 0 && isChecked
                             )
                             .setPositiveButton(
-                                    context.getString(R.string.download_ok),
+                                    context.getString(R.string.ok),
                                     (dialog, which) -> {
                                         if (autodownload[0]) {
                                             PreferenceManager
                                                     .getDefaultSharedPreferences(context)
                                                     .edit()
-                                                    .putBoolean(Config.PREF_AUTO_DOWNLOAD, true)
+                                                    .putBoolean(
+                                                            context.getString(R.string.key_pref_download_noncached_pages),
+                                                            true)
                                                     .apply();
                                         }
                                         startDownloadTask(context, title, tag, null);
                                     }
                             )
                             .setNegativeButton(
-                                    context.getString(R.string.download_no),
+                                    context.getString(R.string.no),
                                     null
                             )
                             .show();
@@ -233,6 +249,46 @@ public class Utils {
             for (String title : selectedLinks) {
                 startDownloadTask(context, title, tag, action);
             }
+        }
+    }
+
+    /**
+     *
+     * @param context to get service
+     * @return first boolean indicates wifi, second boolean indicates mobile
+     */
+    public static boolean[] getNetworkConnection(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return new boolean[]{haveConnectedWifi, haveConnectedMobile};
+    }
+
+    public static boolean isNotAuthorizedDownloadingOverCellularConnection(Context context) {
+        return !Objects.requireNonNull(PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getString(R.string.key_pref_download_when),
+                        context.getString(R.string.default_download_when)
+                ))
+                .equals(context.getString(R.string.download_when_cellular_value));
+    }
+
+    public static void checkConnection(Context context) throws ConnectException {
+        boolean[] connections = Utils.getNetworkConnection(context);
+        if (!connections[0] && !connections[1]) {
+            throw new ConnectException(context.getString(R.string.no_internet));
+        } else if (connections[1]
+                && Utils.isNotAuthorizedDownloadingOverCellularConnection(context)) {
+            throw  new ConnectException(context.getString(R.string.not_authorized_cellular));
         }
     }
 }

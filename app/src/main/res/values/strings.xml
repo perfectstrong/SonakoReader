@@ -90,4 +90,6 @@
     <string name="wanna_download">Trang này chưa được tải. Bạn có muốn tải?</string>
     <string name="confirm_delete">Are you sure about this ? T_T</string>
     <string name="update_completed">Đã cập nhật xong</string>
+    <string name="no_internet">Không có internet</string>
+    <string name="not_authorized_cellular">Hãy tiết kiệm 3G-4G!</string>
 </resources>

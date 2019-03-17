@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -139,6 +140,15 @@ public class PageDownloadService extends IntentService {
             stopSelf();
             return;
         }
+        // Connection check
+        try {
+            Utils.checkConnection(this);
+        } catch (ConnectException e) {
+            postToast(e.getMessage());
+            stopSelf();
+            return;
+        }
+
         // Register
         publishProgress(getString(R.string.download_starting));
         saveLocation = Utils.getSavDirForTag(tag);
@@ -158,6 +168,7 @@ public class PageDownloadService extends IntentService {
             }
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
         try {
+            // Real start
             postToast(getString(R.string.start_downloading) + " " + title);
             if (Utils.isNotCached(title, tag) || forceRefreshText) {
                 // Check cache
