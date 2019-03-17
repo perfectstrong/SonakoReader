@@ -96,11 +96,11 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
                                 }
                         )
                         .setPositiveButton(
-                                R.string.download_ok,
+                                R.string.ok,
                                 (dialog, which) -> Utils.massDownload(context, selectedLinks, tag, null)
                         )
                         .setNegativeButton(
-                                R.string.download_no,
+                                R.string.no,
                                 null
                         )
                         .show();
@@ -109,7 +109,7 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
                         .setTitle(R.string.no_links_download)
                         .setMessage(R.string.try_redownload_text)
                         .setPositiveButton(
-                                R.string.download_ok,
+                                R.string.ok,
                                 null
                         )
                         .show();

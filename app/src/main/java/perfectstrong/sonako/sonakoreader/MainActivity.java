@@ -140,12 +140,12 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.setButton(
                 Dialog.BUTTON_NEGATIVE,
-                getString(R.string.filter_no),
+                getString(R.string.no),
                 (Message) null
         );
         alertDialog.setButton(
                 Dialog.BUTTON_POSITIVE,
-                getString(R.string.filter_ok),
+                getString(R.string.ok),
                 (dialog, which) -> {
                     // Filter
                     String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
