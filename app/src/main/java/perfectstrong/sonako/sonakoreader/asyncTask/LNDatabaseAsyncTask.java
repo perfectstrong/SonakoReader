@@ -64,12 +64,12 @@ public class LNDatabaseAsyncTask {
 
         private void fetchTitles() throws IOException {
             // Check db first
-            if (forceDownload) {
+            titles = lndb.lnDao().getAll();
+            if (titles.size() == 0 && forceDownload) {
                 // Connection check
                 Utils.checkConnection(fragment.get().getContext());
 
                 downloadAll();
-            } else {
                 titles = lndb.lnDao().getAll();
             }
         }
@@ -77,37 +77,24 @@ public class LNDatabaseAsyncTask {
         private void downloadAll() throws IOException {
             this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
             titles = new ArrayList<>();
+
+            publishProgress(fragment.get().getString(R.string.downloading_ln_list));
             downloadTitles();
-            orderTitlesAlphabetically();
-            cacheTitles();
+
             publishProgress(fragment.get().getString(R.string.downloading_tags));
             downloadStatusAndCategories(wikiClient, titles);
-            updateLNDB(lndb, titles);
+
+            publishProgress(fragment.get().getString(R.string.ordering_ln_list));
+            orderTitlesAlphabetically(titles);
+
+            publishProgress(fragment.get().getString(R.string.caching_ln_list));
+            cacheLNDB(lndb, titles);
         }
 
         private void downloadTitles() throws IOException {
-            publishProgress(fragment.get().getString(R.string.downloading_ln_list));
             downloadOfficialProjects(wikiClient, titles);
             downloadTeaserProjects(wikiClient, titles);
             downloadOLNProjects(wikiClient, titles);
-        }
-
-        private void orderTitlesAlphabetically() {
-            publishProgress(fragment.get().getString(R.string.ordering_ln_list));
-            for (int i = 0; i < titles.size() - 1; i++) {
-                for (int j = i + 1; j < titles.size(); j++) {
-                    if (titles.get(i).getTitle().compareTo(titles.get(j).getTitle()) > 0) {
-                        LightNovel ln = titles.get(i);
-                        titles.set(i, titles.get(j));
-                        titles.set(j, ln);
-                    }
-                }
-            }
-        }
-
-        private void cacheTitles() {
-            publishProgress(fragment.get().getString(R.string.caching_ln_list));
-            lndb.lnDao().insert(titles.toArray(new LightNovel[0]));
         }
 
         @Override
@@ -204,9 +191,15 @@ public class LNDatabaseAsyncTask {
                 downloadOfficialProjects(wikiClient, titles);
                 downloadTeaserProjects(wikiClient, titles);
                 downloadOLNProjects(wikiClient, titles);
+
                 publishProgress(_context.get().getString(R.string.downloading_tags));
                 downloadStatusAndCategories(wikiClient, titles);
-                updateLNDB(lndb, titles);
+
+                publishProgress(_context.get().getString(R.string.ordering_ln_list));
+                orderTitlesAlphabetically(titles);
+
+                publishProgress(_context.get().getString(R.string.caching_ln_list));
+                cacheLNDB(lndb, titles);
             } catch (Exception e) {
                 exception = e;
                 Log.e(TAG, e.getMessage(), e);
@@ -339,6 +332,18 @@ public class LNDatabaseAsyncTask {
         }
     }
 
+    private static void orderTitlesAlphabetically(List<LightNovel> titles) {
+        for (int i = 0; i < titles.size() - 1; i++) {
+            for (int j = i + 1; j < titles.size(); j++) {
+                if (titles.get(i).getTitle().compareTo(titles.get(j).getTitle()) > 0) {
+                    LightNovel ln = titles.get(i);
+                    titles.set(i, titles.get(j));
+                    titles.set(j, ln);
+                }
+            }
+        }
+    }
+
     /**
      * Fetch status and categories
      *
@@ -390,8 +395,8 @@ public class LNDatabaseAsyncTask {
         }
     }
 
-    private static void updateLNDB(LightNovelsDatabase lndb,
-                                   List<LightNovel> titles) {
+    private static void cacheLNDB(LightNovelsDatabase lndb,
+                                  List<LightNovel> titles) {
         // Bulk update type and status db
         lndb.lnDao().insert(titles.toArray(new LightNovel[0]));
     }

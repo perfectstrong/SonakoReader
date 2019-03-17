@@ -13,7 +13,7 @@ import androidx.room.Update;
 @Dao
 public abstract class LightNovelDAO {
 
-    @Query("SELECT * FROM lightnovel")
+    @Query("SELECT * FROM lightnovel ORDER BY title ASC")
     public abstract List<LightNovel> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
