@@ -1,13 +1,14 @@
 package perfectstrong.sonako.sonakoreader.database;
 
+import java.util.List;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
-
-import java.util.List;
 
 @Dao
 public abstract class LightNovelDAO {
@@ -15,7 +16,7 @@ public abstract class LightNovelDAO {
     @Query("SELECT * FROM lightnovel")
     public abstract List<LightNovel> getAll();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insert(LightNovel... lightNovels);
 
     @Update
@@ -42,4 +43,7 @@ public abstract class LightNovelDAO {
 
     @Query("SELECT * FROM lightnovel WHERE isFavorite = 1")
     public abstract List<LightNovel> getAllFavorites();
+
+    @Query("DELETE FROM lightnovel")
+    public abstract void clear();
 }

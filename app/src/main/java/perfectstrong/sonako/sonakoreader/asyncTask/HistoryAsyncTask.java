@@ -44,4 +44,18 @@ public class HistoryAsyncTask {
             return null;
         }
     }
+
+    public static class Clear extends AsyncTask<Void, Void, Void> {
+        private final LightNovelsDatabase lndb;
+
+        public Clear(LightNovelsDatabase lndb) {
+            this.lndb = lndb;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            lndb.historyDAO().clear();
+            return null;
+        }
+    }
 }

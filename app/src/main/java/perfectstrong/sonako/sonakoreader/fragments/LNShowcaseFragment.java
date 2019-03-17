@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.asyncTask.LNShowcaseAsyncLoader;
+import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
@@ -54,7 +54,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         recyclerView.setAdapter(mAdapter);
 
         // fetch data
-        new LNShowcaseAsyncLoader(
+        new LNDatabaseAsyncTask.LoadCacheOrDownload(
                 LightNovelsDatabaseClient.getInstance(getContext()),
                 this,
                 mAdapter,
@@ -79,7 +79,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
     }
 
     public void forceDownload(View v) {
-        new LNShowcaseAsyncLoader(
+        new LNDatabaseAsyncTask.LoadCacheOrDownload(
                 LightNovelsDatabaseClient.getInstance(getContext()),
                 this,
                 mAdapter,
