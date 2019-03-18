@@ -6,25 +6,14 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fastily.jwiki.core.MQuery;
-import fastily.jwiki.core.Wiki;
-import fastily.jwiki.util.GSONP;
-import okhttp3.HttpUrl;
-import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
@@ -32,6 +21,7 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
+import perfectstrong.sonako.sonakoreader.helper.WikiClient;
 
 public class LNDatabaseAsyncTask {
 
@@ -49,7 +39,7 @@ public class LNDatabaseAsyncTask {
         private final LightNovelsDatabase lndb;
         private final Callback callback;
         private List<LightNovel> titles;
-        private Wiki wikiClient;
+        private WikiClient wikiClient;
         private WeakReference<LNShowcaseAdapter> adapter;
         private final boolean forceDownload;
         private Exception exception;
@@ -64,8 +54,8 @@ public class LNDatabaseAsyncTask {
             this.callback = callback;
         }
 
-        private void downloadAll() throws IOException {
-            this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+        private void downloadAll() {
+            this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
             titles = new ArrayList<>();
 
             Context context = SonakoReaderApp.getContext();
@@ -83,7 +73,7 @@ public class LNDatabaseAsyncTask {
             cacheLNDB(lndb, titles);
         }
 
-        private void downloadTitles() throws IOException {
+        private void downloadTitles() {
             downloadOfficialProjects(wikiClient, titles);
             downloadTeaserProjects(wikiClient, titles);
             downloadOLNProjects(wikiClient, titles);
@@ -144,7 +134,7 @@ public class LNDatabaseAsyncTask {
         private final LightNovelsDatabase lndb;
         private final Handler mHandler;
         private List<LightNovel> titles;
-        private Wiki wikiClient;
+        private WikiClient wikiClient;
         private Exception exception;
 
         public Update(LightNovelsDatabase lndb) {
@@ -169,7 +159,7 @@ public class LNDatabaseAsyncTask {
                 Utils.checkConnection(SonakoReaderApp.getContext());
 
                 // Real start
-                this.wikiClient = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+                this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
                 titles = new ArrayList<>();
                 Context context = SonakoReaderApp.getContext();
                 publishProgress(context.getString(R.string.downloading_ln_list));
@@ -244,7 +234,7 @@ public class LNDatabaseAsyncTask {
      * @param wikiClient worker
      * @param titles     collector
      */
-    private static void downloadOfficialProjects(Wiki wikiClient,
+    private static void downloadOfficialProjects(WikiClient wikiClient,
                                                  List<LightNovel> titles) {
         String unparsedOfficialList = wikiClient.getPageText(Config.OFFICIAL_PROJECTS_LIST);
         //noinspection RegExpRedundantEscape
@@ -269,20 +259,11 @@ public class LNDatabaseAsyncTask {
      * @param wikiClient worker
      * @param titles     collector
      */
-    private static void downloadTeaserProjects(Wiki wikiClient,
-                                               List<LightNovel> titles) throws IOException {
-        Response res = wikiClient.basicGET("query",
-                "list", "categorymembers",
-                "cmtitle", "Category:Teaser",
-                "cmnamespace", "0",
-                "cmsort", "timestamp",
-                "cmdir", "desc",
-                "cmlimit", "max");
-        assert res.body() != null;
-        JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
-        JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
-        for (JsonElement ele : teasers) {
-            LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
+    private static void downloadTeaserProjects(WikiClient wikiClient,
+                                               List<LightNovel> titles) {
+        List<String> teasers = wikiClient.getCategoryMembers(LightNovel.ProjectType.TEASER, "0", "max");
+        for (String title: teasers) {
+            LightNovel teaser = new LightNovel(title);
             teaser.setType(LightNovel.ProjectType.TEASER);
             titles.add(teaser);
         }
@@ -294,21 +275,12 @@ public class LNDatabaseAsyncTask {
      * @param wikiClient worker
      * @param titles     collector
      */
-    private static void downloadOLNProjects(Wiki wikiClient,
-                                            List<LightNovel> titles) throws IOException {
-        Response res = wikiClient.basicGET("query",
-                "list", "categorymembers",
-                "cmtitle", "Category:Original Light Novel",
-                "cmnamespace", "0",
-                "cmsort", "timestamp",
-                "cmdir", "desc",
-                "cmlimit", "max");
-        assert res.body() != null;
-        JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
-        JsonArray teasers = jsonObject.getAsJsonObject("query").getAsJsonArray("categorymembers");
-        for (JsonElement ele : teasers) {
-            LightNovel teaser = new LightNovel(ele.getAsJsonObject().get("title").getAsString());
-            teaser.setType(LightNovel.ProjectType.TEASER);
+    private static void downloadOLNProjects(WikiClient wikiClient,
+                                            List<LightNovel> titles) {
+        List<String> olns = wikiClient.getCategoryMembers(LightNovel.ProjectType.OLN, "0", "max");
+        for (String title: olns) {
+            LightNovel teaser = new LightNovel(title);
+            teaser.setType(LightNovel.ProjectType.OLN);
             titles.add(teaser);
         }
     }
@@ -331,18 +303,15 @@ public class LNDatabaseAsyncTask {
      * @param wikiClient worker
      * @param titles     collector
      */
-    private static void downloadStatusAndCategories(Wiki wikiClient,
+    private static void downloadStatusAndCategories(WikiClient wikiClient,
                                                     List<LightNovel> titles) {
         Map<String, LightNovel> mapLN = new HashMap<>();
         for (LightNovel lightNovel : titles) {
             mapLN.put(lightNovel.getTitle(), lightNovel);
         }
-        HashMap<String, ArrayList<String>> result = MQuery.getCategoriesOnPage(
-                wikiClient,
-                mapLN.keySet()
-        );
+        Map<String, List<String>> result = wikiClient.getCategoriesOnPages(new ArrayList<>(mapLN.keySet()));
         for (String lntitle : result.keySet()) {
-            ArrayList<String> categories = result.get(lntitle);
+            List<String> categories = result.get(lntitle);
             LightNovel title = mapLN.get(lntitle);
             assert categories != null;
             for (String category : categories) {

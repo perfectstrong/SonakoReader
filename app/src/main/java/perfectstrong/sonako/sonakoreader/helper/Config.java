@@ -5,13 +5,15 @@ import android.os.Environment;
 import java.util.Arrays;
 import java.util.List;
 
+import perfectstrong.sonako.sonakoreader.BuildConfig;
+
 @SuppressWarnings("WeakerAccess")
 public class Config {
     public static final String SERVER_NAME = "sonako.wikia.com";
     public static final String WEBSITE = "https://" + SERVER_NAME;
     public static final String API_ENDPOINT = WEBSITE + "/api.php";
     public static final String OFFICIAL_PROJECTS_LIST = "Danh sách các project";
-    public static final String APP_PREFIX = "perfectstrong.sonako.sonakoreader";
+    public static final String APP_PREFIX = BuildConfig.APPLICATION_ID;
     public static final String APP_NAME = "Sonako Reader";
     public static final String EXTRA_ACTION = APP_PREFIX + ".action";
     public static final String EXTRA_TITLE = APP_PREFIX + ".title";
@@ -20,4 +22,9 @@ public class Config {
     public static final String DEFAULT_SAVE_LOCATION = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + APP_NAME + "/";
     public static final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
+    public static final String USER_AGENT = String.format(
+            "%s %s on Android OS",
+            BuildConfig.APPLICATION_ID,
+            BuildConfig.VERSION_NAME
+    );
 }

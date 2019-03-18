@@ -9,10 +9,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,17 +27,14 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-import fastily.jwiki.core.Wiki;
-import fastily.jwiki.util.GSONP;
-import okhttp3.HttpUrl;
 import okhttp3.Response;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
+import perfectstrong.sonako.sonakoreader.helper.WikiClient;
 
 /**
  * Download a page given its title and tag
@@ -53,7 +49,7 @@ public class PageDownloadService extends IntentService {
     private ACTION action;
     private boolean forceRefreshText;
     private boolean forceRefreshImages;
-    private Wiki wiki;
+    private WikiClient wiki;
     private String text;
     private Map<String, String> imagesLinks = new HashMap<>();
     private Handler mHandler;
@@ -172,7 +168,7 @@ public class PageDownloadService extends IntentService {
             postToast(getString(R.string.start_downloading) + " " + title);
             if (Utils.isNotCached(title, tag) || forceRefreshText) {
                 // Check cache
-                wiki = new Wiki(Objects.requireNonNull(HttpUrl.parse(Config.API_ENDPOINT)));
+                wiki = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
                 if (!wiki.exists(title)) {
                     throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
                 }
@@ -211,12 +207,11 @@ public class PageDownloadService extends IntentService {
         tasks.put(title, str);
     }
 
-    private void downloadText() throws IOException {
+    private void downloadText() throws IOException, JSONException {
         publishProgress(getString(R.string.downloading_text) + " " + title);
-        Response res = wiki.basicGET(
+        Response res = wiki.GET(
                 "parse",
                 "page", title,
-                "format", "json",
                 "rvprop", "content",
                 "disablelimitreport", "true",
                 "disabletoc", "true",
@@ -225,25 +220,27 @@ public class PageDownloadService extends IntentService {
         );
         publishProgress(getString(R.string.analyzing_text) + " " + title);
         assert res.body() != null;
-        JsonObject jsonObject = GSONP.jp.parse(res.body().string()).getAsJsonObject();
+        JSONObject jsonObject = new JSONObject(res.body().string());
         // Check error
-        if (jsonObject.get("error") != null) {
-            JsonObject error = jsonObject.get("error").getAsJsonObject();
+        if (jsonObject.optJSONObject("error") != null) {
+            JSONObject error = jsonObject.getJSONObject("error");
             throw new IllegalArgumentException(
-                    error.get("code").getAsString()
+                    error.getString("code")
                             + ": "
-                            + error.get("info").getAsString()
+                            + error.getString("info")
             );
         }
 
         // Parse
-        JsonObject parse = jsonObject.get("parse").getAsJsonObject();
+        JSONObject parse = jsonObject.getJSONObject("parse");
         // Raw text
-        text = parse.get("text").getAsJsonObject().get("*").getAsString();
+        text = parse.getJSONObject("text").getString("*");
         // Get tag
-        for (JsonElement element : parse.get("categories").getAsJsonArray()) {
+        JSONArray elements = parse.getJSONArray("categories");
+        for (int i = 0; i < elements.length(); i++) {
+            JSONObject element = elements.getJSONObject(i);
             // Skip status, type and genres
-            String t = element.getAsJsonObject().get("*").getAsString();
+            String t = element.getString("*");
             if (LightNovel.ProjectGenre.ALL.contains(t)) continue;
             if (LightNovel.ProjectStatus.ALL.contains(t)) continue;
             if (LightNovel.ProjectType.ALL.contains(t)) continue;
@@ -271,17 +268,19 @@ public class PageDownloadService extends IntentService {
                     && figure.selectFirst("img.lazy.media").attr("data-params") != null) {
                 try {
                     String text = figure.selectFirst("img.lazy.media").attr("data-params");
-                    JsonArray imageDescriptions = GSONP.jp.parse(
+                    JSONArray imageDescriptions = new JSONArray(
                             Parser.unescapeEntities(text, true)
-                    ).getAsJsonArray();
+                    );
                     figure.empty();
-                    for (JsonElement id : imageDescriptions) {
+                    for (int i = 0; i < imageDescriptions.length(); i++) {
+                        JSONObject id = imageDescriptions.getJSONObject(i);
                         Element img = new Element("img");
                         img.attr("src",
-                                id.getAsJsonObject().get("full").getAsString());
-                        if (id.getAsJsonObject().get("capt") != null)
+                                id.getString("full"));
+
+                        if (img.attributes().hasKeyIgnoreCase("capt"))
                             img.attr("data-capt",
-                                    id.getAsJsonObject().get("capt").getAsString());
+                                    id.getString("capt"));
                         figure.appendChild(img);
                     }
                 } catch (Exception e) {
