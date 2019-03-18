@@ -1,10 +1,11 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import androidx.room.TypeConverter;
-
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.room.TypeConverter;
+
+@SuppressWarnings("WeakerAccess")
 public class GenresConverter {
 
     public static final String SEPARATOR = ",";
@@ -22,9 +23,9 @@ public class GenresConverter {
     public String fromList(List<String> genres) {
         if (genres == null || genres.isEmpty()) return null;
         StringBuilder str = new StringBuilder(genres.get(0));
-        for (String genre : genres) {
+        for (int i = 1; i < genres.size(); i++) {
             str.append(SEPARATOR)
-                    .append(genre.replace(SEPARATOR, REPLACEMENT));
+                    .append(genres.get(i).replace(SEPARATOR, REPLACEMENT));
         }
         return str.toString();
     }

@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -116,8 +118,8 @@ public class WikiClient {
      * @param titles non URL-encoded
      * @return map of lists of categories for each title. Empty if no category found
      */
-    public Map<String, List<String>> getCategoriesOnPages(List<String> titles) {
-        Map<String, List<String>> map = new HashMap<>();
+    public Map<String, Set<String>> getCategoriesOnPages(List<String> titles) {
+        Map<String, Set<String>> map = new HashMap<>();
         // Divide titles into portion
         int currentIndex = 0;
         List<String> portion = new ArrayList<>();
@@ -158,7 +160,7 @@ public class WikiClient {
                         JSONObject page = pages.getJSONObject(id);
 
                         // Gather
-                        List<String> categories = new ArrayList<>();
+                        Set<String> categories = new HashSet<>();
                         JSONArray cat = page.optJSONArray("categories");
                         if (cat == null) continue;
                         for (int i1 = 0; i1 < cat.length(); i1++) {

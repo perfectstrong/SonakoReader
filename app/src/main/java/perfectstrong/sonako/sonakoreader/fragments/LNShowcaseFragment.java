@@ -70,9 +70,9 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_lnshowcase, container, false);
         RecyclerView recyclerView = rootView.findViewById(R.id.LNTitlesRecyclerView);
+        recyclerView.setAdapter(mAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
 
         // Button to force download
         rootView.findViewById(R.id.LNTitlesNoDatabaseButton)

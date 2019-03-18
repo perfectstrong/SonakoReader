@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -309,9 +310,9 @@ public class LNDatabaseAsyncTask {
         for (LightNovel lightNovel : titles) {
             mapLN.put(lightNovel.getTitle(), lightNovel);
         }
-        Map<String, List<String>> result = wikiClient.getCategoriesOnPages(new ArrayList<>(mapLN.keySet()));
+        Map<String, Set<String>> result = wikiClient.getCategoriesOnPages(new ArrayList<>(mapLN.keySet()));
         for (String lntitle : result.keySet()) {
-            List<String> categories = result.get(lntitle);
+            Set<String> categories = result.get(lntitle);
             LightNovel title = mapLN.get(lntitle);
             assert categories != null;
             for (String category : categories) {

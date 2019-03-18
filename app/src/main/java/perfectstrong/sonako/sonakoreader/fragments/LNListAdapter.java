@@ -165,6 +165,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
             ((TextView) view.findViewById(R.id.lnTitle)).setText(lightNovel.getTitle());
             // Type
             switch (lightNovel.getType()) {
+                case LightNovel.ProjectType.OFFICIAL:
                 case LightNovel.ProjectType.TEASER:
                 case LightNovel.ProjectType.OLN:
                     ((TextView) view.findViewById(R.id.lnType)).setText(lightNovel.getType());
@@ -181,7 +182,9 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                 for (int i = 1; i < genres.size(); i++) {
                     genresStr.append(", ").append(genres.get(i));
                 }
-                ((TextView) view.findViewById(R.id.lnCategories)).setText("Thể loại: " + genresStr);
+                String _genres = genresStr.toString();
+                ((TextView) view.findViewById(R.id.lnCategories)).setText("Thể loại: " + _genres);
+                view.findViewById(R.id.lnCategories).setVisibility(View.VISIBLE);
             } else {
                 view.findViewById(R.id.lnCategories).setVisibility(View.GONE);
             }
