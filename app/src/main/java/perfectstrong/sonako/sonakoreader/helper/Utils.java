@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
@@ -253,7 +254,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param context to get service
      * @return first boolean indicates wifi, second boolean indicates mobile
      */
@@ -274,7 +274,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param context <tt>null</tt> to reference to application context
      * @return <tt>true</tt> if is allowed to download over cellular connection
      */
@@ -288,7 +287,6 @@ public class Utils {
     }
 
     /**
-     *
      * @throws ConnectException when no internet or only allowed to used Wifi
      */
     public static void checkConnection() throws ConnectException {
@@ -298,7 +296,31 @@ public class Utils {
             throw new ConnectException(context.getString(R.string.no_internet));
         } else if (connections[1]
                 && Utils.isNotAuthorizedDownloadingOverCellularConnection(context)) {
-            throw  new ConnectException(context.getString(R.string.not_authorized_cellular));
+            throw new ConnectException(context.getString(R.string.not_authorized_cellular));
         }
+    }
+
+    /**
+     *
+     * @param href direct link
+     * @return <tt>true</tt> if link contains <tt>wikia.nocookie</tt>
+     */
+    public static boolean isInternalImage(@NonNull String href) {
+        return href.contains("wikia.nocookie");
+    }
+
+    /**
+     *
+     * @return <tt>true</tt> if user allows in settings
+     */
+    public static boolean isAllowedToDownloadExternalImages() {
+        Context context = SonakoReaderApp.getContext();
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(
+                        context.getString(
+                                R.string.key_pref_download_external_images),
+                        context.getResources().getBoolean(
+                                R.bool.default_download_external_images)
+                );
     }
 }

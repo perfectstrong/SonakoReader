@@ -300,7 +300,7 @@ public class PageDownloadService extends IntentService {
             String src = img.attr("src");
             if (src.startsWith("http:")) //noinspection ResultOfMethodCallIgnored
                 src = src.replaceFirst("http", "https");
-            if (src.contains("wikia.nocookie")) // direct link from wikia
+            if (Utils.isInternalImage(src)) // direct link from wikia
                 src = src.replaceAll("/revision.*", "");
             img.attr("data-src", src); // Backup
             String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(src)));
@@ -368,43 +368,47 @@ public class PageDownloadService extends IntentService {
         // Saving images
         for (String imageName : imagesLinks.keySet()) {
             String url = imagesLinks.get(imageName);
+            if (url == null) continue; // Skip null link
             File file = new File(dir, imageName);
             if (file.exists() && !forceRefreshImages) // already cached
                 continue;
-
-            // Only download not cached images if not forced
-            publishProgress(getString(R.string.downloading_image) + " " + imageName);
-            String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
-            if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime)) {
-                Log.e(TAG, "Unsupported image extension " + imageName);
-                continue;
-            }
-
-            Bitmap bitmap = null;
-            try (InputStream inputStream = new URL(url).openStream()) {
-                bitmap = BitmapFactory.decodeStream(inputStream);
-            } catch (IOException e) {
-                Log.e(TAG, imageName + " downloading failed", e);
-            }
-
-            if (bitmap == null) continue;
-            try (FileOutputStream fo = new FileOutputStream(file)) {
-                switch (mime) {
-                    case "jpg":
-                    case "jpeg":
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
-                        break;
-                    case "png":
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fo);
-                        break;
-                    case "webp":
-                        bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
-                        break;
-                    default:
-                        throw new UnsupportedOperationException(mime + " unsupported");
+            if (Utils.isInternalImage(url)
+                    || Utils.isAllowedToDownloadExternalImages()) {
+                // If user allows, download external images as it is
+                // Only download not cached images if not forced
+                publishProgress(getString(R.string.downloading_image) + " " + imageName);
+                String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
+                if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime)) {
+                    Log.e(TAG, "Unsupported image extension " + imageName);
+                    continue;
                 }
-            } catch (IOException | UnsupportedOperationException e) {
-                Log.e(TAG, imageName + " saving failed", e);
+
+                Bitmap bitmap = null;
+                try (InputStream inputStream = new URL(url).openStream()) {
+                    bitmap = BitmapFactory.decodeStream(inputStream);
+                } catch (IOException e) {
+                    Log.e(TAG, imageName + " downloading failed", e);
+                }
+
+                if (bitmap == null) continue;
+                try (FileOutputStream fo = new FileOutputStream(file)) {
+                    switch (mime) {
+                        case "jpg":
+                        case "jpeg":
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
+                            break;
+                        case "png":
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fo);
+                            break;
+                        case "webp":
+                            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
+                            break;
+                        default:
+                            throw new UnsupportedOperationException(mime + " unsupported");
+                    }
+                } catch (IOException | UnsupportedOperationException e) {
+                    Log.e(TAG, imageName + " saving failed", e);
+                }
             }
         }
     }
