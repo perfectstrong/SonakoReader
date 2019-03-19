@@ -10,7 +10,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryAdapter;
-import perfectstrong.sonako.sonakoreader.fragments.LNListAdapter;
 
 public class LNDBViewModel extends AndroidViewModel {
 
@@ -36,14 +35,6 @@ public class LNDBViewModel extends AndroidViewModel {
         new FavoriteLNsAsyncTask(lndb, ACTION.UNREGISTER_FAVORITE).execute(lightNovels);
     }
 
-    public void initLoadFavorites(LNListAdapter adapter) {
-        new FavoriteLNsAsyncTask(
-                lndb,
-                ACTION.INIT_LOAD_FAVORITES,
-                adapter
-        ).execute();
-    }
-
     public LiveData<List<Page>> getLiveHistory() {
         return lndb.historyDAO().getLiveHistory();
     }
@@ -61,7 +52,6 @@ public class LNDBViewModel extends AndroidViewModel {
     }
 
     private enum ACTION {
-        INIT_LOAD_FAVORITES,
         REGISTER_FAVORITE,
         UNREGISTER_FAVORITE,
     }
@@ -70,26 +60,15 @@ public class LNDBViewModel extends AndroidViewModel {
 
         private final ACTION action;
         private final LightNovelsDatabase lndb;
-        private LNListAdapter adapter;
-        private List<LightNovel> data;
-
 
         private FavoriteLNsAsyncTask(LightNovelsDatabase lndb, ACTION action) {
             this.lndb = lndb;
             this.action = action;
         }
 
-        private FavoriteLNsAsyncTask(LightNovelsDatabase lndb, ACTION action, LNListAdapter adapter) {
-            this(lndb, action);
-            this.adapter = adapter;
-        }
-
         @Override
         protected Void doInBackground(LightNovel... lightNovels) {
             switch (action) {
-                case INIT_LOAD_FAVORITES:
-                    data = lndb.lnDao().getAllFavorites();
-                    break;
                 case REGISTER_FAVORITE:
                     lndb.lnDao().registerFavorites(lightNovels);
                     break;
@@ -99,19 +78,5 @@ public class LNDBViewModel extends AndroidViewModel {
             }
             return null;
         }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            switch (action) {
-                case INIT_LOAD_FAVORITES:
-                    adapter.setDatalist(data);
-                    break;
-                case REGISTER_FAVORITE:
-                    break;
-                case UNREGISTER_FAVORITE:
-                    break;
-            }
-        }
     }
-
 }

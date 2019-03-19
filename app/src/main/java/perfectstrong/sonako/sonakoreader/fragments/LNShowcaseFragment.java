@@ -46,16 +46,17 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
                 this,
                 titles -> {
                     mAdapter.setDatalist(titles);
-                    this.updateView();
+                    this.updateView(this.getView());
                 }
         );
     }
 
-    private void updateView() {
-        View view = this.getView();
+    private void updateView(View view) {
         if (view == null) return;
         if (mAdapter.haveEmptyLNList()) {
             view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.LNTitlesNoDatabaseButton)
+                    .setOnClickListener(v -> forceDownload());
             view.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.GONE);
         } else {
             view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
@@ -69,23 +70,11 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_lnshowcase, container, false);
+        updateView(rootView);
         RecyclerView recyclerView = rootView.findViewById(R.id.LNTitlesRecyclerView);
-        recyclerView.setAdapter(mAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        // Button to force download
-        rootView.findViewById(R.id.LNTitlesNoDatabaseButton)
-                .setOnClickListener(this::forceDownload);
-
-        // fetch initial data
-        new LNDatabaseAsyncTask.LoadCacheOrDownload(
-                LightNovelsDatabaseClient.getInstance(getContext()),
-                mAdapter,
-                false,
-                this::updateView
-        ).execute();
-
+        recyclerView.setAdapter(mAdapter);
         return rootView;
     }
 
@@ -99,12 +88,10 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         mAdapter.showAll();
     }
 
-    private void forceDownload(View v) {
+    private void forceDownload() {
         new LNDatabaseAsyncTask.LoadCacheOrDownload(
                 LightNovelsDatabaseClient.getInstance(getContext()),
-                mAdapter,
-                true,
-                null
+                true
         ).execute();
     }
 }

@@ -148,6 +148,8 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         viewHolder.initAt(i);
     }
 
+    private static final String TAG = LNTitleViewHolder.class.getSimpleName();
+
     class LNTitleViewHolder extends ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
         View view;
         private LightNovel lightNovel;

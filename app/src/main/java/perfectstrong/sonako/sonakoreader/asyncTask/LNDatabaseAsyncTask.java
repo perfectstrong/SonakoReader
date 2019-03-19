@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
-import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 import perfectstrong.sonako.sonakoreader.helper.WikiClient;
@@ -28,31 +26,20 @@ public class LNDatabaseAsyncTask {
 
     private static final String TAG = LNDatabaseAsyncTask.class.getSimpleName();
 
-    @FunctionalInterface
-    public interface Callback {
-        void updateView();
-    }
-
     /**
      * Load titles from cache. If not downloaded yet, it will fetch from server then cache it.
      */
     public static class LoadCacheOrDownload extends AsyncTask<Void, String, Void> {
         private final LightNovelsDatabase lndb;
-        private final Callback callback;
         private List<LightNovel> titles;
         private WikiClient wikiClient;
-        private WeakReference<LNShowcaseAdapter> adapter;
         private final boolean forceDownload;
         private Exception exception;
 
         public LoadCacheOrDownload(LightNovelsDatabase lndb,
-                                   LNShowcaseAdapter adapter,
-                                   boolean forceDownload,
-                                   Callback callback) {
+                                   boolean forceDownload) {
             this.lndb = lndb;
-            this.adapter = new WeakReference<>(adapter);
             this.forceDownload = forceDownload;
-            this.callback = callback;
         }
 
         private void downloadAll() {
@@ -120,10 +107,6 @@ public class LNDatabaseAsyncTask {
                                 + exception.getMessage(),
                         Toast.LENGTH_SHORT
                 ).show();
-            } else {
-                adapter.get().setDatalist(titles);
-                if (callback != null)
-                    this.callback.updateView();
             }
         }
     }

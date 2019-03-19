@@ -41,7 +41,6 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
         );
         // Observer
         viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, mAdapter::setDatalist);
-        viewModel.initLoadFavorites(mAdapter);
     }
 
     @Override
