@@ -74,7 +74,7 @@ public class LNDatabaseAsyncTask {
                 titles = lndb.lnDao().getAll();
                 if (titles.size() == 0 && forceDownload) {
                     // Connection check
-                    Utils.checkConnection(SonakoReaderApp.getContext());
+                    Utils.checkConnection();
 
                     downloadAll();
                     titles = lndb.lnDao().getAll();
@@ -140,7 +140,7 @@ public class LNDatabaseAsyncTask {
         protected Void doInBackground(Void... voids) {
             try {
                 // Connection check
-                Utils.checkConnection(SonakoReaderApp.getContext());
+                Utils.checkConnection();
 
                 // Real start
                 this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);

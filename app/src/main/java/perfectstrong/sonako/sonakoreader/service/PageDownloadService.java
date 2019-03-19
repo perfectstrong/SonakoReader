@@ -138,7 +138,7 @@ public class PageDownloadService extends IntentService {
         }
         // Connection check
         try {
-            Utils.checkConnection(this);
+            Utils.checkConnection();
         } catch (ConnectException e) {
             postToast(e.getMessage());
             stopSelf();
@@ -371,6 +371,7 @@ public class PageDownloadService extends IntentService {
             File file = new File(dir, imageName);
             if (file.exists() && !forceRefreshImages) // already cached
                 continue;
+
             // Only download not cached images if not forced
             publishProgress(getString(R.string.downloading_image) + " " + imageName);
             String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();

@@ -273,6 +273,11 @@ public class Utils {
         return new boolean[]{haveConnectedWifi, haveConnectedMobile};
     }
 
+    /**
+     *
+     * @param context <tt>null</tt> to reference to application context
+     * @return <tt>true</tt> if is allowed to download over cellular connection
+     */
     public static boolean isNotAuthorizedDownloadingOverCellularConnection(Context context) {
         return !Objects.requireNonNull(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
@@ -282,7 +287,12 @@ public class Utils {
                 .equals(context.getString(R.string.download_when_cellular_value));
     }
 
-    public static void checkConnection(Context context) throws ConnectException {
+    /**
+     *
+     * @throws ConnectException when no internet or only allowed to used Wifi
+     */
+    public static void checkConnection() throws ConnectException {
+        Context context = SonakoReaderApp.getContext();
         boolean[] connections = Utils.getNetworkConnection(context);
         if (!connections[0] && !connections[1]) {
             throw new ConnectException(context.getString(R.string.no_internet));
