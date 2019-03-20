@@ -14,9 +14,9 @@
         android:name=".SonakoReaderApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@mipmap/ic_new_launcher"
         android:roundIcon="@mipmap/ic_new_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -48,6 +48,7 @@
 
         <service
             android:name=".service.PageDownloadService"
+            android:icon="@mipmap/ic_new_launcher"
             android:exported="false" />
     </application>
 
