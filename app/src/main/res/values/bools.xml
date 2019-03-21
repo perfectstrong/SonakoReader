@@ -2,4 +2,5 @@
 <resources>
     <bool name="default_download_external_images">false</bool>
     <bool name="default_download_noncached_pages">false</bool>
+    <bool name="default_download_webp">true</bool>
 </resources>

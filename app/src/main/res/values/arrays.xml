@@ -19,9 +19,11 @@
     <string-array name="pref_download_wikia_images">
         <item>@string/download_wikia_images_original</item>
         <item>@string/download_wikia_images_adaptive</item>
+        <item>@string/download_wikia_images_not_over_1024px</item>
     </string-array>
     <string-array name="pref_download_images_values">
         <item>@string/download_wikia_images_original_value</item>
         <item>@string/download_wikia_images_adaptive_value</item>
+        <item>@string/download_wikia_images_not_over_1024px_value</item>
     </string-array>
 </resources>

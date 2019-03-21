@@ -67,10 +67,12 @@
     <string name="download_when_cellular_value">cellular</string>
     <string name="key_pref_download_when">key_pref_download_when</string>
     <string name="title_pref_download_when">Khi nào được phép tải?</string>
-    <string name="download_wikia_images_adaptive">Vừa đủ</string>
     <string name="download_wikia_images_original">Nguyên gốc</string>
+    <string name="download_wikia_images_adaptive">Không rộng quá màn hình ngang</string>
+    <string name="download_wikia_images_not_over_1024px">Không rộng quá 1024px</string>
     <string name="download_wikia_images_original_value">original</string>
     <string name="download_wikia_images_adaptive_value">adaptive</string>
+    <string name="download_wikia_images_not_over_1024px_value">1024</string>
     <string name="key_pref_download_wikia_images">key_pref_download_wikia_images</string>
     <string name="title_pref_download_wikia_images">Chất lượng ảnh</string>
     <string name="pref_grp_database">Cơ sở dữ liệu</string>
@@ -83,7 +85,7 @@
     <string name="title_clear_history">Xóa lịch sử đọc</string>
     <string name="default_download_when">@string/download_when_wifi_value</string>
     <string name="default_skin">@string/skin_holy_value</string>
-    <string name="default_download_wikia_images">@string/download_wikia_images_original_value</string>
+    <string name="default_download_wikia_images">@string/download_wikia_images_not_over_1024px_value</string>
     <string name="summary_download_noncached_pages">Mỗi khi nhấp vào link chưa có trong bộ nhớ</string>
     <string name="summary_download_external_images">Chú ý: Hình ảnh ngoài wikia sẽ không được nén kích cỡ khi tải</string>
     <string name="wanna_download">Trang này chưa được tải. Bạn có muốn tải?</string>
@@ -93,4 +95,7 @@
     <string name="not_authorized_cellular">Hãy tiết kiệm 3G-4G!</string>
     <string name="title_download_options">Thiết lập tải</string>
     <string name="title_interface_options">Giao diện</string>
+    <string name="key_download_webp">key_download_webp</string>
+    <string name="title_pref_download_webp">Ưu tiên dùng webp</string>
+    <string name="summary_download_webp">Với các file lớn, webp nhỏ nhẹ hơn các định dạng khác nhiều lần. Tuy nhiên, Android 4 không hỗ trợ webp đầy đủ.</string>
 </resources>

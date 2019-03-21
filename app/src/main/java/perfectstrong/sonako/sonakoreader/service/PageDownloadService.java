@@ -25,7 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.Response;
@@ -51,7 +53,7 @@ public class PageDownloadService extends IntentService {
     private boolean forceRefreshImages;
     private WikiClient wiki;
     private String text;
-    private Map<String, String> imagesLinks = new HashMap<>();
+    private Map<String, Element> imagesLinks = new HashMap<>();
     private Handler mHandler;
 
     public static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
@@ -59,6 +61,7 @@ public class PageDownloadService extends IntentService {
 
     private static Map<String, String> tasks;
     private boolean downloadFailedImages;
+    private Document doc;
 
     public PageDownloadService() {
         super(TAG);
@@ -195,10 +198,10 @@ public class PageDownloadService extends IntentService {
                 Utils.getTextFile(title, tag),
                 "UTF-8");
         for (Element img : doc.getElementsByTag("img")) {
-            String src = img.attr("data-src");
-            String imgName = img.attr("src");
+            String imgName = Utils.sanitize(
+                    Utils.getFileNameFromURL(Utils.decode(img.attr("src"))));
             if (!imgName.equals("")) {
-                imagesLinks.put(imgName, src);
+                imagesLinks.put(imgName, img);
             }
         }
     }
@@ -251,7 +254,7 @@ public class PageDownloadService extends IntentService {
 
     private void preprocess() {
         publishProgress(getString(R.string.preprocessing_text) + " " + title);
-        Document doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
+        doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
         // Retain local navigator
         Element localNav = doc.selectFirst(".localNav");
         // Remove unrelated section
@@ -277,7 +280,6 @@ public class PageDownloadService extends IntentService {
                         Element img = new Element("img");
                         img.attr("src",
                                 id.getString("full"));
-
                         if (img.attributes().hasKeyIgnoreCase("capt"))
                             img.attr("data-capt",
                                     id.getString("capt"));
@@ -302,11 +304,13 @@ public class PageDownloadService extends IntentService {
                 src = src.replaceFirst("http", "https");
             if (Utils.isInternalImage(src)) // direct link from wikia
                 src = src.replaceAll("/revision.*", "");
-            img.attr("data-src", src); // Backup
+            img.removeAttr("width"); // Let viewer client decide later
+            img.removeAttr("height"); // Let viewer client decide later
             String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(src)));
             if (!imgName.equals("")) {
-                img.attr("src", imgName); // To load from local
-                imagesLinks.put(imgName, src);
+                imagesLinks.put(imgName, img); // Caching temporarily
+                img.attr("data-src", src);
+                img.attr("src", "");
             }
         }
         // Fix empty tags
@@ -340,7 +344,6 @@ public class PageDownloadService extends IntentService {
                 .appendElement("meta")
                 .attr("name", "viewport")
                 .attr("content", "width=device-width, initial-scale=1");
-        text = doc.outerHtml();
     }
 
     private void cacheText() {
@@ -353,30 +356,35 @@ public class PageDownloadService extends IntentService {
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(
                         new FileOutputStream(content), "UTF-8"))) {
-            writer.write(text);
+            writer.write(doc.outerHtml());
         } catch (IOException e) {
             Log.e(TAG, "Text caching failed", e);
         }
     }
 
     private void downloadImages() {
-        Log.d(TAG, imagesLinks.toString());
         // Save location
         File dir = new File(saveLocation);
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
+        // Compress images to adapt to max length of screen
+        compressWikiaImages();
         // Saving images
         for (String imageName : imagesLinks.keySet()) {
-            String url = imagesLinks.get(imageName);
+            Element img = imagesLinks.get(imageName);
+            assert img != null;
+            String url = img.attr("data-src");
             if (url == null) continue; // Skip null link
             File file = new File(dir, imageName);
             if (file.exists() && !forceRefreshImages) // already cached
                 continue;
-            if (Utils.isInternalImage(url)
+            boolean isInternalImage = Utils.isInternalImage(url);
+            if (isInternalImage
                     || Utils.isAllowedToDownloadExternalImages()) {
                 // If user allows, download external images as it is
                 // Only download not cached images if not forced
                 publishProgress(getString(R.string.downloading_image) + " " + imageName);
+                Log.d(TAG, "imageName = " + imageName + ", link = " + url);
                 String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
                 if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime)) {
                     Log.e(TAG, "Unsupported image extension " + imageName);
@@ -409,6 +417,33 @@ public class PageDownloadService extends IntentService {
                 } catch (IOException | UnsupportedOperationException e) {
                     Log.e(TAG, imageName + " saving failed", e);
                 }
+                // Refer to cached image
+                img.attr("src", imageName);
+            }
+        }
+    }
+
+    private void compressWikiaImages() {
+        if (Utils.isAllowedToDownloadOriginalImages())
+            return;
+        int maxImageWidth = Utils.getPreferredSize();
+        Log.d(TAG, "maxImageWidth = " + maxImageWidth);
+        List<String> wikiImgList = new ArrayList<>();
+        for (String imageName : imagesLinks.keySet()) {
+            Element img = imagesLinks.get(imageName);
+            assert img != null;
+            String src = img.attr("data-src");
+            if (Utils.isInternalImage(src)) {
+                wikiImgList.add(imageName);
+            }
+        }
+        // Image name with resizing url
+        Map<String, String> resizedImgLinks = wiki.resizeToWidth(maxImageWidth, wikiImgList);
+        for (String imgName : resizedImgLinks.keySet()) {
+            String resizingURL = resizedImgLinks.get(imgName);
+            Element img = imagesLinks.get(imgName);
+            if (resizingURL != null && img != null) {
+                img.attr("data-src", resizingURL);
             }
         }
     }

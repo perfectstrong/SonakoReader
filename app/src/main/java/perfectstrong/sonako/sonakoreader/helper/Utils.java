@@ -2,10 +2,12 @@ package perfectstrong.sonako.sonakoreader.helper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.preference.PreferenceManager;
+import android.view.Display;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.net.ConnectException;
@@ -16,6 +18,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
@@ -301,7 +304,6 @@ public class Utils {
     }
 
     /**
-     *
      * @param href direct link
      * @return <tt>true</tt> if link contains <tt>wikia.nocookie</tt>
      */
@@ -310,7 +312,6 @@ public class Utils {
     }
 
     /**
-     *
      * @return <tt>true</tt> if user allows in settings
      */
     public static boolean isAllowedToDownloadExternalImages() {
@@ -322,5 +323,49 @@ public class Utils {
                         context.getResources().getBoolean(
                                 R.bool.default_download_external_images)
                 );
+    }
+
+    /**
+     * @return <tt>true</tt> if allowed to download original wikia image
+     */
+    public static boolean isAllowedToDownloadOriginalImages() {
+        Context context = SonakoReaderApp.getContext();
+        return context.getString(R.string.download_wikia_images_original_value)
+                .equals(
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                                .getString(
+                                        context.getString(R.string.key_pref_download_wikia_images),
+                                        context.getString(R.string.default_download_wikia_images)
+                                )
+                );
+    }
+
+    /**
+     * @return 2 integers: first describes horizontal size, second describes vertical size
+     */
+    public static Point getScreenSize() {
+        Context context = SonakoReaderApp.getContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size;
+    }
+
+    public static int getPreferredSize() {
+        Context context = SonakoReaderApp.getContext();
+        if (context.getString(R.string.download_wikia_images_not_over_1024px_value)
+                .equals(
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                                .getString(
+                                        context.getString(R.string.key_pref_download_wikia_images),
+                                        context.getString(R.string.default_download_wikia_images)
+                                )
+                ))
+            return Integer.parseInt(context.getString(R.string.download_wikia_images_not_over_1024px_value));
+        else {
+            Point size = getScreenSize();
+            return Math.max(size.x, size.y);
+        }
     }
 }

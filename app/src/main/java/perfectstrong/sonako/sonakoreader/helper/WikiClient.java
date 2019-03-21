@@ -29,6 +29,7 @@ public class WikiClient {
     private HttpUrl apiEndpoint;
     private static final int MAX_TITLES_PER_CALL = 50;
     private static final int CATEGORIES_LIST_MAX = 500;
+    private static final int MAX_IMG_RESIZED_PER_CALL = 50;
 
     public WikiClient(String apiEndpoint, String userAgent) {
         okHttpClient = new OkHttpClient();
@@ -233,5 +234,63 @@ public class WikiClient {
                         .header("User-Agent", USER_AGENT)
                         .build()
         ).execute();
+    }
+
+    /**
+     * @param width       -1 equals original size
+     * @param wikiImgList name of images, including extension but excluding prefix "File:"
+     * @return map of images with their prepared resized versions' links. Img not found will get
+     * value <tt>null</tt>
+     */
+    public Map<String, String> resizeToWidth(int width, List<String> wikiImgList) {
+        Map<String, String> links = new HashMap<>();
+        // Prepare names
+        List<String> wikiImgListPrefixed = new ArrayList<>();
+        for (String imgName : wikiImgList) {
+            wikiImgListPrefixed.add("File:" + imgName);
+        }
+        // Divide list into portions
+        int currentIndex = 0;
+        List<String> portion = new ArrayList<>();
+        while (currentIndex < wikiImgListPrefixed.size()) {
+            portion.addAll(wikiImgListPrefixed.subList(currentIndex,
+                    Math.min(currentIndex + MAX_IMG_RESIZED_PER_CALL, wikiImgListPrefixed.size())));
+            String titlesConcat = concatNonEncodedParams(portion.toArray(new String[0]));
+            try (Response response = GET(
+                    "query",
+                    "prop", "imageinfo",
+                    "titles", titlesConcat,
+                    "iiprop", "url",
+                    "iiurlwidth", String.valueOf(width),
+                    "indexpageids", "true"
+            )) {
+                assert response.body() != null;
+                String str = response.body().string();
+                JSONObject res = new JSONObject(str);
+                JSONObject query = res.getJSONObject("query");
+                JSONArray pageids = query.getJSONArray("pageids");
+                JSONObject pages = query.getJSONObject("pages");
+                for (int i = 0; i < pageids.length(); i++) {
+                    String id = pageids.getString(i);
+                    JSONObject page = pages.getJSONObject(id);
+                    String title = page.getString("title").substring("File:".length());
+                    // If file exists
+                    if (page.optString("pageid") != null)
+                        links.put(
+                                title,
+                                page.getJSONArray("imageinfo")
+                                        .getJSONObject(0)
+                                        .getString("thumburl")
+                        );
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+
+            // Continue with new portion
+            currentIndex += portion.size();
+            portion.clear();
+        }
+        return links;
     }
 }
