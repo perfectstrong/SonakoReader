@@ -51,7 +51,7 @@
     <string name="app_name_short">SNK Reader</string>
     <string name="download_db">Cơ sở dữ liệu chưa có.</string>
     <string name="refresh_missing_images">Tải lại hình ảnh bị thiếu</string>
-    <string name="title_pref_skins">Giao diện</string>
+    <string name="title_pref_skins">Chủ đề</string>
     <string name="key_pref_skins">key_pref_skins</string>
     <string name="title_pref_download_external_images">Tải ảnh ngoài wikia về</string>
     <string name="key_pref_download_external_images">key_pref_download_external_images</string>
@@ -73,7 +73,6 @@
     <string name="download_wikia_images_adaptive_value">adaptive</string>
     <string name="key_pref_download_wikia_images">key_pref_download_wikia_images</string>
     <string name="title_pref_download_wikia_images">Chất lượng ảnh</string>
-    <string name="pref_grp_preferences">Thiết lập</string>
     <string name="pref_grp_database">Cơ sở dữ liệu</string>
     <string name="pref_grp_app_info">Thông tin</string>
     <string name="summary_pref_about">Tàng kinh các cho đêm trường không trăng không net</string>
@@ -92,4 +91,6 @@
     <string name="update_completed">Đã cập nhật xong</string>
     <string name="no_internet">Không có internet</string>
     <string name="not_authorized_cellular">Hãy tiết kiệm 3G-4G!</string>
+    <string name="title_download_options">Thiết lập tải</string>
+    <string name="title_interface_options">Giao diện</string>
 </resources>
