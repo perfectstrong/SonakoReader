@@ -33,7 +33,7 @@
         <CheckBoxPreference
             android:id="@+id/pref_download_webp"
             android:defaultValue="@bool/default_download_webp"
-            android:key="@string/key_download_webp"
+            android:key="@string/key_pref_download_webp"
             android:summary="@string/summary_download_webp"
             android:title="@string/title_pref_download_webp" />
         <CheckBoxPreference

@@ -95,7 +95,7 @@
     <string name="not_authorized_cellular">Hãy tiết kiệm 3G-4G!</string>
     <string name="title_download_options">Thiết lập tải</string>
     <string name="title_interface_options">Giao diện</string>
-    <string name="key_download_webp">key_download_webp</string>
+    <string name="key_pref_download_webp">key_download_webp</string>
     <string name="title_pref_download_webp">Ưu tiên dùng webp</string>
     <string name="summary_download_webp">Với các file lớn, webp nhỏ nhẹ hơn các định dạng khác nhiều lần. Tuy nhiên, Android 4 không hỗ trợ webp đầy đủ.</string>
 </resources>

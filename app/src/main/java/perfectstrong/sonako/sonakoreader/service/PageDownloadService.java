@@ -24,13 +24,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
@@ -370,6 +373,7 @@ public class PageDownloadService extends IntentService {
         // Compress images to adapt to max length of screen
         compressWikiaImages();
         // Saving images
+        OkHttpClient client = new OkHttpClient();
         for (String imageName : imagesLinks.keySet()) {
             Element img = imagesLinks.get(imageName);
             assert img != null;
@@ -384,23 +388,42 @@ public class PageDownloadService extends IntentService {
                 // If user allows, download external images as it is
                 // Only download not cached images if not forced
                 publishProgress(getString(R.string.downloading_image) + " " + imageName);
-                Log.d(TAG, "imageName = " + imageName + ", link = " + url);
-                String mime = imageName.substring(imageName.lastIndexOf(".") + 1).toLowerCase();
-                if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime)) {
-                    Log.e(TAG, "Unsupported image extension " + imageName);
+
+                Request.Builder requestBuilder = new Request.Builder().url(url);
+                if (Utils.isWebpPreferred()) // Check webp
+                    requestBuilder.addHeader("Accept", "image/webp,image/*;q=0.8");
+                Request request = requestBuilder.build();
+
+                Bitmap bitmap;
+                MediaType mime;
+                try (Response response = client.newCall(request).execute()) {
+                    ResponseBody body = response.body();
+                    assert body != null;
+                    try (InputStream inputStream = body.byteStream()) {
+                        bitmap = BitmapFactory.decodeStream(inputStream);
+                    }
+                    mime = body.contentType();
+                } catch (IOException e) {
+                    Log.e(TAG, imageName + " downloading failed", e);
                     continue;
                 }
 
-                Bitmap bitmap = null;
-                try (InputStream inputStream = new URL(url).openStream()) {
-                    bitmap = BitmapFactory.decodeStream(inputStream);
-                } catch (IOException e) {
-                    Log.e(TAG, imageName + " downloading failed", e);
+                assert mime != null;
+                if (!mime.type().equals("image")) {
+                    Log.e(TAG, "Not an image: " + url);
+                    continue;
                 }
+                if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime.subtype())) {
+                    Log.e(TAG, "Unsupported image extension " + imageName);
+                    continue;
+                }
+                // Change extension
+                imageName = imageName.substring(0, imageName.lastIndexOf(".")) + "." + mime.subtype();
+                file = new File(dir, imageName);
 
-                if (bitmap == null) continue;
+                // Saving
                 try (FileOutputStream fo = new FileOutputStream(file)) {
-                    switch (mime) {
+                    switch (mime.subtype()) {
                         case "jpg":
                         case "jpeg":
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
@@ -412,13 +435,14 @@ public class PageDownloadService extends IntentService {
                             bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
                             break;
                         default:
-                            throw new UnsupportedOperationException(mime + " unsupported");
+                            throw new UnsupportedOperationException(mime.subtype() + " unsupported");
                     }
                 } catch (IOException | UnsupportedOperationException e) {
                     Log.e(TAG, imageName + " saving failed", e);
                 }
                 // Refer to cached image
                 img.attr("src", imageName);
+                Log.d(TAG, "imageName = " + imageName + ", link = " + url);
             }
         }
     }

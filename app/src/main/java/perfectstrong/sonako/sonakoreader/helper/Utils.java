@@ -368,4 +368,13 @@ public class Utils {
             return Math.max(size.x, size.y);
         }
     }
+
+    public static boolean isWebpPreferred() {
+        Context context = SonakoReaderApp.getContext();
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(
+                        context.getString(R.string.key_pref_download_webp),
+                        context.getResources().getBoolean(R.bool.default_download_webp)
+                );
+    }
 }
