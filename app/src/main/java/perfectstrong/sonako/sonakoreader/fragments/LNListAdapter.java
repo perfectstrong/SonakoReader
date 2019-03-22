@@ -32,6 +32,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
     List<LightNovel> lnList = new ArrayList<>();
     protected Context context;
     private LNDBViewModel viewModel;
+    private boolean onFilter = false;
 
     LNListAdapter(Context context, LNDBViewModel viewModel) {
         this.context = context;
@@ -41,7 +42,8 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
     public void setDatalist(List<LightNovel> titles) {
         _lnList.clear();
         _lnList.addAll(titles);
-        loadByChunk(_lnList);
+        if (!onFilter)
+            loadByChunk(_lnList);
     }
 
     private void loadByChunk(List<LightNovel> list) {
@@ -68,6 +70,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                       String type,
                       String status,
                       String[] genres) {
+        onFilter = true;
         List<LightNovel> filteredList = new ArrayList<>();
         for (LightNovel ln : _lnList) {
             boolean ok = true;
@@ -132,7 +135,8 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
     }
 
     void showAll() {
-        loadByChunk(_lnList);
+        onFilter = false;
+        setDatalist(_lnList);
     }
 
     @NonNull
