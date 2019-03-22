@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -158,7 +159,7 @@ public class LNDatabaseAsyncTask {
                 orderTitlesAlphabetically(titles);
 
                 publishProgress(context.getString(R.string.caching_ln_list));
-                cacheLNDB(lndb, titles);
+                updateLNDB(lndb, titles);
             } catch (Exception e) {
                 exception = e;
                 Log.e(TAG, e.getMessage(), e);
@@ -246,7 +247,7 @@ public class LNDatabaseAsyncTask {
     private static void downloadTeaserProjects(WikiClient wikiClient,
                                                List<LightNovel> titles) {
         List<String> teasers = wikiClient.getCategoryMembers(LightNovel.ProjectType.TEASER, "0", "max");
-        for (String title: teasers) {
+        for (String title : teasers) {
             LightNovel teaser = new LightNovel(title);
             teaser.setType(LightNovel.ProjectType.TEASER);
             titles.add(teaser);
@@ -262,7 +263,7 @@ public class LNDatabaseAsyncTask {
     private static void downloadOLNProjects(WikiClient wikiClient,
                                             List<LightNovel> titles) {
         List<String> olns = wikiClient.getCategoryMembers(LightNovel.ProjectType.OLN, "0", "max");
-        for (String title: olns) {
+        for (String title : olns) {
             LightNovel teaser = new LightNovel(title);
             teaser.setType(LightNovel.ProjectType.OLN);
             titles.add(teaser);
@@ -333,5 +334,23 @@ public class LNDatabaseAsyncTask {
                                   List<LightNovel> titles) {
         // Bulk update type and status db
         lndb.lnDao().insert(titles.toArray(new LightNovel[0]));
+    }
+
+    private static void updateLNDB(LightNovelsDatabase lndb,
+                                   List<LightNovel> newTitles) {
+        List<LightNovel> oldFavorites = lndb.lnDao().getAllFavorites();
+        // Quick index
+        Map<String, LightNovel> map = new HashMap<>();
+        for (LightNovel ln : oldFavorites) {
+            map.put(ln.getTitle(), ln);
+        }
+        // Conserve favorite status
+        for (LightNovel ln: newTitles) {
+            if (map.containsKey(ln.getTitle()))
+                ln.setFavorite(
+                        Objects.requireNonNull(map.get(ln.getTitle())).isFavorite());
+        }
+        // Bulk update and replace
+        lndb.lnDao().update(newTitles.toArray(new LightNovel[0]));
     }
 }

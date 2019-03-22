@@ -1,13 +1,16 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-import androidx.annotation.NonNull;
+import android.os.Build;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 @Entity()
 @TypeConverters(GenresConverter.class)
@@ -77,6 +80,15 @@ public class LightNovel {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    @Override
+    public int hashCode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return Objects.hash(title);
+        } else {
+            return super.hashCode();
+        }
     }
 
     public static class ProjectType {
