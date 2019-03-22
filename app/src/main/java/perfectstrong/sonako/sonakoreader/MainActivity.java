@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 (dialog, which) -> {
                     // Filter
                     String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
-                            .getText().toString();
+                            .getText().toString().trim();
                     String type = typesSpinner.getSelectedItem().toString();
                     String status = statusSpinner.getSelectedItem().toString();
                     String[] genres = genresTextView.getText().toString().split("\\s*,\\s*");

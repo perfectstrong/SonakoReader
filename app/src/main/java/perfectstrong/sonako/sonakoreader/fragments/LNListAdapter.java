@@ -51,14 +51,17 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         notifyDataSetChanged();
         int currentIndex = 0;
         int chunksize = 25;
-        while (currentIndex < list.size()) {
-            lnList.addAll(list.subList(
-                    currentIndex,
-                    Math.min(currentIndex + chunksize, list.size()))
-            );
-            currentIndex += chunksize;
+        if (list.size() == 0)
             notifyDataSetChanged();
-        }
+        else
+            while (currentIndex < list.size()) {
+                lnList.addAll(list.subList(
+                        currentIndex,
+                        Math.min(currentIndex + chunksize, list.size()))
+                );
+                currentIndex += chunksize;
+                notifyDataSetChanged();
+            }
     }
 
     @Override
@@ -131,12 +134,16 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
             filteredList.add(ln);
         }
         // Show
+        show(filteredList);
+    }
+
+    private void show(List<LightNovel> filteredList) {
         loadByChunk(filteredList);
     }
 
     void showAll() {
         onFilter = false;
-        setDatalist(_lnList);
+        show(_lnList);
     }
 
     @NonNull
