@@ -26,4 +26,16 @@
         <item>@string/download_wikia_images_adaptive_value</item>
         <item>@string/download_wikia_images_not_over_1024px_value</item>
     </string-array>
+    <string-array name="pages">
+        <item>@string/page_ln_showcase</item>
+        <item>@string/page_ln_favorites</item>
+        <item>@string/page_history</item>
+        <item>@string/page_download</item>
+    </string-array>
+    <string-array name="pages_index">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
 </resources>

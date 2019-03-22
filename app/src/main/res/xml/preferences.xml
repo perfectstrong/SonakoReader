@@ -8,6 +8,13 @@
             android:key="@string/key_pref_skins"
             android:summary="%s"
             android:title="@string/title_pref_skins" />
+        <ListPreference
+            android:defaultValue="@string/default_first_page"
+            android:entries="@array/pages"
+            android:entryValues="@array/pages_index"
+            android:key="@string/key_pref_first_page"
+            android:summary="%s"
+            android:title="@string/title_pref_first_page" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/title_download_options">
         <ListPreference

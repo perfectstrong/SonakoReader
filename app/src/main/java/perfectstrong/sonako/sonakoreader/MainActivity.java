@@ -31,16 +31,11 @@ import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String LN_SHOW_CASE = "Danh sách";
-    private static final String FAVORITE_LNs = "Yêu thích";
-    private static final String HISTORY = "Lịch sử";
-    private static final String DOWNLOAD_ACTIVITIES = "Download";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         setContentView(R.layout.main_activity);
@@ -50,28 +45,32 @@ public class MainActivity extends AppCompatActivity {
 
         ViewPager viewPager = findViewById(R.id.viewpager);
         MainActivityPagerAdapter adapter = new MainActivityPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new LNShowcaseFragment(), LN_SHOW_CASE);
-        adapter.addFragment(new FavoriteLNsFragment(), FAVORITE_LNs);
-        adapter.addFragment(new HistoryFragment(), HISTORY);
-        adapter.addFragment(PageDownloadFragment.getInstance(), DOWNLOAD_ACTIVITIES);
+        // In order of @array/pref_first_page_values
+        adapter.addFragment(new LNShowcaseFragment(), getString(R.string.page_ln_showcase));
+        adapter.addFragment(new FavoriteLNsFragment(), getString(R.string.page_ln_favorites));
+        adapter.addFragment(new HistoryFragment(), getString(R.string.page_history));
+        adapter.addFragment(PageDownloadFragment.getInstance(), getString(R.string.page_download));
         viewPager.setAdapter(adapter);
+        // Set first page
+        String first = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.key_pref_first_page),
+                        getResources().getString(R.string.default_first_page));
+        assert first != null;
+        viewPager.setCurrentItem(Integer.parseInt(first) - 1);
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
 
         final FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(l -> {
-            switch (adapter.getPageTitle(viewPager.getCurrentItem())) {
-                case LN_SHOW_CASE:
-                case FAVORITE_LNs:
-                    showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
-                    break;
-                case DOWNLOAD_ACTIVITIES:
-                    break;
-                case HISTORY:
-                    break;
-                default:
-                    break;
+            String s = adapter.getPageTitle(viewPager.getCurrentItem());
+            if (getString(R.string.page_ln_showcase).equals(s)
+                    || getString(R.string.page_ln_favorites).equals(s)) {
+                showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
+            } else if (getString(R.string.page_history).equals(s)) {
+                // TODO filter on title
+            } else if (getString(R.string.page_download).equals(s)) {
+                // Nothing
             }
         });
     }
