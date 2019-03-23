@@ -328,8 +328,10 @@ public class PageDownloadService extends IntentService {
                 href = href.substring("/wiki/".length());
                 if (Utils.isMainpage(href)) {
                     // Main page
+                    href = Utils.removeSubtrait(Utils.decode(href));
                     element.attr("href",
-                            Utils.sanitize(Utils.decode(href)) + ".html"
+                            Utils.sanitize(href) + ".html"
+                            + "?title=" + href
                     );
                     element.attr("data-ns", "0"); // Main page namespace
                 } else {

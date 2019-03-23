@@ -130,10 +130,11 @@ public class PageReadingActivity extends AppCompatActivity {
             String u = Uri.decode(url);
             Log.d(TAG, "Opening link " + u);
             Context context = view.getContext();
-            if (u.startsWith(LINK_PREFIX)) {
+            if (u.startsWith(LINK_PREFIX) && u.contains("?title=")) {
                 // Maybe this is an internal page, indicating a chapter
-                String newTitle = u.replace(LINK_PREFIX, "")
-                        .replace(".html", "");
+                String newTitle = u.substring(
+                        u.lastIndexOf("?title=") + "?title=".length()
+                );
                 Log.d(TAG, "Opening internal link " + newTitle);
                 Utils.openOrDownload(
                         context,
