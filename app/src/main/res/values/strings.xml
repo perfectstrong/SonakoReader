@@ -74,7 +74,7 @@
     <string name="download_wikia_images_adaptive_value">adaptive</string>
     <string name="download_wikia_images_not_over_1024px_value">1024</string>
     <string name="key_pref_download_wikia_images">key_pref_download_wikia_images</string>
-    <string name="title_pref_download_wikia_images">Chất lượng ảnh</string>
+    <string name="title_pref_download_wikia_images">Kích thước ảnh</string>
     <string name="pref_grp_database">Cơ sở dữ liệu</string>
     <string name="pref_grp_app_info">Thông tin</string>
     <string name="summary_pref_about">Tàng kinh các cho đêm trường không trăng không net</string>
