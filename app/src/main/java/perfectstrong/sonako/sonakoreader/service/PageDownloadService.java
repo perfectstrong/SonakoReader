@@ -331,7 +331,7 @@ public class PageDownloadService extends IntentService {
                     href = Utils.removeSubtrait(Utils.decode(href));
                     element.attr("href",
                             Utils.sanitize(href) + ".html"
-                            + "?title=" + href
+                                    + "?title=" + href
                     );
                     element.attr("data-ns", "0"); // Main page namespace
                 } else {
@@ -382,8 +382,18 @@ public class PageDownloadService extends IntentService {
             String url = img.attr("data-src");
             if (url == null) continue; // Skip null link
             File file = new File(dir, imageName);
-            if (file.exists() && !forceRefreshImages) // already cached
-                continue;
+            if (!forceRefreshImages) {
+                // Already cached original
+                if (file.exists())
+                    continue;
+                // Already cached webp
+                String imgWebp = imageName.substring(0, imageName.lastIndexOf(".")) + ".webp";
+                if (new File(dir, imgWebp).exists()) {
+                    // Refer to cached image
+                    img.attr("src", imgWebp);
+                    continue;
+                }
+            }
             boolean isInternalImage = Utils.isInternalImage(url);
             if (isInternalImage
                     || Utils.isAllowedToDownloadExternalImages()) {
