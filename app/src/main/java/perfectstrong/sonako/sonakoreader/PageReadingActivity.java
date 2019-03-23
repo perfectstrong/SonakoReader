@@ -153,13 +153,23 @@ public class PageReadingActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            injectCSS(view, Config.SKIN_BASE);
-            injectCSS(view, Utils.getCurrentSkin());
+            loadAssetIntoHead(view,
+                    "style",
+                    "text/css",
+                    "css/" + Config.SKIN_BASE + ".css");
+            loadAssetIntoHead(view,
+                    "style",
+                    "text/css",
+                    "css/" + Utils.getCurrentSkin() + ".css");
+            loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
         }
 
-        void injectCSS(WebView view, String skinName) {
+        private void loadAssetIntoHead(WebView view,
+                                       String elementType,
+                                       String srcType,
+                                       String filepath) {
             try {
-                InputStream inputStream = getAssets().open("css/" + skinName + ".css");
+                InputStream inputStream = getAssets().open(filepath);
                 byte[] buffer = new byte[inputStream.available()];
                 //noinspection ResultOfMethodCallIgnored
                 inputStream.read(buffer);
@@ -167,11 +177,11 @@ public class PageReadingActivity extends AppCompatActivity {
                 String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
                 String js = "javascript:(function() {" +
                         "var parent = document.getElementsByTagName('head').item(0);" +
-                        "var style = document.createElement('style');" +
-                        "style.type = 'text/css';" +
+                        "var x = document.createElement('" + elementType + "');" +
+                        "x.type = '" + srcType + "';" +
                         // Tell the browser to BASE64-decode the string into your script !!!
-                        "style.innerHTML = window.atob('" + encoded + "');" +
-                        "parent.appendChild(style)" +
+                        "x.innerHTML = window.atob('" + encoded + "');" +
+                        "parent.appendChild(x)" +
                         "})()";
                 if (Build.VERSION.SDK_INT >= 19) {
                     view.evaluateJavascript(js, null);
