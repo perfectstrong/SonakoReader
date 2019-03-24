@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
@@ -31,7 +30,7 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 /**
  * General class for reading a page
  */
-public class PageReadingActivity extends AppCompatActivity {
+public class PageReadingActivity extends SonakoActivity {
 
     private static final String UNDEFINED = "Undefined";
     private static final String TAG = PageReadingActivity.class.getSimpleName();

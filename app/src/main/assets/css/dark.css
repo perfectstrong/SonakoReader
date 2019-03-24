@@ -1,10 +1,10 @@
 @font-face {
-  font-family: "Kanit";
-  src: url("file:///android_asset/fonts/Kanit-Light.ttf");
+  font-family: "dark";
+  src: url("file:///android_asset/fonts/dark.TTF");
 }
 
 * {
-  font-family: Kanit, Verdana, Helvetica, sans-serif;
+  font-family: dark, sans-serif;
 }
 
 body {

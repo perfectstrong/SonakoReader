@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.SettingsActivity;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
@@ -16,6 +17,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+        //noinspection ConstantConditions
+        findPreference(getString(R.string.key_pref_skin)).setOnPreferenceChangeListener((preference, newValue) -> {
+            String str = (String) newValue;
+            //noinspection ConstantConditions
+            ((SettingsActivity) getActivity()).setSkin(str);
+            getActivity().recreate();
+            return true;
+        });
     }
 
     @Override

@@ -18,6 +18,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
@@ -40,7 +41,7 @@ public class Utils {
     public static String getCurrentSkin() {
         Context context = SonakoReaderApp.getContext();
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString(context.getString(R.string.key_pref_skins),
+                .getString(context.getString(R.string.key_pref_skin),
                         context.getResources().getString(R.string.default_skin)
                 );
     }
@@ -376,5 +377,23 @@ public class Utils {
                         context.getString(R.string.key_pref_download_webp),
                         context.getResources().getBoolean(R.bool.default_download_webp)
                 );
+    }
+
+    public static boolean isSkinHoly(Context context) {
+        return context.getString(R.string.skin_holy_value)
+                .equals(
+                        PreferenceManager.getDefaultSharedPreferences(context)
+                                .getString(
+                                        context.getString(R.string.key_pref_skin),
+                                        context.getString(R.string.default_skin)
+                                )
+                );
+    }
+
+    public static void updateTheme(Context context) {
+        if (Utils.isSkinHoly(context)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
     }
 }

@@ -51,8 +51,8 @@
     <string name="app_name_short">SNK Reader</string>
     <string name="download_db">Cơ sở dữ liệu chưa có.</string>
     <string name="refresh_missing_images">Tải lại hình ảnh bị thiếu</string>
-    <string name="title_pref_skins">Chủ đề</string>
-    <string name="key_pref_skins">key_pref_skins</string>
+    <string name="title_pref_skin">Chủ đề</string>
+    <string name="key_pref_skin">key_pref_skin</string>
     <string name="title_pref_download_external_images">Tải ảnh ngoài wikia về</string>
     <string name="key_pref_download_external_images">key_pref_download_external_images</string>
     <string name="key_pref_download_noncached_pages">key_pref_download_noncached_pages</string>

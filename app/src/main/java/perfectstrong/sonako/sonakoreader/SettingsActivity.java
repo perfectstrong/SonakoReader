@@ -2,11 +2,9 @@ package perfectstrong.sonako.sonakoreader;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
 import perfectstrong.sonako.sonakoreader.fragments.SettingsFragment;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends SonakoActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

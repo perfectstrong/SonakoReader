@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="isLightTheme">false</item>
+        <item name="colorPrimary">@color/darkPrimaryColor</item>
+        <item name="colorPrimaryDark">@color/darkPrimaryDarkColor</item>
+        <item name="colorAccent">@color/darkSecondaryColor</item>
+        <item name="fontFamily">@font/dark</item>
+    </style>
+</resources>

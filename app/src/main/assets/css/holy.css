@@ -1,5 +1,10 @@
+@font-face {
+  font-family: "holy";
+  src: url("file:///android_asset/fonts/holy.TTF");
+}
+
 * {
-    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-family: holy, serif;
 }
 
 body {

@@ -17,7 +17,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
@@ -29,7 +28,7 @@ import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends SonakoActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

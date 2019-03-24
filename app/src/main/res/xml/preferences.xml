@@ -3,11 +3,11 @@
     <PreferenceCategory android:title="@string/title_interface_options">
         <ListPreference
             android:defaultValue="@string/default_skin"
-            android:entries="@array/pref_skins"
-            android:entryValues="@array/pref_skins_values"
-            android:key="@string/key_pref_skins"
+            android:entries="@array/pref_skin"
+            android:entryValues="@array/pref_skin_values"
+            android:key="@string/key_pref_skin"
             android:summary="%s"
-            android:title="@string/title_pref_skins" />
+            android:title="@string/title_pref_skin" />
         <ListPreference
             android:defaultValue="@string/default_first_page"
             android:entries="@array/pages"

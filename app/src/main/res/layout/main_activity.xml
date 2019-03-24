@@ -33,7 +33,7 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/sukasuka_header_background" />
+                android:src="@drawable/header_background" />
 
             <View
                 android:id="@+id/header_background_overlay"
