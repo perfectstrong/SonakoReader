@@ -19,7 +19,7 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 /**
  * History of reading
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements PageFilterable {
 
     private HistoryAdapter mAdapter;
 
@@ -59,5 +59,15 @@ public class HistoryFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void filterPages(String keyword, int daysLimit) {
+        mAdapter.filterPages(keyword, daysLimit);
+    }
+
+    @Override
+    public void showAll() {
+        mAdapter.showAll();
     }
 }

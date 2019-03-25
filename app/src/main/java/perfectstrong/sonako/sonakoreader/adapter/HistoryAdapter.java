@@ -9,8 +9,10 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
     private List<Page> plist = new ArrayList<>();
     private final Context context;
     private final SimpleDateFormat format = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
+    private boolean onFilter = false;
 
     public HistoryAdapter(Context context) {
         this.context = context;
@@ -51,7 +54,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
     public void setDatalist(List<Page> pages) {
         _plist.clear();
         _plist.addAll(pages);
-        loadByChunk(_plist);
+        if (!onFilter)
+            loadByChunk(_plist);
     }
 
     private void loadByChunk(List<Page> list) {
@@ -59,14 +63,40 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
         notifyDataSetChanged();
         int currentIndex = 0;
         int chunksize = 25;
-        while (currentIndex < list.size()) {
-            plist.addAll(list.subList(
-                    currentIndex,
-                    Math.min(currentIndex + chunksize, list.size()))
-            );
-            currentIndex += chunksize;
-            notifyDataSetChanged();
+        if (list.size() > 0)
+            while (currentIndex < list.size()) {
+                plist.addAll(list.subList(
+                        currentIndex,
+                        Math.min(currentIndex + chunksize, list.size()))
+                );
+                currentIndex += chunksize;
+                notifyDataSetChanged();
+            }
+    }
+
+    public void filterPages(String keyword, int daysLimit) {
+        onFilter = true;
+        if (daysLimit < 0) daysLimit = Integer.MAX_VALUE;
+        List<Page> filteredPages = new ArrayList<>();
+        Date date = new Date(); // now
+        long msNow = date.getTime();
+        for (Page page : _plist) {
+            if (!page.getTitle().contains(keyword)) continue;
+            if (TimeUnit.MILLISECONDS.toDays(msNow - page.getLastRead().getTime())
+                    > daysLimit)
+                continue;
+            filteredPages.add(page);
         }
+        show(filteredPages);
+    }
+
+    public void showAll() {
+        onFilter = false;
+        show(_plist);
+    }
+
+    private void show(List<Page> list) {
+        loadByChunk(list);
     }
 
     class HistoryEntryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

@@ -27,6 +27,7 @@ import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
 import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
+import perfectstrong.sonako.sonakoreader.fragments.PageFilterable;
 
 public class MainActivity extends SonakoActivity {
 
@@ -67,10 +68,9 @@ public class MainActivity extends SonakoActivity {
                     || getString(R.string.page_ln_favorites).equals(s)) {
                 showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
             } else if (getString(R.string.page_history).equals(s)) {
-                // TODO filter on title
-            } else if (getString(R.string.page_download).equals(s)) {
-                // Nothing
+                showPageFilterDialog((PageFilterable) adapter.getItem(viewPager.getCurrentItem()));
             }
+            // No search on download fragment
         });
     }
 
@@ -158,6 +158,44 @@ public class MainActivity extends SonakoActivity {
                             status,
                             genres
                     );
+                }
+        );
+        alertDialog.setButton(
+                Dialog.BUTTON_NEUTRAL,
+                getString(R.string.filter_reset),
+                (dialog, which) -> fragment.showAll()
+        );
+
+        // Show
+        alertDialog.show();
+    }
+
+    private void showPageFilterDialog(PageFilterable fragment) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog alertDialog = builder.setTitle(R.string.filter).create();
+        View view = View.inflate(this, R.layout.page_filter_dialog, null);
+        alertDialog.setView(view);
+
+        // Action
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setButton(
+                Dialog.BUTTON_NEGATIVE,
+                getString(R.string.no),
+                (Message) null
+        );
+        alertDialog.setButton(
+                Dialog.BUTTON_POSITIVE,
+                getString(R.string.ok),
+                (dialog, which) -> {
+                    // Filter
+                    String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
+                            .getText().toString().trim();
+                    int daysLimit = getResources()
+                            .getIntArray(R.array.history_date_limit_values)[
+                            ((Spinner) view.findViewById(R.id.history_date_limit))
+                                    .getSelectedItemPosition()
+                            ];
+                    fragment.filterPages(keyword, daysLimit);
                 }
         );
         alertDialog.setButton(

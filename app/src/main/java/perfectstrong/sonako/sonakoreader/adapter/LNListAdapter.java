@@ -51,9 +51,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         notifyDataSetChanged();
         int currentIndex = 0;
         int chunksize = 25;
-        if (list.size() == 0)
-            notifyDataSetChanged();
-        else
+        if (list.size() > 0)
             while (currentIndex < list.size()) {
                 lnList.addAll(list.subList(
                         currentIndex,
