@@ -14,17 +14,23 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    public static final String FRAGMENT_TAG = "SETTINGS_FRAGMENT";
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
-        //noinspection ConstantConditions
-        findPreference(getString(R.string.key_pref_skin)).setOnPreferenceChangeListener((preference, newValue) -> {
-            String str = (String) newValue;
-            //noinspection ConstantConditions
-            ((SettingsActivity) getActivity()).setSkin(str);
-            getActivity().recreate();
-            return true;
-        });
+        if ((getString(R.string.key_interface_options)).equals(rootKey)) {
+            Preference prefSkin = findPreference(getString(R.string.key_pref_skin));
+            if (prefSkin != null) {
+                prefSkin.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String str = (String) newValue;
+                    //noinspection ConstantConditions
+                    ((SettingsActivity) getActivity()).setSkin(str);
+                    getActivity().recreate();
+                    return true;
+                });
+            }
+        }
     }
 
     @Override

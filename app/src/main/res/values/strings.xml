@@ -75,8 +75,8 @@
     <string name="download_wikia_images_not_over_1024px_value">1024</string>
     <string name="key_pref_download_wikia_images">key_pref_download_wikia_images</string>
     <string name="title_pref_download_wikia_images">Kích thước ảnh</string>
-    <string name="pref_grp_database">Cơ sở dữ liệu</string>
-    <string name="pref_grp_app_info">Thông tin</string>
+    <string name="title_database_options">Cơ sở dữ liệu</string>
+    <string name="pref_app_info">Thông tin</string>
     <string name="summary_pref_about">Tàng kinh các cho đêm trường không trăng không net</string>
     <string name="title_app_version">Phiên bản</string>
     <string name="app_version">1.0</string>
@@ -105,4 +105,11 @@
     <string name="page_ln_favorites">Yêu thích</string>
     <string name="page_history">Lịch sử</string>
     <string name="page_download">Download</string>
+    <string name="summary_developper">Phẹt</string>
+    <string name="title_developper">Dev</string>
+    <string name="key_interface_options">key_interface_options</string>
+    <string name="key_download_options">key_download_options</string>
+    <string name="key_database_options">key_database_options</string>
+    <string name="key_app_info">key_app_info</string>
+    <string name="key_pref_sonako">key_pref_sonako</string>
 </resources>
