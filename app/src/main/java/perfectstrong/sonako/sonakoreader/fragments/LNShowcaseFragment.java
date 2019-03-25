@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.adapter.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;

@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader.fragments;
+package perfectstrong.sonako.sonakoreader.adapter;
 
 import android.content.Context;
 import android.view.ContextMenu;
@@ -69,10 +69,10 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         return lnList.size();
     }
 
-    void filterLNList(String keyword,
-                      String type,
-                      String status,
-                      String[] genres) {
+    public void filterLNList(String keyword,
+                             String type,
+                             String status,
+                             String[] genres) {
         onFilter = true;
         List<LightNovel> filteredList = new ArrayList<>();
         for (LightNovel ln : _lnList) {
@@ -141,7 +141,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         loadByChunk(filteredList);
     }
 
-    void showAll() {
+    public void showAll() {
         onFilter = false;
         show(_lnList);
     }

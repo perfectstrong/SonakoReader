@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader.fragments;
+package perfectstrong.sonako.sonakoreader.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +26,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
     private final Context context;
     private final SimpleDateFormat format = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
-    HistoryAdapter(Context context) {
+    public HistoryAdapter(Context context) {
         this.context = context;
     }
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.database.Page;
-import perfectstrong.sonako.sonakoreader.fragments.HistoryAdapter;
+import perfectstrong.sonako.sonakoreader.adapter.HistoryAdapter;
 
 public class HistoryAsyncTask {
 

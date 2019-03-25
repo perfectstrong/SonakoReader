@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
-import perfectstrong.sonako.sonakoreader.fragments.HistoryAdapter;
+import perfectstrong.sonako.sonakoreader.adapter.HistoryAdapter;
 
 public class LNDBViewModel extends AndroidViewModel {
 

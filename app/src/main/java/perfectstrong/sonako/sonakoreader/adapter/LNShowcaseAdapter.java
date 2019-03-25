@@ -1,15 +1,15 @@
-package perfectstrong.sonako.sonakoreader.fragments;
+package perfectstrong.sonako.sonakoreader.adapter;
 
 import android.content.Context;
 
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
 public class LNShowcaseAdapter extends LNListAdapter {
-    LNShowcaseAdapter(Context context, LNDBViewModel viewModel) {
+    public LNShowcaseAdapter(Context context, LNDBViewModel viewModel) {
         super(context, viewModel);
     }
 
-    boolean haveEmptyLNList() {
+    public boolean haveEmptyLNList() {
         return lnList == null || lnList.isEmpty();
     }
 }
