@@ -211,6 +211,17 @@ public class LNDatabaseAsyncTask {
             lndb.lnDao().clear();
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Context context = SonakoReaderApp.getContext();
+            Toast.makeText(
+                    context,
+                    R.string.cleared_lndb,
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
     }
 
     /**

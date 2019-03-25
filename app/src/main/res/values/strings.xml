@@ -112,4 +112,5 @@
     <string name="key_database_options">key_database_options</string>
     <string name="key_app_info">key_app_info</string>
     <string name="key_pref_sonako">key_pref_sonako</string>
+    <string name="cleared_lndb">Đã xóa hết tàng kinh các</string>
 </resources>
