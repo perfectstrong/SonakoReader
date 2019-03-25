@@ -105,7 +105,7 @@
     <string name="page_ln_favorites">Yêu thích</string>
     <string name="page_history">Lịch sử</string>
     <string name="page_download">Download</string>
-    <string name="summary_developper">Phẹt</string>
+    <string name="summary_developper">Perfectstrong</string>
     <string name="title_developper">Dev</string>
     <string name="key_interface_options">key_interface_options</string>
     <string name="key_download_options">key_download_options</string>
@@ -113,4 +113,9 @@
     <string name="key_app_info">key_app_info</string>
     <string name="key_pref_sonako">key_pref_sonako</string>
     <string name="cleared_lndb">Đã xóa hết tàng kinh các</string>
+    <string name="title_copyright">Copyright</string>
+    <string name="title_issue_report">Báo lỗi</string>
+    <string name="title_contact">Liên hệ</string>
+    <string name="key_copyright">key_copyright</string>
+    <string name="summary_sonako_copyright"><![CDATA[<p>Với việc sử dụng wiki, bạn đồng ý với các điều kiện sau. Nếu không, hãy thoát khỏi wiki.</p><p>1. Tất cả tác phẩm bản quyền thuộc về đơn vị nắm giữ bản quyền tương ứng với mỗi quốc gia.</p><p>2. Tất cả tác phẩm bản quyền sẽ được xóa khỏi wiki mà không cần thông báo khi có yêu cầu từ đơn vị nắm giữ bản quyền.</p><p>3. Wiki này được thực hiện nhằm thỏa mãn sở thích dịch light novel của người tạo wiki và giới thiệu các light novel đến bạn đọc. Nếu đơn vị nắm giữ bản quyền nào cảm thấy quyền lợi của mình bị xâm phạm bởi wiki, hãy liên lạc với ban quản trị wiki.</p><p>4. Người đọc, người dịch trên wiki và ban quản trị wiki không chịu trách nhiệm trước thiệt hại mà wiki có thể gây ra. Người tạo wiki thực hiện những gì có thể để hướng người đọc đến tác phẩm có bản quyền.</p><p>5. Không được sử dụng tác phẩm hay một phần tác phẩm vào những hoạt động thương mại như mua, bán, đấu giá, in...</p><p>6. Không được tự nhận tác phẩm hay một phần tác phẩm đã được dịch trên wiki là của mình trừ khi tham gia vào quá trình dịch tác phẩm hay một phần tác phẩm ấy và phải ghi rõ đã thực hiện phần nào trong tác phẩm hay một phần tác phẩm.</p>]]></string>
 </resources>

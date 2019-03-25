@@ -83,6 +83,27 @@
             android:selectable="false"
             android:summary="@string/summary_developper"
             android:title="@string/title_developper" />
+        <Preference
+            android:selectable="false"
+            android:title="@string/title_copyright">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/perfectstrong/SonakoReader/blob/master/README.md" />
+        </Preference>
+        <Preference
+            android:selectable="false"
+            android:title="@string/title_issue_report">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/perfectstrong/SonakoReader/issues/new"/>
+        </Preference>
+        <Preference
+            android:selectable="false"
+            android:title="@string/title_contact">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://sonako.fandom.com/wiki/Sonako_Hỏi_và_Đáp"/>
+        </Preference>
     </PreferenceScreen>
 
 </PreferenceScreen>
