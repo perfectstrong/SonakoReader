@@ -7,6 +7,8 @@ Một app con con để lưu trữ tàng kinh các, phòng trường hợp _mấ
 * [JSoup](https://github.com/jhy/jsoup/)
 * [OkHttp](https://github.com/square/okhttp)
 * UVN Bay Buom Nang & UVN Bai Sau
+* Ảnh nền 1: https://www.pixiv.net/member_illust.php?mode=medium&illust_id=47769818
+* Ảnh nền 2: (đang tìm sauce)
 
 ## [Sonako Copyright](https://sonako.fandom.com/wiki/Copyright)
 Với việc sử dụng wiki, bạn đồng ý với các điều kiện sau. Nếu không, hãy thoát khỏi wiki.
