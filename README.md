@@ -6,7 +6,7 @@ Một app con con để lưu trữ tàng kinh các, phòng trường hợp _mấ
 ## Copyright Notice
 * [JSoup](https://github.com/jhy/jsoup/)
 * [OkHttp](https://github.com/square/okhttp)
-* UVN Bay Buom Nang & UVN Hai Ba Trung
+* UVN Bay Buom Nang & UVN Bai Sau
 
 ## [Sonako Copyright](https://sonako.fandom.com/wiki/Copyright)
 Với việc sử dụng wiki, bạn đồng ý với các điều kiện sau. Nếu không, hãy thoát khỏi wiki.

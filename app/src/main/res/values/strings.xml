@@ -34,7 +34,7 @@
     <string name="downloading_patient">đang được tải. Hãy bình tĩnh.</string>
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
-    <string name="last_read">Lần đọc cuối :</string>
+    <string name="last_read">Lần đọc cuối:</string>
     <string name="download_all_chapters">Tải hàng loạt chương truyện</string>
     <string name="download_all">Tải tuốt</string>
     <string name="all">Tất cả</string>
