@@ -102,7 +102,7 @@
             android:title="@string/title_contact">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://sonako.fandom.com/wiki/Sonako_Hỏi_và_Đáp"/>
+                android:data="https://www.facebook.com/SonakoWiki/"/>
         </Preference>
     </PreferenceScreen>
 
