@@ -56,7 +56,7 @@ public class PageDownloadService extends IntentService {
     private boolean forceRefreshImages;
     private WikiClient wiki;
     private String text;
-    private Map<String, Element> imagesLinks = new HashMap<>();
+    private List<Element> imagesLinks = new ArrayList<>();
     private Handler mHandler;
 
     public static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
@@ -201,10 +201,15 @@ public class PageDownloadService extends IntentService {
                 Utils.getTextFile(title, tag),
                 "UTF-8");
         for (Element img : doc.getElementsByTag("img")) {
-            String imgName = Utils.sanitize(
-                    Utils.getFileNameFromURL(Utils.decode(img.attr("src"))));
-            if (!imgName.equals("")) {
-                imagesLinks.put(imgName, img);
+            if (img.hasAttr("data-name")) {
+                imagesLinks.add(img);
+            } else {
+                String imgName = Utils.sanitize(
+                        Utils.getFileNameFromURL(Utils.decode(img.attr("src"))));
+                if (!imgName.equals("")) {
+                    img.attr("data-name", imgName);
+                    imagesLinks.add(img);
+                }
             }
         }
     }
@@ -311,7 +316,8 @@ public class PageDownloadService extends IntentService {
             img.removeAttr("height"); // Let viewer client decide later
             String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(src)));
             if (!imgName.equals("")) {
-                imagesLinks.put(imgName, img); // Caching temporarily
+                imagesLinks.add(img); // Caching temporarily
+                img.attr("data-name", imgName);
                 img.attr("data-src", src);
                 img.attr("src", "");
             }
@@ -376,9 +382,9 @@ public class PageDownloadService extends IntentService {
         compressWikiaImages();
         // Saving images
         OkHttpClient client = new OkHttpClient();
-        for (String imageName : imagesLinks.keySet()) {
-            Element img = imagesLinks.get(imageName);
-            assert img != null;
+        for (Element img : imagesLinks) {
+            if (!img.hasAttr("data-name")) continue;
+            String imageName = img.attr("data-name");
             String url = img.attr("data-src");
             if (url == null) continue; // Skip null link
             File file = new File(dir, imageName);
@@ -465,22 +471,18 @@ public class PageDownloadService extends IntentService {
         int maxImageWidth = Utils.getPreferredSize();
         Log.d(TAG, "maxImageWidth = " + maxImageWidth);
         List<String> wikiImgList = new ArrayList<>();
-        for (String imageName : imagesLinks.keySet()) {
-            Element img = imagesLinks.get(imageName);
-            assert img != null;
+        for (Element img : imagesLinks) {
             String src = img.attr("data-src");
             if (Utils.isInternalImage(src)) {
-                wikiImgList.add(imageName);
+                wikiImgList.add(img.attr("data-name"));
             }
         }
         // Image name with resizing url
         Map<String, String> resizedImgLinks = wiki.resizeToWidth(maxImageWidth, wikiImgList);
-        for (String imgName : resizedImgLinks.keySet()) {
-            String resizingURL = resizedImgLinks.get(imgName);
-            Element img = imagesLinks.get(imgName);
-            if (resizingURL != null && img != null) {
-                img.attr("data-src", resizingURL);
-            }
+        for (Element img: imagesLinks) {
+            String imgName = img.attr("data-name");
+            if (resizedImgLinks.containsKey(imgName))
+                img.attr("data-src", resizedImgLinks.get(imgName));
         }
     }
 
