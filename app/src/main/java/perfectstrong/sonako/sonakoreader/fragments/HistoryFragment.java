@@ -43,7 +43,6 @@ public class HistoryFragment extends Fragment implements PageFilterable {
                 HistoryFragment.this,
                 mAdapter::setDatalist
         );
-        viewModel.initLoadHistory(mAdapter);
 
     }
 

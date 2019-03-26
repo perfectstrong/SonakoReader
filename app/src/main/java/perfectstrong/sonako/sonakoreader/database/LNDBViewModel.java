@@ -8,8 +8,6 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
-import perfectstrong.sonako.sonakoreader.adapter.HistoryAdapter;
 
 public class LNDBViewModel extends AndroidViewModel {
 
@@ -39,13 +37,6 @@ public class LNDBViewModel extends AndroidViewModel {
         return lndb.historyDAO().getLiveHistory();
     }
 
-
-    public void initLoadHistory(HistoryAdapter mAdapter) {
-        new HistoryAsyncTask.InitLoad(
-                lndb,
-                mAdapter
-        ).execute();
-    }
 
     public LiveData<List<LightNovel>> getLiveLNList() {
         return lndb.lnDao().getLiveAll();
