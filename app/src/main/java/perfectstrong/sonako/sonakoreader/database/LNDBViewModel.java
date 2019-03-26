@@ -1,13 +1,13 @@
 package perfectstrong.sonako.sonakoreader.database;
 
 import android.app.Application;
-import android.os.AsyncTask;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import perfectstrong.sonako.sonakoreader.asyncTask.FavoriteLNsAsyncTask;
 
 public class LNDBViewModel extends AndroidViewModel {
 
@@ -26,11 +26,11 @@ public class LNDBViewModel extends AndroidViewModel {
     }
 
     public void registerFavorite(LightNovel... lightNovels) {
-        new FavoriteLNsAsyncTask(lndb, ACTION.REGISTER_FAVORITE).execute(lightNovels);
+        new FavoriteLNsAsyncTask.Register(lndb).execute(lightNovels);
     }
 
     public void unregisterFavorite(LightNovel... lightNovels) {
-        new FavoriteLNsAsyncTask(lndb, ACTION.UNREGISTER_FAVORITE).execute(lightNovels);
+        new FavoriteLNsAsyncTask.Unregister(lndb).execute(lightNovels);
     }
 
     public LiveData<List<Page>> getLiveHistory() {
@@ -40,34 +40,5 @@ public class LNDBViewModel extends AndroidViewModel {
 
     public LiveData<List<LightNovel>> getLiveLNList() {
         return lndb.lnDao().getLiveAll();
-    }
-
-    private enum ACTION {
-        REGISTER_FAVORITE,
-        UNREGISTER_FAVORITE,
-    }
-
-    private static class FavoriteLNsAsyncTask extends AsyncTask<LightNovel, Void, Void> {
-
-        private final ACTION action;
-        private final LightNovelsDatabase lndb;
-
-        private FavoriteLNsAsyncTask(LightNovelsDatabase lndb, ACTION action) {
-            this.lndb = lndb;
-            this.action = action;
-        }
-
-        @Override
-        protected Void doInBackground(LightNovel... lightNovels) {
-            switch (action) {
-                case REGISTER_FAVORITE:
-                    lndb.lnDao().registerFavorites(lightNovels);
-                    break;
-                case UNREGISTER_FAVORITE:
-                    lndb.lnDao().unregisterFavorites(lightNovels);
-                    break;
-            }
-            return null;
-        }
     }
 }
