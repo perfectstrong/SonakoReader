@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +31,12 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleViewHolder> {
     private List<LightNovel> _lnList = new ArrayList<>();
     List<LightNovel> lnList = new ArrayList<>();
-    protected Context context;
+    protected WeakReference<Context> context;
     private LNDBViewModel viewModel;
     private boolean onFilter = false;
 
     LNListAdapter(Context context, LNDBViewModel viewModel) {
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.viewModel = viewModel;
     }
 
@@ -225,7 +226,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
             if (lightNovel == null) return;
             // Open page reader for lightnovel
             Utils.openOrDownload(
-                    context,
+                    context.get(),
                     lightNovel.getTitle(),
                     lightNovel.getTag(),
                     null
@@ -265,7 +266,7 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                     break;
                 case R.id.ln_title_context_menu_refresh_text:
                     Utils.openOrDownload(
-                            context,
+                            context.get(),
                             lightNovel.getTitle(),
                             lightNovel.getTag(),
                             PageDownloadService.ACTION.REFRESH_TEXT
@@ -273,14 +274,14 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                     break;
                 case R.id.ln_title_context_menu_refresh_missing_images:
                     Utils.openOrDownload(
-                            context,
+                            context.get(),
                             lightNovel.getTitle(),
                             lightNovel.getTag(),
                             PageDownloadService.ACTION.REFRESH_MISSING_IMAGES
                     );
                 case R.id.ln_title_context_menu_download_all_chapters:
                     new AsyncMassLinkDownloader(
-                            context,
+                            context.get(),
                             lightNovel.getTitle(),
                             lightNovel.getTag()
                     ).execute();
