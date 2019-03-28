@@ -37,8 +37,19 @@ public class LNDBViewModel extends AndroidViewModel {
         return lndb.historyDAO().getLiveHistory();
     }
 
-
     public LiveData<List<LightNovel>> getLiveLNList() {
         return lndb.lnDao().getLiveAll();
+    }
+
+    public LiveData<List<CachePage>> getLiveCaches() {
+        return lndb.biblioDAO().getLiveCaches();
+    }
+
+    public void clearBiblio() {
+        lndb.biblioDAO().clearAll();
+    }
+
+    public void insertCaches(CachePage... caches) {
+        lndb.biblioDAO().insert(caches);
     }
 }

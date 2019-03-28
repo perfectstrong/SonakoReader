@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
+import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 import perfectstrong.sonako.sonakoreader.helper.Config;
@@ -368,6 +371,12 @@ public class PageDownloadService extends IntentService {
                 new OutputStreamWriter(
                         new FileOutputStream(content), "UTF-8"))) {
             writer.write(doc.outerHtml());
+            // Update biblio
+            new BiblioAsyncTask.Register().execute(new CachePage(
+                    title,
+                    tag,
+                    new Date(content.lastModified())
+            ));
         } catch (IOException e) {
             Log.e(TAG, "Text caching failed", e);
         }

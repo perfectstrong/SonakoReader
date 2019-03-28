@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.fragments.BiblioFragment;
 import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
 import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
@@ -48,6 +49,7 @@ public class MainActivity extends SonakoActivity {
         // In order of @array/pref_first_page_values
         adapter.addFragment(new LNShowcaseFragment(), getString(R.string.page_ln_showcase));
         adapter.addFragment(new FavoriteLNsFragment(), getString(R.string.page_ln_favorites));
+        adapter.addFragment(new BiblioFragment(), getString(R.string.page_biblio));
         adapter.addFragment(new HistoryFragment(), getString(R.string.page_history));
         adapter.addFragment(PageDownloadFragment.getInstance(), getString(R.string.page_download));
         viewPager.setAdapter(adapter);
@@ -69,6 +71,8 @@ public class MainActivity extends SonakoActivity {
                 showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
             } else if (getString(R.string.page_history).equals(s)) {
                 showPageFilterDialog((PageFilterable) adapter.getItem(viewPager.getCurrentItem()));
+            } else if (getString(R.string.page_biblio).equals(s)) {
+                // TODO search dialog
             }
             // No search on download fragment
         });

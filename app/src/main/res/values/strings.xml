@@ -105,6 +105,7 @@
     <string name="page_ln_favorites">Yêu thích</string>
     <string name="page_history">Lịch sử</string>
     <string name="page_download">Download</string>
+    <string name="page_biblio">Tủ truyện</string>
     <string name="summary_developper">Perfectstrong</string>
     <string name="title_developper">Dev</string>
     <string name="key_interface_options">key_interface_options</string>
@@ -121,4 +122,9 @@
     <string name="yesterday">Hôm qua</string>
     <string name="last_week">Tuần rồi</string>
     <string name="last_month">Tháng rồi</string>
+    <string name="label_tag">Tag:</string>
+    <string name="label_last_cached">Lần cập nhật cuối:</string>
+    <string name="start_scanning">Bắt đầu quét</string>
+    <string name="clear_biblio">Dọn tủ truyện</string>
+    <string name="update_biblio">Cập nhật tủ truyện</string>
 </resources>

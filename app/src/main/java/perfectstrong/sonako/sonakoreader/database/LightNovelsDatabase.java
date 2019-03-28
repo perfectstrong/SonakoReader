@@ -1,16 +1,14 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.annotation.NonNull;
 
 @Database(
-        version = 3,
+        version = 2,
         entities = {
                 LightNovel.class,
-                Page.class
+                Page.class,
+                CachePage.class
         },
         exportSchema = false
 )
@@ -18,5 +16,7 @@ public abstract class LightNovelsDatabase extends RoomDatabase {
     public abstract LightNovelDAO lnDao();
 
     public abstract HistoryDAO historyDAO();
+
+    public abstract BiblioDAO biblioDAO();
 }
 

@@ -29,6 +29,7 @@
     <string-array name="pages">
         <item>@string/page_ln_showcase</item>
         <item>@string/page_ln_favorites</item>
+        <item>@string/page_biblio</item>
         <item>@string/page_history</item>
         <item>@string/page_download</item>
     </string-array>
@@ -37,6 +38,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array>
     <string-array name="history_date_limit">
         <item>@string/yesterday</item>

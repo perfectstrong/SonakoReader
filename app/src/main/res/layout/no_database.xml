@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/NoDatabaseGroup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerInParent="true"
+    android:layout_marginTop="36dp"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/Logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:minWidth="128dp"
+        android:minHeight="128dp"
+        android:src="@drawable/ic_sonakoreaderlogo" />
+
+    <TextView
+        android:id="@+id/NoDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Logo"
+        android:text="@string/download_db"
+        android:textSize="@dimen/title"
+        android:visibility="visible" />
+
+    <Button
+        android:id="@+id/NoDatabaseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/NoDatabase"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:text="@string/start_downloading"
+        android:visibility="visible" />
+</RelativeLayout>
