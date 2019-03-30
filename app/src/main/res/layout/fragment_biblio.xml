@@ -8,9 +8,10 @@
     <include layout="@layout/no_database" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/BiblioRecyclerView"
+        android:id="@+id/RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerInParent="true"
         android:clickable="true"
         android:longClickable="true"
         android:paddingLeft="10dp"

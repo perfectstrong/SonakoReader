@@ -44,10 +44,10 @@ public class BiblioFragment extends Fragment implements PageFilterable {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
             view.findViewById(R.id.NoDatabaseButton)
                     .setOnClickListener(v -> forceRefresh());
-            view.findViewById(R.id.BiblioRecyclerView).setVisibility(View.GONE);
+            view.findViewById(R.id.RecyclerView).setVisibility(View.GONE);
         } else {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.GONE);
-            view.findViewById(R.id.BiblioRecyclerView).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
         }
     }
 
@@ -61,7 +61,7 @@ public class BiblioFragment extends Fragment implements PageFilterable {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_biblio, container, false);
         updateView(rootView);
-        RecyclerView recyclerView = rootView.findViewById(R.id.BiblioRecyclerView);
+        RecyclerView recyclerView = rootView.findViewById(R.id.RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);

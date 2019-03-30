@@ -50,13 +50,13 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
     private void updateView(View view) {
         if (view == null) return;
         if (mAdapter.getItemCount() == 0) {
-            view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.LNTitlesNoDatabaseButton)
+            view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.NoDatabaseButton)
                     .setOnClickListener(v -> forceDownload());
-            view.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.GONE);
+            view.findViewById(R.id.RecyclerView).setVisibility(View.GONE);
         } else {
-            view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.GONE);
-            view.findViewById(R.id.LNTitlesRecyclerView).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.GONE);
+            view.findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
         }
     }
 
@@ -67,7 +67,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_lnshowcase, container, false);
         updateView(rootView);
-        RecyclerView recyclerView = rootView.findViewById(R.id.LNTitlesRecyclerView);
+        RecyclerView recyclerView = rootView.findViewById(R.id.RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
