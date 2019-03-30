@@ -69,7 +69,7 @@ public class BiblioAdapter extends RecyclerView.Adapter<BiblioAdapter.CachePageV
     @Override
     public CachePageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.biblio_list_item_page,
+                .inflate(R.layout.cache_basic_view,
                         parent,
                         false);
         return new CachePageViewHolder(v);
