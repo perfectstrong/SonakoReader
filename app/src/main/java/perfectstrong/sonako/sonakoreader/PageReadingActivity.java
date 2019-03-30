@@ -21,7 +21,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
@@ -72,7 +71,7 @@ public class PageReadingActivity extends SonakoActivity {
         pageview.loadUrl(Utils.getFilepath(title, tag));
 
         // Register to history
-        new HistoryAsyncTask.Register(LightNovelsDatabaseClient.getInstance(this))
+        new HistoryAsyncTask.Register()
                 .execute(new Page(
                         title,
                         tag,

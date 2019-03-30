@@ -14,7 +14,7 @@ public class LightNovelsDatabaseClient {
     private static final String DB_NAME = LightNovelsDatabase.class.getSimpleName() + ".db";
     private static volatile LightNovelsDatabase instance;
 
-    public static synchronized LightNovelsDatabase getInstance(Context context) {
+    private static synchronized LightNovelsDatabase getInstance(Context context) {
         if (instance == null) {
             instance = create(context);
         }

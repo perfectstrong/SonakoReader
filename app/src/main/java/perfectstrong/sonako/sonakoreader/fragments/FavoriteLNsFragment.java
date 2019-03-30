@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.FavoriteLNsAdapter;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
 /**
@@ -33,7 +32,6 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
         // View model
         LNDBViewModel viewModel = ViewModelProviders.of(this)
                 .get(LNDBViewModel.class);
-        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
 
         // Adapter
         mAdapter = new FavoriteLNsAdapter(

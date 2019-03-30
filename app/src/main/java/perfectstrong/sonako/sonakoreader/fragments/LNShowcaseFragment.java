@@ -14,7 +14,6 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.LNShowcaseAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 
 /**
@@ -34,7 +33,6 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         // View model
         LNDBViewModel viewModel = ViewModelProviders.of(this)
                 .get(LNDBViewModel.class);
-        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
 
         // Adapter
         mAdapter = new LNShowcaseAdapter(
@@ -91,7 +89,6 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
 
     private void forceDownload() {
         new LNDatabaseAsyncTask.LoadCacheOrDownload(
-                LightNovelsDatabaseClient.getInstance(getContext()),
                 true
         ).execute();
     }

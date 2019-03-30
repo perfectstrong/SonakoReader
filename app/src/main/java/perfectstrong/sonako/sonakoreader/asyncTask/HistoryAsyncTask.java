@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader.asyncTask;
 import android.os.AsyncTask;
 
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.database.Page;
 
 public class HistoryAsyncTask {
@@ -10,8 +11,8 @@ public class HistoryAsyncTask {
     public static class Register extends AsyncTask<Page, Void, Void> {
         private final LightNovelsDatabase lndb;
 
-        public Register(LightNovelsDatabase lndb) {
-            this.lndb = lndb;
+        public Register() {
+            this.lndb = LightNovelsDatabaseClient.getInstance();
         }
 
         @Override
@@ -24,8 +25,8 @@ public class HistoryAsyncTask {
     public static class Clear extends AsyncTask<Void, Void, Void> {
         private final LightNovelsDatabase lndb;
 
-        public Clear(LightNovelsDatabase lndb) {
-            this.lndb = lndb;
+        public Clear() {
+            this.lndb = LightNovelsDatabaseClient.getInstance();
         }
 
         @Override

@@ -15,7 +15,6 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.BiblioAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
-import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 
 public class BiblioFragment extends Fragment implements PageFilterable {
 
@@ -26,7 +25,6 @@ public class BiblioFragment extends Fragment implements PageFilterable {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(LNDBViewModel.class);
-        viewModel.setLndb(LightNovelsDatabaseClient.getInstance(this.getContext()));
 
         // Adapter
         adapter = new BiblioAdapter(viewModel);

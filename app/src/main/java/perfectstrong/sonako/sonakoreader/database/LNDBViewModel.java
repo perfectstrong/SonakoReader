@@ -15,6 +15,7 @@ public class LNDBViewModel extends AndroidViewModel {
 
     public LNDBViewModel(@NonNull Application application) {
         super(application);
+        lndb = LightNovelsDatabaseClient.getInstance();
     }
 
     public void setLndb(LightNovelsDatabase lndb) {

@@ -19,6 +19,7 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 import perfectstrong.sonako.sonakoreader.helper.WikiClient;
@@ -37,9 +38,8 @@ public class LNDatabaseAsyncTask {
         private final boolean forceDownload;
         private Exception exception;
 
-        public LoadCacheOrDownload(LightNovelsDatabase lndb,
-                                   boolean forceDownload) {
-            this.lndb = lndb;
+        public LoadCacheOrDownload(boolean forceDownload) {
+            this.lndb = LightNovelsDatabaseClient.getInstance();
             this.forceDownload = forceDownload;
         }
 
@@ -122,8 +122,8 @@ public class LNDatabaseAsyncTask {
         private WikiClient wikiClient;
         private Exception exception;
 
-        public Update(LightNovelsDatabase lndb) {
-            this.lndb = lndb;
+        public Update() {
+            this.lndb = LightNovelsDatabaseClient.getInstance();
             mHandler = new Handler();
         }
 
@@ -202,8 +202,8 @@ public class LNDatabaseAsyncTask {
     public static class Clear extends AsyncTask<Void, Void, Void> {
         private final LightNovelsDatabase lndb;
 
-        public Clear(LightNovelsDatabase lndb) {
-            this.lndb = lndb;
+        public Clear() {
+            this.lndb = LightNovelsDatabaseClient.getInstance();
         }
 
         @Override
