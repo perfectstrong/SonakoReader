@@ -13,7 +13,9 @@ import java.io.File;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,8 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 @SuppressWarnings("WeakerAccess")
 public class Utils {
+
+    public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
     @SuppressWarnings("WeakerAccess")
     public static String getSaveDir() {
@@ -151,16 +155,15 @@ public class Utils {
 
     /**
      * Open page reader or download if not cached yet
-     *
-     * @param context activity
      * @param title   of new page to open
      * @param tag     tag of series
      * @param action  See {@link PageDownloadService.ACTION}
+     * @param context where to execute
      */
-    public static void openOrDownload(Context context,
-                                      String title,
+    public static void openOrDownload(String title,
                                       String tag,
-                                      PageDownloadService.ACTION action) {
+                                      PageDownloadService.ACTION action,
+                                      Context context) {
         if (action == null)
             // Read or first download
             if (isNotCached(title, tag)) {

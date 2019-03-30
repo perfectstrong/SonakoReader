@@ -5,28 +5,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
-import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAdapter extends RecyclerView.Adapter<BiblioAdapter.CachePageViewHolder> {
-    private final LNDBViewModel viewModel;
     private List<CachePage> _clist = new ArrayList<>();
     private List<CachePage> clist = new ArrayList<>();
     private boolean onFilter = false;
-    private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
-
-    public BiblioAdapter(LNDBViewModel viewModel) {
-        this.viewModel = viewModel;
+    public BiblioAdapter() {
     }
 
     public void setDataList(List<CachePage> cachePages) {
@@ -103,7 +96,7 @@ public class BiblioAdapter extends RecyclerView.Adapter<BiblioAdapter.CachePageV
             // Tag
             ((TextView) view.findViewById(R.id.biblio_item_page_tag)).setText(cache.getTag());
             // Last cached
-            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(FORMATTER.format(cache.getLastCached()));
+            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(Utils.FORMATTER.format(cache.getLastCached()));
         }
 
         @Override
@@ -111,10 +104,10 @@ public class BiblioAdapter extends RecyclerView.Adapter<BiblioAdapter.CachePageV
             if (cache == null) return;
             // Open page reader
             Utils.openOrDownload(
-                    v.getContext(),
                     cache.getTitle(),
                     cache.getTag(),
-                    null
+                    null,
+                    v.getContext()
             );
         }
     }

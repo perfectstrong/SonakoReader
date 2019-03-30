@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.adapter.FavoriteLNsAdapter;
+import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
 
@@ -20,7 +20,7 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
  */
 public class FavoriteLNsFragment extends Fragment implements LNFilterable {
 
-    private FavoriteLNsAdapter mAdapter;
+    private LNListAdapter mAdapter;
 
     public FavoriteLNsFragment() {
         // Required empty public constructor
@@ -34,10 +34,7 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new FavoriteLNsAdapter(
-                this.getContext(),
-                viewModel
-        );
+        mAdapter = new LNListAdapter(viewModel);
         // Observer
         viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, mAdapter::setDatalist);
     }

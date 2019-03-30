@@ -181,13 +181,15 @@ public class PageDownloadService extends IntentService {
                 if (!wiki.exists(title)) {
                     throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
                 }
-                downloadText();
-                preprocess();
-                downloadImages();
-                cacheText();
-            } else if (downloadFailedImages) {
-                loadImageLinksFromCachedText();
-                downloadImages();
+                if (downloadFailedImages) {
+                    loadImageLinksFromCachedText();
+                    downloadImages();
+                } else {
+                    downloadText();
+                    preprocess();
+                    downloadImages();
+                    cacheText();
+                }
             }
             postToast(getString(R.string.download_finish) + " " + title);
         } catch (Exception e) {

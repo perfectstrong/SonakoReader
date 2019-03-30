@@ -1,36 +1,32 @@
 package perfectstrong.sonako.sonakoreader.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import perfectstrong.sonako.sonakoreader.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.Page;
-import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryEntryViewHolder> {
 
     private List<Page> _plist = new ArrayList<>();
     private List<Page> plist = new ArrayList<>();
-    private final Context context;
-    private final SimpleDateFormat format = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
+    private final WeakReference<Context> context;
     private boolean onFilter = false;
 
     public HistoryAdapter(Context context) {
-        this.context = context;
+        this.context = new WeakReference<>(context);
     }
 
     @NonNull
@@ -115,17 +111,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryE
             ((TextView) view.findViewById(R.id.page_title)).setText(page.getTitle());
             // Last read
             ((TextView) view.findViewById(R.id.page_last_read))
-                    .setText(format.format(page.getLastRead()));
+                    .setText(Utils.FORMATTER.format(page.getLastRead()));
         }
 
         @Override
         public void onClick(View v) {
             if (page == null) return;
             // Open page reader
-            Intent intent = new Intent(context, PageReadingActivity.class);
-            intent.putExtra(Config.EXTRA_TITLE, page.getTitle());
-            intent.putExtra(Config.EXTRA_TAG, page.getTag());
-            context.startActivity(intent);
+            Utils.openOrDownload(
+                    page.getTitle(),
+                    page.getTag(),
+                    null,
+                    context.get()
+            );
         }
     }
 }

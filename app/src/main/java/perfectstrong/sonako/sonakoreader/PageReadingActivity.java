@@ -90,19 +90,19 @@ public class PageReadingActivity extends SonakoActivity {
         switch (item.getItemId()) {
             case R.id.action_download_all_chapters:
                 Log.d(TAG, "Download all chapters of " + title);
-                new AsyncMassLinkDownloader(this, title, tag).execute();
+                new AsyncMassLinkDownloader(title, tag, this).execute();
                 break;
             case R.id.action_refresh_text_and_images:
                 Log.d(TAG, "Reset text and images of " + title);
-                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_ALL);
+                Utils.openOrDownload(title, tag, PageDownloadService.ACTION.REFRESH_ALL, this);
                 break;
             case R.id.action_refresh_text:
                 Log.d(TAG, "Refresh text of " + title);
-                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_TEXT);
+                Utils.openOrDownload(title, tag, PageDownloadService.ACTION.REFRESH_TEXT, this);
                 break;
             case R.id.action_refresh_missing_images:
                 Log.d(TAG, "Refresh missing images of " + title);
-                Utils.openOrDownload(this, title, tag, PageDownloadService.ACTION.REFRESH_MISSING_IMAGES);
+                Utils.openOrDownload(title, tag, PageDownloadService.ACTION.REFRESH_MISSING_IMAGES, this);
             case R.id.action_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
@@ -135,10 +135,10 @@ public class PageReadingActivity extends SonakoActivity {
                 );
                 Log.d(TAG, "Opening internal link " + newTitle);
                 Utils.openOrDownload(
-                        context,
                         newTitle,
                         tag,
-                        null
+                        null,
+                        PageReadingActivity.this
                 );
                 return true;
             } else {

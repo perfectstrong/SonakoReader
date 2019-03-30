@@ -31,7 +31,7 @@ public class LNDatabaseAsyncTask {
     /**
      * Load titles from cache. If not downloaded yet, it will fetch from server then cache it.
      */
-    public static class LoadCacheOrDownload extends AsyncTask<Void, String, Void> {
+    public static class LoadCacheOrDownload extends AsyncTask<Void, Integer, Void> {
         private final LightNovelsDatabase lndb;
         private List<LightNovel> titles;
         private WikiClient wikiClient;
@@ -47,18 +47,16 @@ public class LNDatabaseAsyncTask {
             this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
             titles = new ArrayList<>();
 
-            Context context = SonakoReaderApp.getContext();
-
-            publishProgress(context.getString(R.string.downloading_ln_list));
+            publishProgress(R.string.downloading_ln_list);
             downloadTitles();
 
-            publishProgress(context.getString(R.string.downloading_tags));
+            publishProgress(R.string.downloading_tags);
             downloadStatusAndCategories(wikiClient, titles);
 
-            publishProgress(context.getString(R.string.ordering_ln_list));
+            publishProgress(R.string.ordering_ln_list);
             orderTitlesAlphabetically(titles);
 
-            publishProgress(context.getString(R.string.caching_ln_list));
+            publishProgress(R.string.caching_ln_list);
             cacheLNDB(lndb, titles);
         }
 
@@ -88,7 +86,7 @@ public class LNDatabaseAsyncTask {
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Integer... values) {
             Toast.makeText(
                     SonakoReaderApp.getContext(),
                     values[0],
@@ -115,7 +113,7 @@ public class LNDatabaseAsyncTask {
     /**
      * Update light novel database
      */
-    public static class Update extends AsyncTask<Void, String, Void> {
+    public static class Update extends AsyncTask<Void, Integer, Void> {
         private final LightNovelsDatabase lndb;
         private final Handler mHandler;
         private List<LightNovel> titles;
@@ -146,19 +144,18 @@ public class LNDatabaseAsyncTask {
                 // Real start
                 this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
                 titles = new ArrayList<>();
-                Context context = SonakoReaderApp.getContext();
-                publishProgress(context.getString(R.string.downloading_ln_list));
+                publishProgress(R.string.downloading_ln_list);
                 downloadOfficialProjects(wikiClient, titles);
                 downloadTeaserProjects(wikiClient, titles);
                 downloadOLNProjects(wikiClient, titles);
 
-                publishProgress(context.getString(R.string.downloading_tags));
+                publishProgress(R.string.downloading_tags);
                 downloadStatusAndCategories(wikiClient, titles);
 
-                publishProgress(context.getString(R.string.ordering_ln_list));
+                publishProgress(R.string.ordering_ln_list);
                 orderTitlesAlphabetically(titles);
 
-                publishProgress(context.getString(R.string.caching_ln_list));
+                publishProgress(R.string.caching_ln_list);
                 updateLNDB(lndb, titles);
             } catch (Exception e) {
                 exception = e;
@@ -168,7 +165,7 @@ public class LNDatabaseAsyncTask {
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Integer... values) {
             mHandler.post(() -> Toast.makeText(
                     SonakoReaderApp.getContext(),
                     values[0],

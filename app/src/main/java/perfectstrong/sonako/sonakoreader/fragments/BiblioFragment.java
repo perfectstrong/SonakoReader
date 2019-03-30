@@ -19,15 +19,14 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 public class BiblioFragment extends Fragment implements PageFilterable {
 
     private BiblioAdapter adapter;
-    private LNDBViewModel viewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(LNDBViewModel.class);
+        LNDBViewModel viewModel = ViewModelProviders.of(this).get(LNDBViewModel.class);
 
         // Adapter
-        adapter = new BiblioAdapter(viewModel);
+        adapter = new BiblioAdapter();
 
         // Observer
         viewModel.getLiveCaches().observe(

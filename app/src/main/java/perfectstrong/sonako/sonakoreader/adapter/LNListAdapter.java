@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader.adapter;
 
-import android.content.Context;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,15 +26,13 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 /**
  * Generic adapter to show light novel list
  */
-public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleViewHolder> {
+public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleViewHolder> {
     private List<LightNovel> _lnList = new ArrayList<>();
-    List<LightNovel> lnList = new ArrayList<>();
-    protected WeakReference<Context> context;
+    private List<LightNovel> lnList = new ArrayList<>();
     private LNDBViewModel viewModel;
     private boolean onFilter = false;
 
-    LNListAdapter(Context context, LNDBViewModel viewModel) {
-        this.context = new WeakReference<>(context);
+    public LNListAdapter(LNDBViewModel viewModel) {
         this.viewModel = viewModel;
     }
 
@@ -224,10 +220,10 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
             if (lightNovel == null) return;
             // Open page reader for lightnovel
             Utils.openOrDownload(
-                    context.get(),
                     lightNovel.getTitle(),
                     lightNovel.getTag(),
-                    null
+                    null,
+                    v.getContext()
             );
         }
 
@@ -264,25 +260,27 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                     break;
                 case R.id.ln_title_context_menu_refresh_text:
                     Utils.openOrDownload(
-                            context.get(),
                             lightNovel.getTitle(),
                             lightNovel.getTag(),
-                            PageDownloadService.ACTION.REFRESH_TEXT
+                            PageDownloadService.ACTION.REFRESH_TEXT,
+                            itemView.getContext()
                     );
                     break;
                 case R.id.ln_title_context_menu_refresh_missing_images:
                     Utils.openOrDownload(
-                            context.get(),
                             lightNovel.getTitle(),
                             lightNovel.getTag(),
-                            PageDownloadService.ACTION.REFRESH_MISSING_IMAGES
+                            PageDownloadService.ACTION.REFRESH_MISSING_IMAGES,
+                            itemView.getContext()
                     );
+                    break;
                 case R.id.ln_title_context_menu_download_all_chapters:
                     new AsyncMassLinkDownloader(
-                            context.get(),
                             lightNovel.getTitle(),
-                            lightNovel.getTag()
+                            lightNovel.getTag(),
+                            itemView.getContext()
                     ).execute();
+                    break;
             }
             return true;
         }

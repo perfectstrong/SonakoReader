@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.adapter.LNShowcaseAdapter;
+import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
@@ -21,7 +21,7 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
  */
 public class LNShowcaseFragment extends Fragment implements LNFilterable {
 
-    private LNShowcaseAdapter mAdapter;
+    private LNListAdapter mAdapter;
 
     public LNShowcaseFragment() {
         // Required empty public constructor
@@ -35,10 +35,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new LNShowcaseAdapter(
-                this.getContext(),
-                viewModel
-        );
+        mAdapter = new LNListAdapter(viewModel);
 
         // Observer
         viewModel.getLiveLNList().observe(
@@ -52,7 +49,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
 
     private void updateView(View view) {
         if (view == null) return;
-        if (mAdapter.haveEmptyLNList()) {
+        if (mAdapter.getItemCount() == 0) {
             view.findViewById(R.id.LNTitlesNoDatabaseGroup).setVisibility(View.VISIBLE);
             view.findViewById(R.id.LNTitlesNoDatabaseButton)
                     .setOnClickListener(v -> forceDownload());

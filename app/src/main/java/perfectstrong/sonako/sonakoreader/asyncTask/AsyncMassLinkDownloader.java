@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader.asyncTask;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -23,22 +22,11 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
     private final String title;
     private final String tag;
     private final WeakReference<Context> _context;
-    private ProgressDialog progressDialog;
 
-    public AsyncMassLinkDownloader(Context _context, String title, String tag) {
+    public AsyncMassLinkDownloader(String title, String tag, Context context) {
         this.title = title;
         this.tag = tag;
-        this._context = new WeakReference<>(_context);
-    }
-
-    @Override
-    protected void onPreExecute() {
-        if (_context.get() != null)
-            progressDialog = ProgressDialog.show(
-                    _context.get(),
-                    "",
-                    _context.get().getString(R.string.loading_links)
-            );
+        this._context = new WeakReference<>(context);
     }
 
     @Override
@@ -61,7 +49,6 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
     protected void onPostExecute(List<String> links) {
         Context context = _context.get();
         if (!isCancelled() && context != null) {
-            if (progressDialog != null) progressDialog.dismiss();
             final List<String> selectedLinks = new ArrayList<>();
             if (links != null && !links.isEmpty()) {
                 links.add(0, context.getString(R.string.download_select_all));
