@@ -4,16 +4,16 @@ import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 @SuppressWarnings("unused")
-@Entity(
-        primaryKeys = {"title", "tag"}
-)
+@Entity
 @TypeConverters(TimestampConverter.class)
 public class CachePage {
     @NonNull
+    @PrimaryKey
     private String title;
     @NonNull
     private String tag;

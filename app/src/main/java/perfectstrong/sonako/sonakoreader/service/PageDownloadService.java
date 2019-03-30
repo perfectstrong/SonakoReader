@@ -256,7 +256,7 @@ public class PageDownloadService extends IntentService {
         for (int i = 0; i < elements.length(); i++) {
             JSONObject element = elements.getJSONObject(i);
             // Skip status, type and genres
-            String t = element.getString("*");
+            String t = Utils.removeSubtrait(element.getString("*"));
             if (LightNovel.ProjectGenre.ALL.contains(t)) continue;
             if (LightNovel.ProjectStatus.ALL.contains(t)) continue;
             if (LightNovel.ProjectType.ALL.contains(t)) continue;
