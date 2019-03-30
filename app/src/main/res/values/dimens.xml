@@ -4,4 +4,5 @@
     <dimen name="text_margin">16dp</dimen>
     <dimen name="subtitle">14sp</dimen>
     <dimen name="title">18sp</dimen>
+    <dimen name="basic_item_padding">6dip</dimen>
 </resources>

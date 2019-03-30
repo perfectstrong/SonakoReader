@@ -129,4 +129,9 @@
     <string name="update_biblio">Cập nhật tủ truyện</string>
     <string name="title_update_biblio">Cập nhật tủ truyện</string>
     <string name="title_clear_biblio">Xóa tủ truyện</string>
+    <string name="ln_status_active">Tình trạng: Liên tục cập nhật</string>
+    <string name="ln_status_idle">Tình trạng: Không cập nhật trong 3 tháng qua</string>
+    <string name="ln_status_stalled">Tình trạng: Không cập nhật trong 6 tháng qua</string>
+    <string name="ln_status_completed">Tình trạng: Hoàn thành</string>
+    <string name="ln_status_inactive">Tình trạng: Không cập nhật trong 1 năm qua</string>
 </resources>

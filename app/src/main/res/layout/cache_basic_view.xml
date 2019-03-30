@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
-    android:padding="6dip">
+    android:padding="@dimen/basic_item_padding">
 
     <TextView
         android:id="@+id/biblio_item_page_title"

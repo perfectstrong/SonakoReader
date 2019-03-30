@@ -158,8 +158,6 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         viewHolder.initAt(i);
     }
 
-    private static final String TAG = LNTitleViewHolder.class.getSimpleName();
-
     class LNTitleViewHolder extends ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
         View view;
         private LightNovel lightNovel;
@@ -174,17 +172,17 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
         void initAt(int position) {
             lightNovel = lnList.get(position);
             // Title
-            ((TextView) view.findViewById(R.id.lnTitle)).setText(lightNovel.getTitle());
+            ((TextView) view.findViewById(R.id.ln_title)).setText(lightNovel.getTitle());
             // Type
             switch (lightNovel.getType()) {
                 case LightNovel.ProjectType.OFFICIAL:
                 case LightNovel.ProjectType.TEASER:
                 case LightNovel.ProjectType.OLN:
-                    ((TextView) view.findViewById(R.id.lnType)).setText(lightNovel.getType());
-                    view.findViewById(R.id.lnType).setVisibility(View.VISIBLE);
+                    ((TextView) view.findViewById(R.id.ln_type)).setText(lightNovel.getType());
+                    view.findViewById(R.id.ln_type).setVisibility(View.VISIBLE);
                     break;
                 default:
-                    view.findViewById(R.id.lnType).setVisibility(View.GONE);
+                    view.findViewById(R.id.ln_type).setVisibility(View.GONE);
                     break;
             }
             // Genres
@@ -195,28 +193,28 @@ public abstract class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.L
                     genresStr.append(", ").append(genres.get(i));
                 }
                 String _genres = genresStr.toString();
-                ((TextView) view.findViewById(R.id.lnCategories)).setText("Thể loại: " + _genres);
-                view.findViewById(R.id.lnCategories).setVisibility(View.VISIBLE);
+                ((TextView) view.findViewById(R.id.ln_categories)).setText(_genres);
+                view.findViewById(R.id.ln_categories).setVisibility(View.VISIBLE);
             } else {
-                view.findViewById(R.id.lnCategories).setVisibility(View.GONE);
+                view.findViewById(R.id.ln_categories).setVisibility(View.GONE);
             }
             // Status
             switch (lightNovel.getStatus()) {
                 case LightNovel.ProjectStatus.ACTIVE:
-                    ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Liên tục cập nhật");
+                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_active);
                     break;
                 case LightNovel.ProjectStatus.IDLE:
-                    ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Không cập nhật trong 3 tháng qua");
+                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_idle);
                     break;
                 case LightNovel.ProjectStatus.STALLED:
-                    ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Không cập nhật trong 6 tháng qua");
+                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_stalled);
                     break;
                 case LightNovel.ProjectStatus.COMPLETED:
-                    ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Hoàn thành");
+                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_completed);
                     break;
                 case LightNovel.ProjectStatus.INACTIVE:
                 default:
-                    ((TextView) view.findViewById(R.id.lnStatus)).setText("Tình trạng: Không cập nhật trong 1 năm qua");
+                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_inactive);
                     break;
             }
         }

@@ -5,13 +5,13 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    android:padding="@dimen/basic_item_padding">
 
     <TextView
         android:id="@+id/page_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
         android:gravity="center_vertical"
         android:textSize="@dimen/title"
         app:layout_constraintBottom_toTopOf="@+id/page_last_read"
@@ -23,8 +23,6 @@
         android:id="@+id/page_last_read"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:gravity="right"
         android:textSize="@dimen/subtitle"
         app:layout_constraintBottom_toBottomOf="parent"
