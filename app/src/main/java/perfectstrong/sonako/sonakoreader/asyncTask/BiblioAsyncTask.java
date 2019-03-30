@@ -11,18 +11,12 @@ import java.util.List;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
-import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
+import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAsyncTask {
     public static class ScanSaveDirectory extends AsyncTask<Void, Integer, Void> {
-
-        private final LNDBViewModel model;
-
-        public ScanSaveDirectory(LNDBViewModel model) {
-            this.model = model;
-        }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
@@ -36,6 +30,7 @@ public class BiblioAsyncTask {
         @Override
         protected Void doInBackground(Void... voids) {
             publishProgress(R.string.start_scanning);
+            LightNovelsDatabase lndb = LightNovelsDatabaseClient.getInstance();
 
             File saveDir = new File(Utils.getSaveDir());
             // Get all subfolders
@@ -58,11 +53,11 @@ public class BiblioAsyncTask {
 
             // Clear database
             publishProgress(R.string.clear_biblio);
-            model.clearBiblio();
+            lndb.biblioDAO().clearAll();
 
             // Insert to database
             publishProgress(R.string.update_biblio);
-            model.insertCaches(cachePages.toArray(new CachePage[0]));
+            lndb.biblioDAO().insert(cachePages.toArray(new CachePage[0]));
 
             return null;
         }
@@ -72,7 +67,7 @@ public class BiblioAsyncTask {
 
         @Override
         protected Void doInBackground(CachePage... cachePages) {
-            LightNovelsDatabaseClient.getInstance(SonakoReaderApp.getContext())
+            LightNovelsDatabaseClient.getInstance()
                     .biblioDAO()
                     .insert(cachePages);
             return null;

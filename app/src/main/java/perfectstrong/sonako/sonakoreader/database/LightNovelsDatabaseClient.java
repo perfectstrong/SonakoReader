@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import perfectstrong.sonako.sonakoreader.BuildConfig;
+import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 
 /**
  * Singleton class to access database
@@ -34,4 +35,7 @@ public class LightNovelsDatabaseClient {
             return builder.build();
     }
 
+    public static LightNovelsDatabase getInstance() {
+        return getInstance(SonakoReaderApp.getContext());
+    }
 }

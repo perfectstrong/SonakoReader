@@ -55,7 +55,7 @@ public class BiblioFragment extends Fragment implements PageFilterable {
     }
 
     private void forceRefresh() {
-        new BiblioAsyncTask.ScanSaveDirectory(viewModel).execute();
+        new BiblioAsyncTask.ScanSaveDirectory().execute();
     }
 
     @Override

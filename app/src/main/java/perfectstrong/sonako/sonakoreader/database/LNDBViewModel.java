@@ -45,11 +45,4 @@ public class LNDBViewModel extends AndroidViewModel {
         return lndb.biblioDAO().getLiveCaches();
     }
 
-    public void clearBiblio() {
-        lndb.biblioDAO().clearAll();
-    }
-
-    public void insertCaches(CachePage... caches) {
-        lndb.biblioDAO().insert(caches);
-    }
 }
