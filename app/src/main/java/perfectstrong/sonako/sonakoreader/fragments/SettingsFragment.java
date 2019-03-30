@@ -8,6 +8,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SettingsActivity;
+import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
@@ -74,6 +75,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         )
                         .show();
                 return true;
+            } else if (getString(R.string.title_update_biblio).equals(title)) {
+                new BiblioAsyncTask.Update().execute();
+            } else if (getString(R.string.title_clear_biblio).equals(title)) {
+                new AlertDialog.Builder(context)
+                        .setTitle(R.string.confirm_delete)
+                        .setPositiveButton(
+                                R.string.ok,
+                                (dialog, which) -> new BiblioAsyncTask.Clear().execute()
+                        )
+                        .setNegativeButton(
+                                R.string.no,
+                                null
+                        )
+                        .show();
             }
         return super.onPreferenceTreeClick(preference);
     }

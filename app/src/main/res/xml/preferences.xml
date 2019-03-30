@@ -63,7 +63,13 @@
             android:title="@string/title_update_lndb" />
         <Preference
             android:selectable="true"
+            android:title="@string/title_update_biblio"/>
+        <Preference
+            android:selectable="true"
             android:title="@string/title_clear_lndb" />
+        <Preference
+            android:selectable="true"
+            android:title="@string/title_clear_biblio"/>
         <Preference
             android:selectable="true"
             android:title="@string/title_clear_history" />

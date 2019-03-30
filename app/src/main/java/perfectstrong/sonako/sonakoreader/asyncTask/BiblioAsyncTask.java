@@ -73,4 +73,27 @@ public class BiblioAsyncTask {
             return null;
         }
     }
+
+    public static class Update extends ScanSaveDirectory {
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(
+                    SonakoReaderApp.getContext(),
+                    R.string.update_completed,
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+    }
+
+    public static class Clear extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            LightNovelsDatabaseClient.getInstance()
+                    .biblioDAO()
+                    .clearAll();
+            return null;
+        }
+    }
 }
