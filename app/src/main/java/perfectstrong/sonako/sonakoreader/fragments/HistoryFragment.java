@@ -34,7 +34,7 @@ public class HistoryFragment extends Fragment implements PageFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new HistoryAdapter(this.getContext());
+        mAdapter = new HistoryAdapter();
 
         // Observer
         viewModel.getLiveHistory().observe(
