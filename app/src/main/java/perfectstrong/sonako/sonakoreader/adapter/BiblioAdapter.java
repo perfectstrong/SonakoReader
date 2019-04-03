@@ -26,7 +26,7 @@ public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.Ca
         return new CachePageViewHolder(v);
     }
 
-    class CachePageViewHolder extends SonakoListAdapter.ItemViewHolder {
+    class CachePageViewHolder extends SonakoListAdapter<CachePage, BiblioAdapter.CachePageViewHolder>.ItemViewHolder {
 
         CachePageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -39,7 +39,7 @@ public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.Ca
             // Tag
             ((TextView) view.findViewById(R.id.biblio_item_page_tag)).setText(item.getTag());
             // Last cached
-            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(Utils.FORMATTER.format(((CachePage) item).getLastCached()));
+            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(Utils.FORMATTER.format(item.getLastCached()));
         }
     }
 }

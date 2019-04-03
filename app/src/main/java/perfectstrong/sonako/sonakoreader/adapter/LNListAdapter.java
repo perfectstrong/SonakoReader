@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader.adapter;
 
+import android.os.Build;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,8 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
@@ -26,42 +25,11 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 /**
  * Generic adapter to show light novel list
  */
-public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleViewHolder> {
-    private List<LightNovel> _lnList = new ArrayList<>();
-    private List<LightNovel> lnList = new ArrayList<>();
+public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.LNTitleViewHolder> {
     private LNDBViewModel viewModel;
-    private boolean onFilter = false;
 
     public LNListAdapter(LNDBViewModel viewModel) {
         this.viewModel = viewModel;
-    }
-
-    public void setDatalist(List<LightNovel> titles) {
-        _lnList.clear();
-        _lnList.addAll(titles);
-        if (!onFilter)
-            loadByChunk(_lnList);
-    }
-
-    private void loadByChunk(List<LightNovel> list) {
-        lnList.clear();
-        notifyDataSetChanged();
-        int currentIndex = 0;
-        int chunksize = 25;
-        if (list.size() > 0)
-            while (currentIndex < list.size()) {
-                lnList.addAll(list.subList(
-                        currentIndex,
-                        Math.min(currentIndex + chunksize, list.size()))
-                );
-                currentIndex += chunksize;
-                notifyDataSetChanged();
-            }
-    }
-
-    @Override
-    public int getItemCount() {
-        return lnList.size();
     }
 
     public void filterLNList(String keyword,
@@ -70,7 +38,7 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
                              String[] genres) {
         onFilter = true;
         List<LightNovel> filteredList = new ArrayList<>();
-        for (LightNovel ln : _lnList) {
+        for (LightNovel ln : _itemsList) {
             boolean ok = true;
             // Keyword
             if (!keyword.equals("") && !ln.getTitle().toLowerCase().contains(keyword.toLowerCase()))
@@ -132,15 +100,6 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
         show(filteredList);
     }
 
-    private void show(List<LightNovel> filteredList) {
-        loadByChunk(filteredList);
-    }
-
-    public void showAll() {
-        onFilter = false;
-        show(_lnList);
-    }
-
     @NonNull
     @Override
     public LNTitleViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -149,32 +108,23 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
         return new LNTitleViewHolder(v);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull LNTitleViewHolder viewHolder, int i) {
-        viewHolder.initAt(i);
-    }
-
-    class LNTitleViewHolder extends ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
-        View view;
-        private LightNovel lightNovel;
+    class LNTitleViewHolder extends SonakoListAdapter<LightNovel, LNListAdapter.LNTitleViewHolder>.ItemViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
         LNTitleViewHolder(View v) {
             super(v);
-            view = v;
-            v.setOnClickListener(this);
             v.setOnCreateContextMenuListener(this);
         }
 
         void initAt(int position) {
-            lightNovel = lnList.get(position);
+            setItem(position);
             // Title
-            ((TextView) view.findViewById(R.id.ln_title)).setText(lightNovel.getTitle());
+            ((TextView) view.findViewById(R.id.ln_title)).setText(item.getTitle());
             // Type
-            switch (lightNovel.getType()) {
+            switch (item.getType()) {
                 case LightNovel.ProjectType.OFFICIAL:
                 case LightNovel.ProjectType.TEASER:
                 case LightNovel.ProjectType.OLN:
-                    ((TextView) view.findViewById(R.id.ln_type)).setText(lightNovel.getType());
+                    ((TextView) view.findViewById(R.id.ln_type)).setText(item.getType());
                     view.findViewById(R.id.ln_type).setVisibility(View.VISIBLE);
                     break;
                 default:
@@ -182,7 +132,7 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
                     break;
             }
             // Genres
-            List<String> genres = lightNovel.getGenres();
+            List<String> genres = item.getGenres();
             if (genres != null && genres.size() > 0) {
                 StringBuilder genresStr = new StringBuilder(genres.get(0));
                 for (int i = 1; i < genres.size(); i++) {
@@ -195,7 +145,7 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
                 view.findViewById(R.id.ln_categories).setVisibility(View.GONE);
             }
             // Status
-            switch (lightNovel.getStatus()) {
+            switch (item.getStatus()) {
                 case LightNovel.ProjectStatus.ACTIVE:
                     ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_active);
                     break;
@@ -216,27 +166,15 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
         }
 
         @Override
-        public void onClick(View v) {
-            if (lightNovel == null) return;
-            // Open page reader for lightnovel
-            Utils.openOrDownload(
-                    lightNovel.getTitle(),
-                    lightNovel.getTag(),
-                    null,
-                    v.getContext()
-            );
-        }
-
-        @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             PopupMenu popupMenu;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
             } else {
                 popupMenu = new PopupMenu(v.getContext(), v);
             }
             popupMenu.getMenuInflater().inflate(R.menu.ln_title_context_menu, popupMenu.getMenu());
-            if (lightNovel.isFavorite()) {
+            if (item.isFavorite()) {
                 popupMenu.getMenu()
                         .findItem(R.id.ln_title_context_menu_register_favorite)
                         .setVisible(false);
@@ -250,34 +188,34 @@ public class LNListAdapter extends RecyclerView.Adapter<LNListAdapter.LNTitleVie
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
                 case R.id.ln_title_context_menu_register_favorite:
-                    viewModel.registerFavorite(lightNovel);
+                    viewModel.registerFavorite(item);
                     break;
                 case R.id.ln_title_context_menu_unregister_favorite:
-                    viewModel.unregisterFavorite(lightNovel);
+                    viewModel.unregisterFavorite(item);
                     break;
                 case R.id.ln_title_context_menu_refresh_text:
                     Utils.openOrDownload(
-                            lightNovel.getTitle(),
-                            lightNovel.getTag(),
+                            item.getTitle(),
+                            item.getTag(),
                             PageDownloadService.ACTION.REFRESH_TEXT,
                             itemView.getContext()
                     );
                     break;
                 case R.id.ln_title_context_menu_refresh_missing_images:
                     Utils.openOrDownload(
-                            lightNovel.getTitle(),
-                            lightNovel.getTag(),
+                            item.getTitle(),
+                            item.getTag(),
                             PageDownloadService.ACTION.REFRESH_MISSING_IMAGES,
                             itemView.getContext()
                     );
                     break;
                 case R.id.ln_title_context_menu_download_all_chapters:
                     new AsyncMassLinkDownloader(
-                            lightNovel.getTitle(),
-                            lightNovel.getTag(),
+                            item.getTitle(),
+                            item.getTag(),
                             itemView.getContext()
                     ).execute();
                     break;

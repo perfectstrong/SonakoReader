@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 public abstract class Item {
     @NonNull
     String title;
-    @NonNull
     String tag;
 
     @NonNull

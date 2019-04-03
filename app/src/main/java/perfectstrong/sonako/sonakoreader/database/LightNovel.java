@@ -9,16 +9,13 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-@Entity()
+@Entity(
+        primaryKeys = {"title"}
+)
 @TypeConverters(GenresConverter.class)
-public class LightNovel {
-    @PrimaryKey()
-    @NonNull
-    private String title;
-    private String tag;
+public class LightNovel extends Item {
     private String type = ProjectType.OFFICIAL;
     private String status = ProjectStatus.ACTIVE;
     private List<String> genres;
@@ -34,11 +31,6 @@ public class LightNovel {
         if (o == null || getClass() != o.getClass()) return false;
         LightNovel that = (LightNovel) o;
         return title.equals(that.getTitle());
-    }
-
-    @NonNull
-    public String getTitle() {
-        return title;
     }
 
     public String getStatus() {
@@ -64,14 +56,6 @@ public class LightNovel {
 
     public void setGenres(List<String> genres) {
         this.genres = genres;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
     }
 
     public boolean isFavorite() {

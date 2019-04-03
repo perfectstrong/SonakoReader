@@ -46,7 +46,7 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
         show(filteredPages);
     }
 
-    class HistoryEntryViewHolder extends SonakoListAdapter.ItemViewHolder {
+    class HistoryEntryViewHolder extends SonakoListAdapter<Page, HistoryAdapter.HistoryEntryViewHolder>.ItemViewHolder {
 
         HistoryEntryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,7 +61,7 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
             ((TextView) view.findViewById(R.id.page_title)).setText(item.getTitle());
             // Last read
             ((TextView) view.findViewById(R.id.page_last_read))
-                    .setText(Utils.FORMATTER.format(((Page) item).getLastRead()));
+                    .setText(Utils.FORMATTER.format(item.getLastRead()));
         }
     }
 }

@@ -7,7 +7,7 @@ import androidx.room.Entity;
 import androidx.room.TypeConverters;
 
 @Entity(
-        primaryKeys = {"title", "tag"}
+        primaryKeys = {"title"}
 )
 @TypeConverters(TimestampConverter.class)
 public class Page extends Item {
