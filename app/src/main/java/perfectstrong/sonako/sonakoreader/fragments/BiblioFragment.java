@@ -32,7 +32,7 @@ public class BiblioFragment extends Fragment implements PageFilterable {
         viewModel.getLiveCaches().observe(
                 BiblioFragment.this,
                 cachedPages -> {
-                    adapter.setDataList(cachedPages);
+                    adapter.setDatalist(cachedPages);
                     this.updateView(this.getView());
                 }
         );
