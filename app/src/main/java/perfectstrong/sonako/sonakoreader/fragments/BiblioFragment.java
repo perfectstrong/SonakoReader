@@ -1,5 +1,6 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
@@ -82,6 +83,12 @@ public class BiblioFragment extends SonakoFragment {
         View view = View.inflate(activity, R.layout.cache_filter_dialog, null);
         alertDialog.setView(view);
 
+        // Set default
+        Spinner sp = view.findViewById(R.id.date_limit);
+        if (sp != null) {
+            sp.setSelection(3);
+        }
+
         // Action
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.setButton(
@@ -98,7 +105,7 @@ public class BiblioFragment extends SonakoFragment {
                             .getText().toString().trim();
                     String tagKeyword = ((TextView) view.findViewById(R.id.tag_keyword_selection))
                             .getText().toString().trim();
-                    int daysLimit = getResources()
+                    @SuppressLint("CutPasteId") int daysLimit = getResources()
                             .getIntArray(R.array.date_limit_values)[
                             ((Spinner) view.findViewById(R.id.date_limit))
                                     .getSelectedItemPosition()
