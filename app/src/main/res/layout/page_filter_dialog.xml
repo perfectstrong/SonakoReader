@@ -21,7 +21,7 @@
         tools:targetApi="o" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/label_date_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -30,11 +30,11 @@
         app:layout_constraintTop_toBottomOf="@+id/keyword_selection" />
 
     <Spinner
-        android:id="@+id/history_date_limit"
+        android:id="@+id/date_limit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:entries="@array/history_date_limit"
+        android:entries="@array/date_limit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/keyword_selection" />
 

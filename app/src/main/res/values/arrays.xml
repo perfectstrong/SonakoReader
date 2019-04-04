@@ -40,13 +40,13 @@
         <item>4</item>
         <item>5</item>
     </string-array>
-    <string-array name="history_date_limit">
+    <string-array name="date_limit">
         <item>@string/yesterday</item>
         <item>@string/last_week</item>
         <item>@string/last_month</item>
         <item>@string/all</item>
     </string-array>
-    <integer-array name="history_date_limit_values">
+    <integer-array name="date_limit_values">
         <item>1</item>
         <item>7</item>
         <item>30</item>

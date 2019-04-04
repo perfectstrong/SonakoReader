@@ -55,8 +55,8 @@ public class HistoryFragment extends SonakoFragment {
                     String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
                             .getText().toString().trim();
                     int daysLimit = getResources()
-                            .getIntArray(R.array.history_date_limit_values)[
-                            ((Spinner) view.findViewById(R.id.history_date_limit))
+                            .getIntArray(R.array.date_limit_values)[
+                            ((Spinner) view.findViewById(R.id.date_limit))
                                     .getSelectedItemPosition()
                             ];
                     adapter.filterPages(keyword, daysLimit);
