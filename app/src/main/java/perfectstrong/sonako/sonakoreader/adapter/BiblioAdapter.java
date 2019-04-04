@@ -5,6 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import androidx.annotation.NonNull;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
@@ -12,8 +17,23 @@ import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.CachePageViewHolder> {
 
-    public void filterPages(String keyword, int dateLimit) {
-        // TODO filter pages
+    public void filterPages(String titleKeyword,
+                            String tagKeyword,
+                            int daysLimit) {
+        onFilter = true;
+        if (daysLimit < 0) daysLimit = Integer.MAX_VALUE;
+        List<CachePage> filteredPages = new ArrayList<>();
+        Date date = new Date(); // now
+        long msNow = date.getTime();
+        for (CachePage page : _itemsList) {
+            if (!page.getTitle().contains(titleKeyword)) continue;
+            if (!page.getTitle().contains(tagKeyword)) continue;
+            if (TimeUnit.MILLISECONDS.toDays(msNow - page.getLastCached().getTime())
+                    > daysLimit)
+                continue;
+            filteredPages.add(page);
+        }
+        show(filteredPages);
     }
 
     @NonNull

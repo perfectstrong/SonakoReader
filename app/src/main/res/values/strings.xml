@@ -133,4 +133,6 @@
     <string name="ln_status_stalled">Tình trạng: Không cập nhật trong 6 tháng qua</string>
     <string name="ln_status_completed">Tình trạng: Hoàn thành</string>
     <string name="ln_status_inactive">Tình trạng: Không cập nhật trong 1 năm qua</string>
+    <string name="ln_tag_keyword">Từ khóa trong tag</string>
+    <string name="label_cache_date_limit">Lần cập nhật cuối:</string>
 </resources>

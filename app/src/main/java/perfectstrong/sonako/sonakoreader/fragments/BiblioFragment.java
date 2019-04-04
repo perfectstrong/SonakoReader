@@ -79,7 +79,7 @@ public class BiblioFragment extends SonakoFragment {
         if (activity == null) return;
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         AlertDialog alertDialog = builder.setTitle(R.string.filter).create();
-        View view = View.inflate(activity, R.layout.page_filter_dialog, null);
+        View view = View.inflate(activity, R.layout.cache_filter_dialog, null);
         alertDialog.setView(view);
 
         // Action
@@ -94,14 +94,16 @@ public class BiblioFragment extends SonakoFragment {
                 getString(R.string.ok),
                 (dialog, which) -> {
                     // Filter
-                    String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
+                    String titleKeyword = ((TextView) view.findViewById(R.id.title_keyword_selection))
+                            .getText().toString().trim();
+                    String tagKeyword = ((TextView) view.findViewById(R.id.tag_keyword_selection))
                             .getText().toString().trim();
                     int daysLimit = getResources()
-                            .getIntArray(R.array.history_date_limit_values)[
-                            ((Spinner) view.findViewById(R.id.history_date_limit))
+                            .getIntArray(R.array.date_limit_values)[
+                            ((Spinner) view.findViewById(R.id.date_limit))
                                     .getSelectedItemPosition()
                             ];
-                    adapter.filterPages(keyword, daysLimit);
+                    adapter.filterPages(titleKeyword, tagKeyword, daysLimit);
                 }
         );
         alertDialog.setButton(
