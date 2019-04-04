@@ -1,10 +1,11 @@
-package perfectstrong.sonako.sonakoreader;
+package perfectstrong.sonako.sonakoreader.activity;
 
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class SonakoActivity extends AppCompatActivity {

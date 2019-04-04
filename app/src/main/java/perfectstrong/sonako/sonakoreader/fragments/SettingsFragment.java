@@ -7,7 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.SettingsActivity;
+import perfectstrong.sonako.sonakoreader.activity.SettingsActivity;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;

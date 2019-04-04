@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader;
+package perfectstrong.sonako.sonakoreader.activity;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
+import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.MainActivityPagerAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.BiblioFragment;
 import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;

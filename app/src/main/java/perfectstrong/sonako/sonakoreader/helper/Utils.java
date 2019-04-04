@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
-import perfectstrong.sonako.sonakoreader.PageReadingActivity;
+import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;

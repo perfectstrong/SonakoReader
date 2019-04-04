@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader;
+package perfectstrong.sonako.sonakoreader.activity;
 
 import android.os.Bundle;
 

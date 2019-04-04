@@ -1,4 +1,4 @@
-package perfectstrong.sonako.sonakoreader;
+package perfectstrong.sonako.sonakoreader.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +19,7 @@ import java.util.Calendar;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
+import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.Page;
