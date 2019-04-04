@@ -37,7 +37,7 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
         Date date = new Date(); // now
         long msNow = date.getTime();
         for (Page page : _itemsList) {
-            if (!page.getTitle().contains(keyword)) continue;
+            if (!page.getTitle().toLowerCase().contains(keyword.toLowerCase())) continue;
             if (TimeUnit.MILLISECONDS.toDays(msNow - page.getLastRead().getTime())
                     > daysLimit)
                 continue;

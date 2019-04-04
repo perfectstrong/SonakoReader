@@ -26,8 +26,8 @@ public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.Ca
         Date date = new Date(); // now
         long msNow = date.getTime();
         for (CachePage page : _itemsList) {
-            if (!page.getTitle().contains(titleKeyword)) continue;
-            if (!page.getTitle().contains(tagKeyword)) continue;
+            if (!page.getTitle().toLowerCase().contains(titleKeyword.toLowerCase())) continue;
+            if (!page.getTitle().toLowerCase().contains(tagKeyword.toLowerCase())) continue;
             if (TimeUnit.MILLISECONDS.toDays(msNow - page.getLastCached().getTime())
                     > daysLimit)
                 continue;
