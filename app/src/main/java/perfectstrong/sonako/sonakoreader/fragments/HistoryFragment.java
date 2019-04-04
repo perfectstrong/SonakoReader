@@ -1,12 +1,17 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,12 +23,53 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 /**
  * History of reading
  */
-public class HistoryFragment extends Fragment implements PageFilterable {
+public class HistoryFragment extends SonakoFragment {
 
-    private HistoryAdapter mAdapter;
+    private HistoryAdapter adapter;
 
     public HistoryFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void showFilterDialog() {
+        FragmentActivity activity = getActivity();
+        if (activity == null) return;
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog alertDialog = builder.setTitle(R.string.filter).create();
+        View view = View.inflate(activity, R.layout.page_filter_dialog, null);
+        alertDialog.setView(view);
+
+        // Action
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setButton(
+                Dialog.BUTTON_NEGATIVE,
+                getString(R.string.no),
+                (Message) null
+        );
+        alertDialog.setButton(
+                Dialog.BUTTON_POSITIVE,
+                getString(R.string.ok),
+                (dialog, which) -> {
+                    // Filter
+                    String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
+                            .getText().toString().trim();
+                    int daysLimit = getResources()
+                            .getIntArray(R.array.history_date_limit_values)[
+                            ((Spinner) view.findViewById(R.id.history_date_limit))
+                                    .getSelectedItemPosition()
+                            ];
+                    adapter.filterPages(keyword, daysLimit);
+                }
+        );
+        alertDialog.setButton(
+                Dialog.BUTTON_NEUTRAL,
+                getString(R.string.filter_reset),
+                (dialog, which) -> adapter.showAll()
+        );
+
+        // Show
+        alertDialog.show();
     }
 
     @Override
@@ -34,14 +80,13 @@ public class HistoryFragment extends Fragment implements PageFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new HistoryAdapter();
+        adapter = new HistoryAdapter();
 
         // Observer
         viewModel.getLiveHistory().observe(
                 HistoryFragment.this,
-                mAdapter::setDatalist
+                adapter::setDatalist
         );
-
     }
 
     @Override
@@ -53,18 +98,8 @@ public class HistoryFragment extends Fragment implements PageFilterable {
         RecyclerView recyclerView = rootView.findViewById(R.id.HistoryRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(adapter);
 
         return rootView;
-    }
-
-    @Override
-    public void filterPages(String keyword, int daysLimit) {
-        mAdapter.filterPages(keyword, daysLimit);
-    }
-
-    @Override
-    public void showAll() {
-        mAdapter.showAll();
     }
 }

@@ -1,10 +1,6 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +9,16 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
 
 /**
  * A singleton {@link Fragment} to display all downloading/ed entries
  */
-public class PageDownloadFragment extends Fragment {
+public class PageDownloadFragment extends SonakoFragment {
 
     private static PageDownloadFragment instance;
     private PageDownloadAdapter adapter = new PageDownloadAdapter();
@@ -31,6 +31,11 @@ public class PageDownloadFragment extends Fragment {
 
     public PageDownloadFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void showFilterDialog() {
+        // Nothing
     }
 
     @Override

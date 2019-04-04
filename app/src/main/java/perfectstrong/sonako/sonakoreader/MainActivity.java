@@ -1,34 +1,24 @@
 package perfectstrong.sonako.sonakoreader;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.MultiAutoCompleteTextView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
-import perfectstrong.sonako.sonakoreader.database.LightNovel;
+import perfectstrong.sonako.sonakoreader.adapter.MainActivityPagerAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.BiblioFragment;
 import perfectstrong.sonako.sonakoreader.fragments.FavoriteLNsFragment;
 import perfectstrong.sonako.sonakoreader.fragments.HistoryFragment;
-import perfectstrong.sonako.sonakoreader.fragments.LNFilterable;
 import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
-import perfectstrong.sonako.sonakoreader.fragments.PageFilterable;
 
 public class MainActivity extends SonakoActivity {
 
@@ -64,18 +54,7 @@ public class MainActivity extends SonakoActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         final FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(l -> {
-            String s = adapter.getPageTitle(viewPager.getCurrentItem());
-            if (getString(R.string.page_ln_showcase).equals(s)
-                    || getString(R.string.page_ln_favorites).equals(s)) {
-                showLNTitleFilterDialog((LNFilterable) adapter.getItem(viewPager.getCurrentItem()));
-            } else if (getString(R.string.page_history).equals(s)) {
-                showPageFilterDialog((PageFilterable) adapter.getItem(viewPager.getCurrentItem()));
-            } else if (getString(R.string.page_biblio).equals(s)) {
-                // TODO search dialog
-            }
-            // No search on download fragment
-        });
+        fab.setOnClickListener(l -> adapter.getItem(viewPager.getCurrentItem()).showFilterDialog());
     }
 
     @Override
@@ -99,116 +78,5 @@ public class MainActivity extends SonakoActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showLNTitleFilterDialog(LNFilterable fragment) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        AlertDialog alertDialog = builder.setTitle(R.string.filter).create();
-        View view = View.inflate(this, R.layout.ln_title_filter_dialog, null);
-        alertDialog.setView(view);
-
-        // Hint for genres
-        ArrayAdapter<String> genresHintAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_dropdown_item_1line,
-                LightNovel.ProjectGenre.ALL
-        );
-        MultiAutoCompleteTextView genresTextView = view.findViewById(R.id.genres_selection);
-        assert genresTextView != null;
-        genresTextView.setAdapter(genresHintAdapter);
-        genresTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-
-        // Hint for type
-        ArrayAdapter<String> typesAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                LightNovel.ProjectType.CHOICES
-        );
-        typesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner typesSpinner = view.findViewById(R.id.type_selection);
-        typesSpinner.setAdapter(typesAdapter);
-
-        // Hint for status
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                LightNovel.ProjectStatus.CHOICES
-        );
-        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner statusSpinner = view.findViewById(R.id.status_selection);
-        statusSpinner.setAdapter(statusAdapter);
-
-        // Action
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setButton(
-                Dialog.BUTTON_NEGATIVE,
-                getString(R.string.no),
-                (Message) null
-        );
-        alertDialog.setButton(
-                Dialog.BUTTON_POSITIVE,
-                getString(R.string.ok),
-                (dialog, which) -> {
-                    // Filter
-                    String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
-                            .getText().toString().trim();
-                    String type = typesSpinner.getSelectedItem().toString();
-                    String status = statusSpinner.getSelectedItem().toString();
-                    String[] genres = genresTextView.getText().toString().split("\\s*,\\s*");
-                    if (genres.length == 1 && genres[0].equals("")) genres = new String[]{};
-                    fragment.filterLNList(
-                            keyword,
-                            type,
-                            status,
-                            genres
-                    );
-                }
-        );
-        alertDialog.setButton(
-                Dialog.BUTTON_NEUTRAL,
-                getString(R.string.filter_reset),
-                (dialog, which) -> fragment.showAll()
-        );
-
-        // Show
-        alertDialog.show();
-    }
-
-    private void showPageFilterDialog(PageFilterable fragment) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        AlertDialog alertDialog = builder.setTitle(R.string.filter).create();
-        View view = View.inflate(this, R.layout.page_filter_dialog, null);
-        alertDialog.setView(view);
-
-        // Action
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.setButton(
-                Dialog.BUTTON_NEGATIVE,
-                getString(R.string.no),
-                (Message) null
-        );
-        alertDialog.setButton(
-                Dialog.BUTTON_POSITIVE,
-                getString(R.string.ok),
-                (dialog, which) -> {
-                    // Filter
-                    String keyword = ((TextView) view.findViewById(R.id.keyword_selection))
-                            .getText().toString().trim();
-                    int daysLimit = getResources()
-                            .getIntArray(R.array.history_date_limit_values)[
-                            ((Spinner) view.findViewById(R.id.history_date_limit))
-                                    .getSelectedItemPosition()
-                            ];
-                    fragment.filterPages(keyword, daysLimit);
-                }
-        );
-        alertDialog.setButton(
-                Dialog.BUTTON_NEUTRAL,
-                getString(R.string.filter_reset),
-                (dialog, which) -> fragment.showAll()
-        );
-
-        // Show
-        alertDialog.show();
     }
 }

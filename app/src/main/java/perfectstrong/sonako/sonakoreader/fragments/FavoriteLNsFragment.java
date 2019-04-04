@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,9 +17,7 @@ import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 /**
  * Represent all bookmarked LN
  */
-public class FavoriteLNsFragment extends Fragment implements LNFilterable {
-
-    private LNListAdapter mAdapter;
+public class FavoriteLNsFragment extends LNFilterableFragment {
 
     public FavoriteLNsFragment() {
         // Required empty public constructor
@@ -34,9 +31,9 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new LNListAdapter(viewModel);
+        adapter = new LNListAdapter(viewModel);
         // Observer
-        viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, mAdapter::setDatalist);
+        viewModel.getLiveFavoritesLNList().observe(FavoriteLNsFragment.this, adapter::setDatalist);
     }
 
     @Override
@@ -47,17 +44,7 @@ public class FavoriteLNsFragment extends Fragment implements LNFilterable {
         RecyclerView recyclerView = rootview.findViewById(R.id.FavoriteLNsRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(adapter);
         return rootview;
-    }
-
-    @Override
-    public void filterLNList(String keyword, String type, String status, String[] genres) {
-        mAdapter.filterLNList(keyword, type, status, genres);
-    }
-
-    @Override
-    public void showAll() {
-        mAdapter.showAll();
     }
 }

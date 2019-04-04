@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,13 +14,10 @@ import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
-
 /**
  * List of all LNs (including teaser, OLN)
  */
-public class LNShowcaseFragment extends Fragment implements LNFilterable {
-
-    private LNListAdapter mAdapter;
+public class LNShowcaseFragment extends LNFilterableFragment {
 
     public LNShowcaseFragment() {
         // Required empty public constructor
@@ -35,13 +31,13 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
                 .get(LNDBViewModel.class);
 
         // Adapter
-        mAdapter = new LNListAdapter(viewModel);
+        adapter = new LNListAdapter(viewModel);
 
         // Observer
         viewModel.getLiveLNList().observe(
                 this,
                 titles -> {
-                    mAdapter.setDatalist(titles);
+                    adapter.setDatalist(titles);
                     this.updateView(this.getView());
                 }
         );
@@ -49,7 +45,7 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
 
     private void updateView(View view) {
         if (view == null) return;
-        if (mAdapter.getItemCount() == 0) {
+        if (adapter.getItemCount() == 0) {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
             view.findViewById(R.id.NoDatabaseButton)
                     .setOnClickListener(v -> forceDownload());
@@ -70,18 +66,8 @@ public class LNShowcaseFragment extends Fragment implements LNFilterable {
         RecyclerView recyclerView = rootView.findViewById(R.id.RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(adapter);
         return rootView;
-    }
-
-    @Override
-    public void filterLNList(String keyword, String type, String status, String[] genres) {
-        mAdapter.filterLNList(keyword, type, status, genres);
-    }
-
-    @Override
-    public void showAll() {
-        mAdapter.showAll();
     }
 
     private void forceDownload() {
