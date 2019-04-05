@@ -89,6 +89,9 @@ public class PageReadingActivity extends SonakoActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_return_home:
+                Utils.goHome(this);
+                break;
             case R.id.action_download_all_chapters:
                 Log.d(TAG, "Download all chapters of " + title);
                 new AsyncMassLinkDownloader(title, tag, this).execute();

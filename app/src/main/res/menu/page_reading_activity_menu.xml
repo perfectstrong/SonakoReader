@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="perfectstrong.sonako.sonakoreader.activity.PageReadingActivity">
     <item
+        android:id="@+id/action_return_home"
+        android:title="@string/return_home" />
+    <item
         android:id="@+id/action_download_all_chapters"
         android:title="@string/download_all_chapters" />
     <item

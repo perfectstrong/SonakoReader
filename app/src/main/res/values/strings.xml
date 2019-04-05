@@ -135,4 +135,5 @@
     <string name="ln_status_inactive">Tình trạng: Không cập nhật trong 1 năm qua</string>
     <string name="ln_tag_keyword">Từ khóa trong tag</string>
     <string name="label_cache_date_limit">Lần cập nhật cuối:</string>
+    <string name="return_home">Trở về cửa sổ xuất phát</string>
 </resources>

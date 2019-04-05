@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
+import perfectstrong.sonako.sonakoreader.activity.MainActivity;
 import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
@@ -398,5 +399,10 @@ public class Utils {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         } else
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+    }
+
+    public static void goHome(Context context) {
+        Intent i = new Intent(context, MainActivity.class);
+        context.startActivity(i);
     }
 }
