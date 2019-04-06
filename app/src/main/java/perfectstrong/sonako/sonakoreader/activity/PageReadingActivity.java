@@ -9,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -46,6 +47,9 @@ public class PageReadingActivity extends SonakoActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            WebView.enableSlowWholeDocumentDraw();
+        }
         setContentView(R.layout.activity_page_reading);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -76,7 +80,13 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         pageview.setWebViewClient(new PageReadingWebViewClient());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            pageview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        } else {
+            pageview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     @Override
