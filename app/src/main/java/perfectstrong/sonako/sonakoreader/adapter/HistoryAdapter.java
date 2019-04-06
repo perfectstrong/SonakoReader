@@ -55,8 +55,7 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
         }
 
         @Override
-        void initAt(int pos) {
-            setItem(pos);
+        void decorateView() {
             // Title
             ((TextView) view.findViewById(R.id.page_title)).setText(item.getTitle());
             // Last read

@@ -115,8 +115,8 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
             v.setOnCreateContextMenuListener(this);
         }
 
-        void initAt(int position) {
-            setItem(position);
+        @Override
+        void decorateView() {
             // Title
             ((TextView) view.findViewById(R.id.ln_title)).setText(item.getTitle());
             // Type

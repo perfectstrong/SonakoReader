@@ -13,11 +13,12 @@ import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 /**
  * Common adapter for fragment
- * @param <I> containing title and tag
+ *
+ * @param <I>  containing title and tag
  * @param <VH> view holder of item
  */
 @SuppressWarnings("WeakerAccess")
-    public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAdapter.ItemViewHolder> extends RecyclerView.Adapter<VH> {
+public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAdapter.ItemViewHolder> extends RecyclerView.Adapter<VH> {
     List<I> _itemsList = new ArrayList<>();
     List<I> itemsList = new ArrayList<>();
     boolean onFilter = false;
@@ -78,16 +79,15 @@ import perfectstrong.sonako.sonakoreader.helper.Utils;
             view.setOnClickListener(this);
         }
 
-        void setItem(int pos) {
-            item = itemsList.get(pos);
-        }
-
         /**
-         * Override this method to decorate. Call {@link #setItem(int)} to get item content
-         *
          * @param pos position in {@link #itemsList}
          */
-        abstract void initAt(int pos);
+        void initAt(int pos) {
+            item = itemsList.get(pos);
+            decorateView();
+        }
+
+        abstract void decorateView();
 
         @Override
         public void onClick(View v) {

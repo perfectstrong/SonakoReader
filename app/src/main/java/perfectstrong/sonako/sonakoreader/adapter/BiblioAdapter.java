@@ -52,8 +52,8 @@ public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.Ca
             super(itemView);
         }
 
-        void initAt(int position) {
-            setItem(position);
+        @Override
+        void decorateView() {
             // Title
             ((TextView) view.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
             // Tag
