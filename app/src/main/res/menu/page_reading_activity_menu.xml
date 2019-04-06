@@ -4,10 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="perfectstrong.sonako.sonakoreader.activity.PageReadingActivity">
     <item
+        android:id="@+id/action_backward"
+        android:icon="@android:drawable/ic_media_previous"
+        android:title="@string/backward"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_forward"
+        android:icon="@android:drawable/ic_media_next"
+        android:title="@string/forward"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_return_home"
         android:icon="@drawable/ic_menu_home"
         android:title="@string/return_home"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_download_all_chapters"
         android:title="@string/download_all_chapters" />

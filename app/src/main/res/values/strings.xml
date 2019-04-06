@@ -136,4 +136,6 @@
     <string name="ln_tag_keyword">Từ khóa trong tag</string>
     <string name="label_cache_date_limit">Lần cập nhật cuối:</string>
     <string name="return_home">Trở về cửa sổ xuất phát</string>
+    <string name="forward">Tiến tới</string>
+    <string name="backward">Quay lui</string>
 </resources>

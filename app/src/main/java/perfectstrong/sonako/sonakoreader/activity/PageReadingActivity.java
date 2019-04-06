@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
 import perfectstrong.sonako.sonakoreader.R;
@@ -34,30 +35,39 @@ public class PageReadingActivity extends SonakoActivity {
 
     private static final String UNDEFINED = "Undefined";
     private static final String TAG = PageReadingActivity.class.getSimpleName();
+    private static final String LAST_INTENT_KEY = "lastIntentKey";
+    private static final String SHOULD_RESTORE_HISTORY_KEY = "shouldRestoreHistoryKey";
 
     private String title;
     private String tag;
+    private WebView pageview;
+    private boolean shouldRestoreHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            title = bundle.getString(Config.EXTRA_TITLE);
-            tag = bundle.getString(Config.EXTRA_TAG);
-        }
-        if (title == null) title = UNDEFINED;
-        if (tag == null) tag = UNDEFINED;
-
-        // New title to load
-        title = Utils.removeSubtrait(title);
-        tag = Utils.removeSubtrait(tag);
         setContentView(R.layout.activity_page_reading);
-        setTitle(title);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        setupPageview();
+        if (savedInstanceState == null) {
+            setTagAndTitle(getIntent());
+            openPage();
+        }
+    }
 
-        WebView pageview = findViewById(R.id.page_viewer);
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        shouldRestoreHistory = savedInstanceState.getBoolean(SHOULD_RESTORE_HISTORY_KEY);
+        Intent lastIntent = savedInstanceState.getParcelable(LAST_INTENT_KEY);
+        if (shouldRestoreHistory && lastIntent != null) {
+            setTagAndTitle(lastIntent);
+            pageview.restoreState(savedInstanceState);
+        }
+    }
+
+    private void setupPageview() {
+        pageview = findViewById(R.id.page_viewer);
         pageview.setInitialScale(1);
         pageview.setScrollContainer(false);
         WebSettings settings = pageview.getSettings();
@@ -67,17 +77,6 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
         pageview.setWebViewClient(new PageReadingWebViewClient());
-
-        // The file should be ready
-        pageview.loadUrl(Utils.getFilepath(title, tag));
-
-        // Register to history
-        new HistoryAsyncTask.Register()
-                .execute(new Page(
-                        title,
-                        tag,
-                        Calendar.getInstance().getTime()
-                ));
     }
 
     @Override
@@ -89,6 +88,12 @@ public class PageReadingActivity extends SonakoActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_backward:
+                pageview.goBack();
+                break;
+            case R.id.action_forward:
+                pageview.goForward();
+                break;
             case R.id.action_return_home:
                 Utils.goHome(this);
                 break;
@@ -117,9 +122,61 @@ public class PageReadingActivity extends SonakoActivity {
         return true;
     }
 
-    private class PageReadingWebViewClient extends WebViewClient {
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setTagAndTitle(intent);
+        openPage();
+    }
 
-        private final String LINK_PREFIX = "file://" + Utils.getSavDirForTag(tag);
+    private void setTagAndTitle(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+            title = bundle.getString(Config.EXTRA_TITLE);
+            tag = bundle.getString(Config.EXTRA_TAG);
+        }
+        if (title == null) title = UNDEFINED;
+        if (tag == null) tag = UNDEFINED;
+
+        // New title to load
+        title = Utils.removeSubtrait(title);
+        tag = Utils.removeSubtrait(tag);
+        setTitle(title);
+    }
+
+    private void openPage() {
+        // The file should be ready
+        pageview.loadUrl(Utils.getFilepath(title, tag));
+
+        // Register to history
+        new HistoryAsyncTask.Register()
+                .execute(new Page(
+                        title,
+                        tag,
+                        Calendar.getInstance().getTime()
+                ));
+    }
+
+    @Override
+    public void recreate() {
+        shouldRestoreHistory = true;
+        super.recreate();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        if (shouldRestoreHistory) {
+            pageview.saveState(outState);
+            outState.putBoolean(SHOULD_RESTORE_HISTORY_KEY, true);
+            Intent lastIntent = new Intent();
+            lastIntent.putExtra(Config.EXTRA_TITLE, title);
+            lastIntent.putExtra(Config.EXTRA_TAG, tag);
+            outState.putParcelable(LAST_INTENT_KEY, lastIntent);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    private class PageReadingWebViewClient extends WebViewClient {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -132,7 +189,7 @@ public class PageReadingActivity extends SonakoActivity {
             String u = Uri.decode(url);
             Log.d(TAG, "Opening link " + u);
             Context context = view.getContext();
-            if (u.startsWith(LINK_PREFIX) && u.contains("?title=")) {
+            if (u.startsWith("file://" + Utils.getSavDirForTag(tag)) && u.contains("?title=")) {
                 // Maybe this is an internal page, indicating a chapter
                 String newTitle = u.substring(
                         u.lastIndexOf("?title=") + "?title=".length()
@@ -151,6 +208,7 @@ public class PageReadingActivity extends SonakoActivity {
             }
             return true;
         }
+
 
         @Override
         public void onPageFinished(WebView view, String url) {
