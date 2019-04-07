@@ -2,6 +2,7 @@ package perfectstrong.sonako.sonakoreader.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -219,10 +220,9 @@ public class PageReadingActivity extends SonakoActivity {
             return true;
         }
 
-
         @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            super.onPageStarted(view, url, favicon);
             loadAssetIntoHead(view,
                     "style",
                     "text/css",
@@ -232,6 +232,11 @@ public class PageReadingActivity extends SonakoActivity {
                     "text/css",
                     "css/" + Utils.getCurrentSkin() + ".css");
             loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
         }
 
         private void loadAssetIntoHead(WebView view,
