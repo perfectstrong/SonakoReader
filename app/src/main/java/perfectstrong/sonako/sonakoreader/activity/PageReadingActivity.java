@@ -223,6 +223,11 @@ public class PageReadingActivity extends SonakoActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
             loadAssetIntoHead(view,
                     "style",
                     "text/css",
@@ -232,11 +237,6 @@ public class PageReadingActivity extends SonakoActivity {
                     "text/css",
                     "css/" + Utils.getCurrentSkin() + ".css");
             loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, url);
         }
 
         private void loadAssetIntoHead(WebView view,
