@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.PageReadingActivity">
 
@@ -45,6 +46,7 @@
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
+        android:onClick="toggleReadingTools"
         app:layout_constraintBottom_toTopOf="@id/reading_tools"
         app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_show_more"
@@ -56,10 +58,11 @@
         android:layout_height="?android:attr/actionBarSize"
         android:orientation="horizontal"
         android:theme="@style/AppTheme"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/page_viewer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/page_viewer">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/action_plus_textsize"

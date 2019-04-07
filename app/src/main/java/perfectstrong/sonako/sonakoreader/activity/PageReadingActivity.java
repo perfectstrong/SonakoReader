@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -44,6 +46,8 @@ public class PageReadingActivity extends SonakoActivity {
     private String tag;
     private WebView pageview;
     private boolean shouldRestoreHistory;
+    private View readingTools;
+    private boolean isShowingReadingTools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,8 @@ public class PageReadingActivity extends SonakoActivity {
             setTagAndTitle(getIntent());
             openPage();
         }
+        readingTools = findViewById(R.id.reading_tools);
+        isShowingReadingTools = false;
     }
 
     @Override
@@ -185,6 +191,28 @@ public class PageReadingActivity extends SonakoActivity {
             outState.putParcelable(LAST_INTENT_KEY, lastIntent);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    // slide the view from below itself to the current position
+    public void slideUp(View view) {
+        Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_up);
+        view.startAnimation(bottomUp);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    // slide the view from its current position to below itself
+    public void slideDown(View view) {
+        Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_down);
+        view.startAnimation(bottomUp);
+        view.setVisibility(View.GONE);
+    }
+
+    public void toggleReadingTools(View view) {
+        if (isShowingReadingTools)
+            slideDown(readingTools);
+        else
+            slideUp(readingTools);
+        isShowingReadingTools = !isShowingReadingTools;
     }
 
     private class PageReadingWebViewClient extends WebViewClient {
