@@ -314,13 +314,18 @@ public class PageReadingActivity extends SonakoActivity {
                         "x.innerHTML = window.atob('" + encoded + "');" +
                         "parent.appendChild(x)" +
                         "})()";
-                if (Build.VERSION.SDK_INT >= 19) {
-                    view.evaluateJavascript(js, null);
-                } else {
-                    view.loadUrl(js);
-                }
+                executeJS(view, js);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
+            }
+        }
+
+        private void executeJS(WebView view,
+                               String js) {
+            if (Build.VERSION.SDK_INT >= 19) {
+                view.evaluateJavascript(js, null);
+            } else {
+                view.loadUrl(js);
             }
         }
 
