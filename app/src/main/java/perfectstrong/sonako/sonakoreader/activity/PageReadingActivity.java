@@ -18,12 +18,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.io.InputStream;
-import java.util.Calendar;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
+
+import java.io.InputStream;
+import java.util.Calendar;
+
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
@@ -45,6 +46,7 @@ public class PageReadingActivity extends SonakoActivity {
     private String title;
     private String tag;
     private WebView pageview;
+    private PageReadingWebViewClient webviewclient;
     private boolean shouldRestoreHistory;
     private View readingTools;
     private boolean isShowingReadingTools;
@@ -88,7 +90,8 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        pageview.setWebViewClient(new PageReadingWebViewClient());
+        webviewclient = new PageReadingWebViewClient(settings);
+        pageview.setWebViewClient(webviewclient);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             pageview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         } else {
@@ -193,14 +196,22 @@ public class PageReadingActivity extends SonakoActivity {
         super.onSaveInstanceState(outState);
     }
 
-    // slide the view from below itself to the current position
+    /**
+     * slide the view from below itself to the current position
+     *
+     * @param view common view
+     */
     public void slideUp(View view) {
         Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_up);
         view.startAnimation(bottomUp);
         view.setVisibility(View.VISIBLE);
     }
 
-    // slide the view from its current position to below itself
+    /**
+     * Slide the view from its current position to below itself
+     *
+     * @param view common view
+     */
     public void slideDown(View view) {
         Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_down);
         view.startAnimation(bottomUp);
@@ -215,7 +226,24 @@ public class PageReadingActivity extends SonakoActivity {
         isShowingReadingTools = !isShowingReadingTools;
     }
 
+    public void plusTextSize(View v) {
+        // Delegate to webviewclient
+        webviewclient.plusTextSize();
+    }
+
+    public void minusTextSize(View v) {
+        // Delegate to webviewclient
+        webviewclient.minusTextSize();
+    }
+
     private class PageReadingWebViewClient extends WebViewClient {
+
+        private final WebSettings settings;
+
+        PageReadingWebViewClient(WebSettings settings) {
+            super();
+            this.settings = settings;
+        }
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -294,6 +322,23 @@ public class PageReadingActivity extends SonakoActivity {
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
+        }
+
+        /**
+         * Percentage
+         */
+        private static final int MAX_ZOOM = 500;
+        private static final int MIN_ZOOM = 20;
+        private static final int STEP_ZOOM = 20;
+
+        void plusTextSize() {
+            if (settings.getTextZoom() - STEP_ZOOM >= MIN_ZOOM)
+                settings.setTextZoom(settings.getTextZoom() - STEP_ZOOM);
+        }
+
+        void minusTextSize() {
+            if (settings.getTextZoom() + STEP_ZOOM <= MAX_ZOOM)
+                settings.setTextZoom(settings.getTextZoom() + STEP_ZOOM);
         }
     }
 }

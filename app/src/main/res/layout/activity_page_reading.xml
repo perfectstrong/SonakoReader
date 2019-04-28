@@ -70,6 +70,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:clickable="true"
+            android:onClick="plusTextSize"
             app:srcCompat="@drawable/ic_plus_textsize" />
 
         <ImageButton
@@ -78,6 +79,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:clickable="true"
+            android:onClick="minusTextSize"
             app:srcCompat="@drawable/ic_minus_textsize" />
 
         <ImageButton
