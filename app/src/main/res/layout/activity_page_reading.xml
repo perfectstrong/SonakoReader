@@ -44,10 +44,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginBottom="8dp"
         android:clickable="true"
         android:onClick="toggleReadingTools"
-        app:layout_constraintBottom_toTopOf="@id/reading_tools"
+        app:layout_constraintBottom_toTopOf="@+id/reading_tools"
         app:layout_constraintRight_toRightOf="parent"
         app:srcCompat="@drawable/ic_show_more"
         app:useCompatPadding="true" />
@@ -55,48 +55,76 @@
     <LinearLayout
         android:id="@+id/reading_tools"
         android:layout_width="0dp"
-        android:layout_height="?android:attr/actionBarSize"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:theme="@style/AppTheme"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/page_viewer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/page_viewer">
 
-        <ImageButton
-            android:id="@+id/action_plus_textsize"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:onClick="plusTextSize"
-            app:srcCompat="@drawable/ic_plus_textsize" />
+        <LinearLayout
+            android:id="@+id/search_box"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme"
+            android:visibility="gone">
 
-        <ImageButton
-            android:id="@+id/action_minus_textsize"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:onClick="minusTextSize"
-            app:srcCompat="@drawable/ic_minus_textsize" />
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:inputType="textShortMessage" />
 
-        <ImageButton
-            android:id="@+id/action_find"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_find" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/action_show_tocs"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:clickable="true"
-            app:srcCompat="@drawable/ic_show_tocs" />
+        <LinearLayout
+            android:id="@+id/reading_tools_container"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:orientation="horizontal"
+            android:theme="@style/AppTheme">
+
+            <ImageButton
+                android:id="@+id/action_plus_textsize"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="plusTextSize"
+                app:srcCompat="@drawable/ic_plus_textsize" />
+
+            <ImageButton
+                android:id="@+id/action_minus_textsize"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="minusTextSize"
+                app:srcCompat="@drawable/ic_minus_textsize" />
+
+            <ImageButton
+                android:id="@+id/action_find"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="toggleSearchBox"
+                app:srcCompat="@drawable/ic_find" />
+
+            <ImageButton
+                android:id="@+id/action_show_tocs"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                app:srcCompat="@drawable/ic_show_tocs" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

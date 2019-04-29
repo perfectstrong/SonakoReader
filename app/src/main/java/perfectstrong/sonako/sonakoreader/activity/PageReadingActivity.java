@@ -2,12 +2,14 @@ package perfectstrong.sonako.sonakoreader.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +22,11 @@ import android.webkit.WebViewClient;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.Calendar;
 
 import perfectstrong.sonako.sonakoreader.R;
@@ -50,6 +54,8 @@ public class PageReadingActivity extends SonakoActivity {
     private boolean shouldRestoreHistory;
     private View readingTools;
     private boolean isShowingReadingTools;
+    private boolean onTextSearching = false;
+    private boolean isShowingSearchBox = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +67,7 @@ public class PageReadingActivity extends SonakoActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupPageview();
+        setupSearchBox();
         if (savedInstanceState == null) {
             setTagAndTitle(getIntent());
             openPage();
@@ -97,6 +104,68 @@ public class PageReadingActivity extends SonakoActivity {
         } else {
             pageview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
+    }
+
+    private void setupSearchBox() {
+        // Background search box
+        TypedValue typedValue = new TypedValue();
+        TypedArray a = this.obtainStyledAttributes(typedValue.data, new int[]{R.attr.colorPrimary});
+        int color = a.getColor(0, 0);
+        a.recycle();
+        findViewById(R.id.search_box).setBackgroundColor(color);
+
+        // Search view
+        final SearchView searchView = findViewById(R.id.search_view);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setIconifiedByDefault(false);
+        searchView.clearFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query != null && !query.isEmpty()) {
+                    if (!onTextSearching) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            pageview.findAllAsync(query);
+                        } else {
+                            pageview.findAll(query);
+                            try {
+                                //noinspection JavaReflectionMemberAccess
+                                Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                                m.invoke(pageview, true);
+                            } catch (Throwable ignored) {
+                            }
+                        }
+                        onTextSearching = true;
+                    } else {
+                        pageview.findNext(true);
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.isEmpty()) {
+                    try {
+                        //noinspection JavaReflectionMemberAccess
+                        Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                        m.invoke(pageview, false);
+                    } catch (Throwable ignored) {
+                    }
+                    onTextSearching = false;
+                }
+                return true;
+            }
+        });
+        searchView.setOnCloseListener(() -> {
+            closeSearchBox();
+            return false;
+        });
+    }
+
+    private void closeSearchBox() {
+        onTextSearching = false;
+        pageview.clearMatches();
     }
 
     @Override
@@ -219,9 +288,10 @@ public class PageReadingActivity extends SonakoActivity {
     }
 
     public void toggleReadingTools(View view) {
-        if (isShowingReadingTools)
+        if (isShowingReadingTools) {
+            closeSearchBox();
             slideDown(readingTools);
-        else
+        } else
             slideUp(readingTools);
         isShowingReadingTools = !isShowingReadingTools;
     }
@@ -234,6 +304,15 @@ public class PageReadingActivity extends SonakoActivity {
     public void minusTextSize(View v) {
         // Delegate to webviewclient
         webviewclient.minusTextSize();
+    }
+
+    public void toggleSearchBox(View view) {
+        if (isShowingSearchBox) {
+            closeSearchBox();
+            slideDown(findViewById(R.id.search_box));
+        } else
+            slideUp(findViewById(R.id.search_box));
+        isShowingSearchBox = !isShowingSearchBox;
     }
 
     private class PageReadingWebViewClient extends WebViewClient {
