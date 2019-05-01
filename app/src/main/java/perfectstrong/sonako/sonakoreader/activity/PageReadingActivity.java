@@ -316,6 +316,7 @@ public class PageReadingActivity extends SonakoActivity {
     private class PageReadingWebViewClient extends WebViewClient {
 
         private final WebSettings settings;
+        private boolean assetsLoaded = false;
 
         PageReadingWebViewClient(WebSettings settings) {
             super();
@@ -361,21 +362,25 @@ public class PageReadingActivity extends SonakoActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            loadAssetIntoHead(view,
-                    "style",
-                    "text/css",
-                    "css/" + Config.SKIN_BASE + ".css");
-            loadAssetIntoHead(view,
-                    "style",
-                    "text/css",
-                    "css/" + Utils.getCurrentSkin() + ".css");
-            loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
+            if (!assetsLoaded) {
+                loadAssetIntoHead(view,
+                        "style",
+                        "text/css",
+                        "css/" + Config.SKIN_BASE + ".css");
+                loadAssetIntoHead(view,
+                        "style",
+                        "text/css",
+                        "css/" + Utils.getCurrentSkin() + ".css");
+                loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
+                assetsLoaded = true;
+            }
         }
 
         private void loadAssetIntoHead(WebView view,
                                        String elementType,
                                        String srcType,
                                        String filepath) {
+            Log.d(TAG, "Loading asset " + filepath + " into head");
             try {
                 InputStream inputStream = getAssets().open(filepath);
                 byte[] buffer = new byte[inputStream.available()];
