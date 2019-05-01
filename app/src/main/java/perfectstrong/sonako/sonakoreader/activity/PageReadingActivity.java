@@ -96,7 +96,7 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webviewclient = new PageReadingWebViewClient(settings);
         pageview.setWebViewClient(webviewclient);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -126,8 +126,6 @@ public class PageReadingActivity extends SonakoActivity {
                     if (!onTextSearching) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             pageview.findAllAsync(query);
-                        } else {
-                            pageview.findAll(query);
                             try {
                                 //noinspection JavaReflectionMemberAccess
                                 Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
@@ -415,12 +413,12 @@ public class PageReadingActivity extends SonakoActivity {
         private static final int MIN_ZOOM = 20;
         private static final int STEP_ZOOM = 20;
 
-        void plusTextSize() {
+        void minusTextSize() {
             if (settings.getTextZoom() - STEP_ZOOM >= MIN_ZOOM)
                 settings.setTextZoom(settings.getTextZoom() - STEP_ZOOM);
         }
 
-        void minusTextSize() {
+        void plusTextSize() {
             if (settings.getTextZoom() + STEP_ZOOM <= MAX_ZOOM)
                 settings.setTextZoom(settings.getTextZoom() + STEP_ZOOM);
         }
