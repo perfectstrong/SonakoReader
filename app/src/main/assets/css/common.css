@@ -357,3 +357,58 @@ figure {
     margin-left: auto;
     margin-right: auto;
 }
+
+.toc-h1 {
+    text-indent: 0em;
+}
+
+.toc-h2 {
+    text-indent: 1em;
+}
+
+.toc-h3 {
+    text-indent: 2em;
+}
+
+.toc-h4 {
+    text-indent: 3em;
+}
+
+.toc-h5 {
+    text-indent: 4em;
+}
+
+.toc-h6 {
+    text-indent: 5em;
+}
+
+#toc-wrapper {
+    z-index: 100;
+    position: fixed;
+    display: block;
+    max-width: 200px;
+    outline: black solid 2px;
+    height: auto;
+    background-color: #dfdbc3;
+    margin: 0;
+    padding: 0.5em;
+    right: 1em;
+    overflow-y: auto;
+}
+
+.toc-title {
+    margin: 0;
+    padding: 0;
+    font-size: larger;
+}
+
+.toggle-collapse {
+    float: right;
+    border: black solid 2px;
+    padding: 0.2em;
+    cursor: pointer;
+}
+
+.inactive {
+    display:none;
+}
