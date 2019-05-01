@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:support-compat:28.0.1'
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha04'
     implementation 'com.google.android.material:material:1.1.0-alpha05'
     implementation 'androidx.room:room-runtime:2.1.0-alpha07'
