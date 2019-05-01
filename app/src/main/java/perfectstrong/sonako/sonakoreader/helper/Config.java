@@ -9,7 +9,7 @@ import perfectstrong.sonako.sonakoreader.BuildConfig;
 
 @SuppressWarnings("WeakerAccess")
 public class Config {
-    public static final String SERVER_NAME = "sonako.wikia.com";
+    public static final String SERVER_NAME = "sonako.fandom.com";
     public static final String WEBSITE = "https://" + SERVER_NAME;
     public static final String API_ENDPOINT = WEBSITE + "/api.php";
     public static final String OFFICIAL_PROJECTS_LIST = "Danh sách các project";
