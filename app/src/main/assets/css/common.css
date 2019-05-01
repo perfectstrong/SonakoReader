@@ -387,6 +387,7 @@ figure {
     position: fixed;
     display: block;
     max-width: 200px;
+    max-height: 50vh;
     outline: black solid 2px;
     height: auto;
     background-color: #dfdbc3;
