@@ -35,6 +35,10 @@ public class BiblioAsyncTask {
             File saveDir = new File(Utils.getSaveDir());
             // Get all subfolders
             File[] dirs = saveDir.listFiles(File::isDirectory);
+            if (dirs == null || dirs.length == 0) {
+                publishProgress(R.string.biblio_empty);
+                return null;
+            }
             List<CachePage> cachePages = new ArrayList<>();
             for (File dir : dirs) {
                 String tag = dir.getName();
