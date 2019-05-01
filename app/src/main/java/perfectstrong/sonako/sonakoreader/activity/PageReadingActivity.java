@@ -96,7 +96,10 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setUseWideViewPort(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setAllowFileAccess(true);
+        settings.setAppCacheEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        settings.setAppCachePath(this.getCacheDir().getAbsolutePath());
         webviewclient = new PageReadingWebViewClient(settings);
         pageview.setWebViewClient(webviewclient);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -176,9 +179,13 @@ public class PageReadingActivity extends SonakoActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_backward:
+                if (webviewclient != null)
+                    webviewclient.assetsLoaded = false;
                 pageview.goBack();
                 break;
             case R.id.action_forward:
+                if (webviewclient != null)
+                    webviewclient.assetsLoaded = false;
                 pageview.goForward();
                 break;
             case R.id.action_return_home:
@@ -233,6 +240,7 @@ public class PageReadingActivity extends SonakoActivity {
 
     private void openPage() {
         // The file should be ready
+        webviewclient.assetsLoaded = false;
         pageview.loadUrl(Utils.getFilepath(title, tag));
 
         // Register to history
