@@ -420,3 +420,8 @@ figure {
 .inactive {
     display:none;
 }
+
+table.wikitable {
+    table-layout: fixed;
+    width: 100%;
+}
