@@ -352,6 +352,13 @@ template {
   display: none;
 }
 
+* {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    -webkit-hyphens: auto;
+}
+
 figure {
     width: 80%;
     margin-left: auto;
