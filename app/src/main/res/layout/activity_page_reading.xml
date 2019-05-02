@@ -39,17 +39,20 @@
 
     </WebView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <perfectstrong.sonako.sonakoreader.component.MovableFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="8dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:clickable="true"
         android:onClick="toggleReadingTools"
         app:layout_constraintBottom_toTopOf="@+id/reading_tools"
         app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/ic_show_more"
+        app:srcCompat="@android:drawable/ic_menu_manage"
         app:useCompatPadding="true" />
 
     <LinearLayout
