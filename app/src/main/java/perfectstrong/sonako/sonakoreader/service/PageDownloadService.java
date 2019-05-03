@@ -368,17 +368,22 @@ public class PageDownloadService extends IntentService {
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
         File content = new File(dir, filename);
-        //noinspection CharsetObjectCanBeUsed
-        try (BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(
-                        new FileOutputStream(content), "UTF-8"))) {
-            writer.write(doc.outerHtml());
-            // Update biblio
-            new BiblioAsyncTask.Register().execute(new CachePage(
-                    title,
-                    tag,
-                    new Date(content.lastModified())
-            ));
+        try {
+            @SuppressWarnings("CharsetObjectCanBeUsed")
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(content), "UTF-8"));
+            try {
+                writer.write(doc.outerHtml());
+                // Update biblio
+                new BiblioAsyncTask.Register().execute(new CachePage(
+                        title,
+                        tag,
+                        new Date(content.lastModified())
+                ));
+            } finally {
+                writer.close();
+            }
         } catch (IOException e) {
             Log.e(TAG, "Text caching failed", e);
         }
@@ -425,16 +430,24 @@ public class PageDownloadService extends IntentService {
 
                 Bitmap bitmap;
                 MediaType mime;
-                try (Response response = client.newCall(request).execute()) {
+                Response response = null;
+                try {
+                    response = client.newCall(request).execute();
                     ResponseBody body = response.body();
                     assert body != null;
-                    try (InputStream inputStream = body.byteStream()) {
+                    InputStream inputStream = body.byteStream();
+                    try {
                         bitmap = BitmapFactory.decodeStream(inputStream);
+                    } finally {
+                        inputStream.close();
                     }
                     mime = body.contentType();
                 } catch (IOException e) {
                     Log.e(TAG, imageName + " downloading failed", e);
                     continue;
+                } finally {
+                    if (response != null)
+                        response.close();
                 }
 
                 assert mime != null;
@@ -451,20 +464,25 @@ public class PageDownloadService extends IntentService {
                 file = new File(dir, imageName);
 
                 // Saving
-                try (FileOutputStream fo = new FileOutputStream(file)) {
-                    switch (mime.subtype()) {
-                        case "jpg":
-                        case "jpeg":
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
-                            break;
-                        case "png":
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fo);
-                            break;
-                        case "webp":
-                            bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
-                            break;
-                        default:
-                            throw new UnsupportedOperationException(mime.subtype() + " unsupported");
+                try {
+                    FileOutputStream fo = new FileOutputStream(file);
+                    try {
+                        switch (mime.subtype()) {
+                            case "jpg":
+                            case "jpeg":
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
+                                break;
+                            case "png":
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fo);
+                                break;
+                            case "webp":
+                                bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
+                                break;
+                            default:
+                                throw new UnsupportedOperationException(mime.subtype() + " unsupported");
+                        }
+                    } finally {
+                        fo.close();
                     }
                 } catch (IOException | UnsupportedOperationException e) {
                     Log.e(TAG, imageName + " saving failed", e);
@@ -490,7 +508,7 @@ public class PageDownloadService extends IntentService {
         }
         // Image name with resizing url
         Map<String, String> resizedImgLinks = wiki.resizeToWidth(maxImageWidth, wikiImgList);
-        for (Element img: imagesLinks) {
+        for (Element img : imagesLinks) {
             String imgName = img.attr("data-name");
             if (resizedImgLinks.containsKey(imgName))
                 img.attr("data-src", resizedImgLinks.get(imgName));

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -32,9 +33,22 @@ public class WikiClient {
     private static final int MAX_IMG_RESIZED_PER_CALL = 50;
 
     public WikiClient(String apiEndpoint, String userAgent) {
-        okHttpClient = new OkHttpClient();
+        okHttpClient = getNewHttpClient();
         this.apiEndpoint = HttpUrl.parse(apiEndpoint);
         this.USER_AGENT = userAgent;
+    }
+
+    private OkHttpClient getNewHttpClient() {
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .retryOnConnectionFailure(true)
+                .cache(null)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS);
+
+        return Tls12SocketFactory.enableTls12OnPreLollipop(client).build();
     }
 
     private HttpUrl buildURLFromQueryParams(List<String> params) {
@@ -60,13 +74,15 @@ public class WikiClient {
      * @return media wiki code text
      */
     public String getPageText(String title) throws IOException, JSONException {
-        try (Response response = GET(
-                "query",
-                "titles", title,
-                "prop", "revisions",
-                "rvprop", "content",
-                "indexpageids", "true"
-        )) {
+        Response response = null;
+        try {
+            response = GET(
+                    "query",
+                    "titles", title,
+                    "prop", "revisions",
+                    "rvprop", "content",
+                    "indexpageids", "true"
+            );
             assert response.body() != null;
             JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
             String pageId = query.getJSONArray("pageids").getString(0);
@@ -80,6 +96,9 @@ public class WikiClient {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            if (response != null)
+                response.close();
         }
     }
 
@@ -94,14 +113,16 @@ public class WikiClient {
                                            String namespace,
                                            String limit) throws IOException, JSONException {
         List<String> titles = new ArrayList<>();
-        try (Response response = GET(
-                "query",
-                "list", "categorymembers",
-                "cmtitle", "Category:" + category,
-                "cmnamespace", namespace,
-                "cmprop", "title",
-                "cmlimit", limit
-        )) {
+        Response response = null;
+        try {
+            response = GET(
+                    "query",
+                    "list", "categorymembers",
+                    "cmtitle", "Category:" + category,
+                    "cmnamespace", namespace,
+                    "cmprop", "title",
+                    "cmlimit", limit
+            );
             assert response.body() != null;
             JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
             JSONArray arrays = query.getJSONArray("categorymembers");
@@ -111,6 +132,9 @@ public class WikiClient {
         } catch (IOException | JSONException e) {
             e.printStackTrace();
             throw e;
+        } finally {
+            if (response != null)
+                response.close();
         }
         return titles;
     }
@@ -204,17 +228,21 @@ public class WikiClient {
      * @return <tt>false</tt> if server returns missing or failed request
      */
     public boolean exists(String title) {
-        try (Response response = GET(
-                "query",
-                "format", "json",
-                "titles", title,
-                "indexpageids", "true")
-        ) {
+        Response response = null;
+        try {
+            response = GET(
+                    "query",
+                    "format", "json",
+                    "titles", title,
+                    "indexpageids", "true");
             assert response.body() != null;
             JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
             return !"-1".equals(query.getJSONArray("pageids").getString(0));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+        } finally {
+            if (response != null)
+                response.close();
         }
         return false;
     }
@@ -257,14 +285,16 @@ public class WikiClient {
             portion.addAll(wikiImgListPrefixed.subList(currentIndex,
                     Math.min(currentIndex + MAX_IMG_RESIZED_PER_CALL, wikiImgListPrefixed.size())));
             String titlesConcat = concatNonEncodedParams(portion.toArray(new String[0]));
-            try (Response response = GET(
-                    "query",
-                    "prop", "imageinfo",
-                    "titles", titlesConcat,
-                    "iiprop", "url",
-                    "iiurlwidth", String.valueOf(width),
-                    "indexpageids", "true"
-            )) {
+            Response response = null;
+            try {
+                response = GET(
+                        "query",
+                        "prop", "imageinfo",
+                        "titles", titlesConcat,
+                        "iiprop", "url",
+                        "iiurlwidth", String.valueOf(width),
+                        "indexpageids", "true"
+                );
                 assert response.body() != null;
                 String str = response.body().string();
                 JSONObject res = new JSONObject(str);
@@ -287,6 +317,9 @@ public class WikiClient {
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 throw e;
+            } finally {
+                if (response != null)
+                    response.close();
             }
 
             // Continue with new portion
