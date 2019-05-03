@@ -313,7 +313,7 @@ public class PageDownloadService extends IntentService {
         // Fix all images
         for (Element img : doc.getElementsByTag("img")) {
             String src = img.attr("src");
-            if (src.startsWith("http:")) //noinspection ResultOfMethodCallIgnored
+            if (src.startsWith("http:"))
                 src = src.replaceFirst("http", "https");
             if (Utils.isInternalImage(src)) // direct link from wikia
                 src = src.replaceAll("/revision.*", "");
@@ -384,7 +384,7 @@ public class PageDownloadService extends IntentService {
         }
     }
 
-    private void downloadImages() {
+    private void downloadImages() throws IOException, JSONException {
         // Save location
         File dir = new File(saveLocation);
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
@@ -476,7 +476,7 @@ public class PageDownloadService extends IntentService {
         }
     }
 
-    private void compressWikiaImages() {
+    private void compressWikiaImages() throws IOException, JSONException {
         if (Utils.isAllowedToDownloadOriginalImages())
             return;
         int maxImageWidth = Utils.getPreferredSize();

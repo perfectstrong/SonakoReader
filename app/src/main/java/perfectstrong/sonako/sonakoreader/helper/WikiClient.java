@@ -59,7 +59,7 @@ public class WikiClient {
      * @param title non URL-encoded
      * @return media wiki code text
      */
-    public String getPageText(String title) {
+    public String getPageText(String title) throws IOException, JSONException {
         try (Response response = GET(
                 "query",
                 "titles", title,
@@ -79,8 +79,8 @@ public class WikiClient {
                     .getString("*");
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+            throw e;
         }
-        return null;
     }
 
 
@@ -92,7 +92,7 @@ public class WikiClient {
      */
     public List<String> getCategoryMembers(String category,
                                            String namespace,
-                                           String limit) {
+                                           String limit) throws IOException, JSONException {
         List<String> titles = new ArrayList<>();
         try (Response response = GET(
                 "query",
@@ -110,6 +110,7 @@ public class WikiClient {
             }
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+            throw e;
         }
         return titles;
     }
@@ -242,7 +243,7 @@ public class WikiClient {
      * @return map of images with their prepared resized versions' links. Img not found will get
      * value <tt>null</tt>
      */
-    public Map<String, String> resizeToWidth(int width, List<String> wikiImgList) {
+    public Map<String, String> resizeToWidth(int width, List<String> wikiImgList) throws IOException, JSONException {
         Map<String, String> links = new HashMap<>();
         // Prepare names
         List<String> wikiImgListPrefixed = new ArrayList<>();
@@ -285,6 +286,7 @@ public class WikiClient {
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
+                throw e;
             }
 
             // Continue with new portion

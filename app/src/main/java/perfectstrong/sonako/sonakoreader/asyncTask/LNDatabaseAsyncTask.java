@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +46,7 @@ public class LNDatabaseAsyncTask {
             this.forceDownload = forceDownload;
         }
 
-        private void downloadAll() {
+        private void downloadAll() throws IOException, JSONException {
             this.wikiClient = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
             titles = new ArrayList<>();
 
@@ -60,7 +63,7 @@ public class LNDatabaseAsyncTask {
             cacheLNDB(lndb, titles);
         }
 
-        private void downloadTitles() {
+        private void downloadTitles() throws IOException, JSONException {
             downloadOfficialProjects(wikiClient, titles);
             downloadTeaserProjects(wikiClient, titles);
             downloadOLNProjects(wikiClient, titles);
@@ -228,7 +231,7 @@ public class LNDatabaseAsyncTask {
      * @param titles     collector
      */
     private static void downloadOfficialProjects(WikiClient wikiClient,
-                                                 List<LightNovel> titles) {
+                                                 List<LightNovel> titles) throws IOException, JSONException {
         String unparsedOfficialList = wikiClient.getPageText(Config.OFFICIAL_PROJECTS_LIST);
         //noinspection RegExpRedundantEscape
         Pattern p = Pattern.compile("\\[\\[([^|]*?)\\]\\]|\\[\\[([^|]*?)\\|[^|]*?\\]\\]",
@@ -253,7 +256,7 @@ public class LNDatabaseAsyncTask {
      * @param titles     collector
      */
     private static void downloadTeaserProjects(WikiClient wikiClient,
-                                               List<LightNovel> titles) {
+                                               List<LightNovel> titles) throws IOException, JSONException {
         List<String> teasers = wikiClient.getCategoryMembers(LightNovel.ProjectType.TEASER, "0", "max");
         for (String title : teasers) {
             LightNovel teaser = new LightNovel(title);
@@ -269,7 +272,7 @@ public class LNDatabaseAsyncTask {
      * @param titles     collector
      */
     private static void downloadOLNProjects(WikiClient wikiClient,
-                                            List<LightNovel> titles) {
+                                            List<LightNovel> titles) throws IOException, JSONException {
         List<String> olns = wikiClient.getCategoryMembers(LightNovel.ProjectType.OLN, "0", "max");
         for (String title : olns) {
             LightNovel teaser = new LightNovel(title);
