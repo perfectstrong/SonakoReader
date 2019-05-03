@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/NoDatabaseGroup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -16,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:minWidth="128dp"
         android:minHeight="128dp"
-        android:src="@drawable/ic_sonakoreaderlogo" />
+        app:srcCompat="@drawable/ic_sonakoreaderlogo" />
 
     <TextView
         android:id="@+id/NoDatabase"
