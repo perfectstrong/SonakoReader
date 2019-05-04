@@ -77,9 +77,10 @@
             android:selectable="false"
             android:summary="@string/summary_pref_about"
             android:title="@string/app_name" />
+        <!--suppress AndroidDomInspection -->
         <Preference
             android:selectable="false"
-            android:summary="@string/app_version"
+            android:summary="@string/versionName"
             android:title="@string/title_app_version" />
         <Preference
             android:selectable="false"
