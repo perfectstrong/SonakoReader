@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
     <font
-        app:font="@font/bay_buom_bold"
-        app:fontStyle="normal"
-        app:fontWeight="400" />
+        app:font="@font/literatabook_medium"
+        app:fontStyle="normal" />
 </font-family>

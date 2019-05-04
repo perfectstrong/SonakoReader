@@ -9,6 +9,11 @@ import android.net.Uri;
 import android.view.Display;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.PreferenceManager;
+
 import java.io.File;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
@@ -18,22 +23,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.preference.PreferenceManager;
-import perfectstrong.sonako.sonakoreader.activity.MainActivity;
-import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
+import perfectstrong.sonako.sonakoreader.activity.MainActivity;
+import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 @SuppressWarnings("WeakerAccess")
 public class Utils {
 
     public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
+    private static final int MAGICAL_NUMBER = 6134;
 
-    @SuppressWarnings("WeakerAccess")
     public static String getSaveDir() {
         return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
                 .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
@@ -156,6 +157,7 @@ public class Utils {
 
     /**
      * Open page reader or download if not cached yet
+     *
      * @param title   of new page to open
      * @param tag     tag of series
      * @param action  See {@link PageDownloadService.ACTION}
@@ -404,5 +406,19 @@ public class Utils {
     public static void goHome(Context context) {
         Intent i = new Intent(context, MainActivity.class);
         context.startActivity(i);
+    }
+
+    public static void restartApp(Context context) {
+//        Context context = SonakoReaderApp.getContext();
+//        Intent intent = new Intent(context, MainActivity.class);
+//        PendingIntent mPendingIntent = PendingIntent.getActivity(context, MAGICAL_NUMBER, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+//        System.exit(0);
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 }

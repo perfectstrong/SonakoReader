@@ -2,6 +2,6 @@
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <font
-        android:font="@font/bay_buom_bold"
-        app:font="@font/bay_buom_bold" />
+        android:font="@font/literatabook_medium"
+        app:font="@font/literatabook_medium" />
 </font-family>

@@ -16,7 +16,7 @@ public class SonakoReaderApp extends Application {
     @Override
     public void onCreate() {
         instance = this;
-        super.onCreate();
         Utils.updateTheme(this);
+        super.onCreate();
     }
 }

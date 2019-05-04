@@ -4,12 +4,8 @@
     <PreferenceScreen
         android:key="@string/key_interface_options"
         android:title="@string/title_interface_options">
-        <ListPreference
-            android:defaultValue="@string/default_skin"
-            android:entries="@array/pref_skin"
-            android:entryValues="@array/pref_skin_values"
+        <Preference
             android:key="@string/key_pref_skin"
-            android:summary="%s"
             android:title="@string/title_pref_skin" />
         <ListPreference
             android:defaultValue="@string/default_first_page"
@@ -63,13 +59,13 @@
             android:title="@string/title_update_lndb" />
         <Preference
             android:selectable="true"
-            android:title="@string/title_update_biblio"/>
+            android:title="@string/title_update_biblio" />
         <Preference
             android:selectable="true"
             android:title="@string/title_clear_lndb" />
         <Preference
             android:selectable="true"
-            android:title="@string/title_clear_biblio"/>
+            android:title="@string/title_clear_biblio" />
         <Preference
             android:selectable="true"
             android:title="@string/title_clear_history" />
@@ -101,14 +97,14 @@
             android:title="@string/title_issue_report">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/perfectstrong/SonakoReader/issues/new"/>
+                android:data="https://github.com/perfectstrong/SonakoReader/issues/new" />
         </Preference>
         <Preference
             android:selectable="false"
             android:title="@string/title_contact">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://www.facebook.com/SonakoWiki/"/>
+                android:data="https://www.facebook.com/SonakoWiki/" />
         </Preference>
     </PreferenceScreen>
 

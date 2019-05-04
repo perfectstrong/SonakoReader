@@ -2,6 +2,6 @@
 <font-family xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <font
-        android:font="@font/bai_sau_bold"
-        app:font="@font/bai_sau_bold" />
+        android:font="@font/roboto_medium"
+        app:font="@font/roboto_medium" />
 </font-family>

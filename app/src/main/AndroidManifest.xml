@@ -15,8 +15,8 @@
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_new_launcher"
-        android:roundIcon="@mipmap/ic_new_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_new_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
@@ -24,10 +24,10 @@
         tools:targetApi="m">
         <activity
             android:name=".activity.SettingsActivity"
-            android:label="@string/action_settings"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:label="@string/action_settings"
+            android:noHistory="true"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.PageReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -50,8 +50,8 @@
 
         <service
             android:name=".service.PageDownloadService"
-            android:icon="@mipmap/ic_new_launcher"
-            android:exported="false" />
+            android:exported="false"
+            android:icon="@mipmap/ic_new_launcher" />
     </application>
 
 </manifest>
