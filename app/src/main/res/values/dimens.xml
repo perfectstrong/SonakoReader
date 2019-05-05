@@ -5,4 +5,5 @@
     <dimen name="subtitle">14sp</dimen>
     <dimen name="title">18sp</dimen>
     <dimen name="basic_item_padding">6dip</dimen>
+    <dimen name="child_item_padding_start">18dip</dimen>
 </resources>

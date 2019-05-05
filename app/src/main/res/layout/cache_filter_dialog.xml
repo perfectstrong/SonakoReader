@@ -12,25 +12,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="@string/ln_title_keyword"
         android:importantForAutofill="no"
         android:inputType="text"
-        android:hint="@string/ln_title_keyword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:targetApi="o" />
-
-    <EditText
-        android:id="@+id/tag_keyword_selection"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:hint="@string/ln_tag_keyword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_keyword_selection"
         tools:targetApi="o" />
 
     <TextView
@@ -40,7 +27,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/label_cache_date_limit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tag_keyword_selection" />
+        app:layout_constraintTop_toBottomOf="@id/title_keyword_selection" />
 
     <Spinner
         android:id="@+id/date_limit"
@@ -49,6 +36,6 @@
         android:layout_marginTop="8dp"
         android:entries="@array/date_limit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tag_keyword_selection" />
+        app:layout_constraintTop_toBottomOf="@id/title_keyword_selection" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

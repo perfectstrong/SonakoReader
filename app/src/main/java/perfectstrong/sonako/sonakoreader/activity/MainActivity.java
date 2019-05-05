@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.MainActivityPagerAdapter;
 import perfectstrong.sonako.sonakoreader.fragments.BiblioFragment;

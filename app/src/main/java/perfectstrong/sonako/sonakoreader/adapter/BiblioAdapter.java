@@ -5,15 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
-import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.CachePageViewHolder> {
 
@@ -56,10 +56,10 @@ public class BiblioAdapter extends SonakoListAdapter<CachePage, BiblioAdapter.Ca
         void decorateView() {
             // Title
             ((TextView) view.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
-            // Tag
-            ((TextView) view.findViewById(R.id.biblio_item_page_tag)).setText(item.getTag());
-            // Last cached
-            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(Utils.FORMATTER.format(item.getLastCached()));
+//            // Tag
+//            ((TextView) view.findViewById(R.id.biblio_item_page_tag)).setText(item.getTag());
+//            // Last cached
+//            ((TextView) view.findViewById(R.id.biblio_item_page_last_cached)).setText(Utils.FORMATTER.format(item.getLastCached()));
         }
     }
 }

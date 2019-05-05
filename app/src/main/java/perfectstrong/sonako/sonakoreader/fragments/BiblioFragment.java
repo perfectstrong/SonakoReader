@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
@@ -17,43 +16,62 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import perfectstrong.sonako.sonakoreader.R;
-import perfectstrong.sonako.sonakoreader.adapter.BiblioAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
+import perfectstrong.sonako.sonakoreader.component.biblio.BiblioExpandableAdapter;
+import perfectstrong.sonako.sonakoreader.component.biblio.LNTag;
+import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 
 public class BiblioFragment extends SonakoFragment {
 
-    private BiblioAdapter adapter;
+    private BiblioExpandableAdapter adapter;
+    private List<LNTag> itemsList;
+    private boolean onFilter = false;
+    private RecyclerView recyclerView;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LNDBViewModel viewModel = ViewModelProviders.of(this).get(LNDBViewModel.class);
 
-        // Adapter
-        adapter = new BiblioAdapter();
-
         // Observer
         viewModel.getLiveCaches().observe(
                 BiblioFragment.this,
                 cachedPages -> {
-                    adapter.setDatalist(cachedPages);
+                    this.updateBackData(cachedPages);
                     this.updateView(this.getView());
                 }
         );
     }
 
+    private void updateBackData(List<CachePage> cachedPages) {
+        itemsList = BiblioExpandableAdapter.regroupCaches(cachedPages);
+        if (!onFilter) {
+            show(itemsList);
+        }
+    }
+
     private void updateView(View view) {
         if (view == null) return;
-        if (adapter.getItemCount() == 0) {
+        if (adapter == null || adapter.getItemCount() == 0) {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
             view.findViewById(R.id.NoDatabaseButton)
                     .setOnClickListener(v -> forceRefresh());
-            view.findViewById(R.id.RecyclerView).setVisibility(View.GONE);
+            if (recyclerView != null)
+                recyclerView.setVisibility(View.GONE);
         } else {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.GONE);
             view.findViewById(R.id.RecyclerView).setVisibility(View.VISIBLE);
+            if (!onFilter && recyclerView != null)
+                recyclerView.setAdapter(adapter);
         }
     }
 
@@ -67,7 +85,7 @@ public class BiblioFragment extends SonakoFragment {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_biblio, container, false);
         updateView(rootView);
-        RecyclerView recyclerView = rootView.findViewById(R.id.RecyclerView);
+        recyclerView = rootView.findViewById(R.id.RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
@@ -103,23 +121,55 @@ public class BiblioFragment extends SonakoFragment {
                     // Filter
                     String titleKeyword = ((TextView) view.findViewById(R.id.title_keyword_selection))
                             .getText().toString().trim();
-                    String tagKeyword = ((TextView) view.findViewById(R.id.tag_keyword_selection))
-                            .getText().toString().trim();
-                    @SuppressLint("CutPasteId") int daysLimit = getResources()
-                            .getIntArray(R.array.date_limit_values)[
-                            ((Spinner) view.findViewById(R.id.date_limit))
-                                    .getSelectedItemPosition()
-                            ];
-                    adapter.filterPages(titleKeyword, tagKeyword, daysLimit);
+                    assert sp != null;
+                    int daysLimit = getResources()
+                            .getIntArray(R.array.date_limit_values)[sp.getSelectedItemPosition()];
+                    filterPages(titleKeyword, daysLimit);
                 }
         );
         alertDialog.setButton(
                 Dialog.BUTTON_NEUTRAL,
                 getString(R.string.filter_reset),
-                (dialog, which) -> adapter.showAll()
+                (dialog, which) -> showAll()
         );
 
         // Show
         alertDialog.show();
+    }
+
+    private void showAll() {
+        onFilter = false;
+        show(itemsList);
+    }
+
+    private void filterPages(String titleKeyword,
+                             int daysLimit) {
+        onFilter = true;
+        if (daysLimit < 0) daysLimit = Integer.MAX_VALUE;
+        Date date = new Date(); // now
+        long msNow = date.getTime();
+        List<LNTag> filteredTag = new ArrayList<>();
+        for (LNTag lnTag : itemsList) {
+            String tag = lnTag.getTag();
+            List<CachePage> filteredCached = new ArrayList<>();
+            for (CachePage cachePage : lnTag.getCachePages()) {
+                if (!cachePage.getTitle().toLowerCase().contains(titleKeyword.toLowerCase()))
+                    continue;
+                if (TimeUnit.MILLISECONDS.toDays(msNow - cachePage.getLastCached().getTime())
+                        > daysLimit) {
+                    continue;
+                }
+                filteredCached.add(cachePage);
+            }
+            if (filteredCached.size() > 0)
+                filteredTag.add(new LNTag(tag, filteredCached));
+        }
+        show(filteredTag);
+    }
+
+    private void show(List<LNTag> filteredTags) {
+        adapter = new BiblioExpandableAdapter(filteredTags);
+        if (recyclerView != null)
+            recyclerView.setAdapter(adapter);
     }
 }
