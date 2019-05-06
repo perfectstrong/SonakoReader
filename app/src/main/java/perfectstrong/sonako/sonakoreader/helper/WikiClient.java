@@ -38,7 +38,7 @@ public class WikiClient {
         this.USER_AGENT = userAgent;
     }
 
-    private OkHttpClient getNewHttpClient() {
+    public static OkHttpClient getNewHttpClient() {
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)

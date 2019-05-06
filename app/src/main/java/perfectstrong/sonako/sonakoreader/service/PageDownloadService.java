@@ -59,7 +59,7 @@ public class PageDownloadService extends IntentService {
     private boolean forceRefreshImages;
     private WikiClient wiki;
     private String text;
-    private List<Element> imagesLinks = new ArrayList<>();
+    private List<Element> imagesLinks;
     private Handler mHandler;
 
     public static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
@@ -202,6 +202,7 @@ public class PageDownloadService extends IntentService {
 
     private void loadImageLinksFromCachedText() throws IOException {
         publishProgress(getString(R.string.analyzing_text));
+        imagesLinks = new ArrayList<>();
         Document doc = Jsoup.parse(
                 Utils.getTextFile(title, tag),
                 "UTF-8");
@@ -310,7 +311,8 @@ public class PageDownloadService extends IntentService {
                 figure.empty().appendChild(realImg);
             }
         }
-        // Fix all images
+        // Fix and get all images' names
+        imagesLinks = new ArrayList<>();
         for (Element img : doc.getElementsByTag("img")) {
             String src = img.attr("src");
             if (src.startsWith("http:"))
@@ -397,7 +399,7 @@ public class PageDownloadService extends IntentService {
         // Compress images to adapt to max length of screen
         compressWikiaImages();
         // Saving images
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = WikiClient.getNewHttpClient();
         for (Element img : imagesLinks) {
             if (!img.hasAttr("data-name")) continue;
             String imageName = img.attr("data-name");
