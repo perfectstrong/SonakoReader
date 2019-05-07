@@ -365,8 +365,7 @@ public class PageReadingActivity extends SonakoActivity {
                 );
                 return true;
             } else {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                context.startActivity(i);
+                Utils.viewExternalLink(PageReadingActivity.this, url);
             }
             return true;
         }

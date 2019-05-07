@@ -408,16 +408,16 @@ public class Utils {
     }
 
     public static void restartApp(Context context) {
-//        Context context = SonakoReaderApp.getContext();
-//        Intent intent = new Intent(context, MainActivity.class);
-//        PendingIntent mPendingIntent = PendingIntent.getActivity(context, MAGICAL_NUMBER, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-//        System.exit(0);
         Intent intent = new Intent(context, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_CLEAR_TASK |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static void viewExternalLink(Context context, String url) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
     }
 }
