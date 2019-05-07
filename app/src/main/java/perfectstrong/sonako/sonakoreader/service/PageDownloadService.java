@@ -62,8 +62,8 @@ public class PageDownloadService extends IntentService {
     private List<Element> imagesLinks;
     private Handler mHandler;
 
-    public static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
-    public static final String FLAG_DOWNLOAD_DUPLICATE = "DUPLICATE";
+    private static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
+    private static final String FLAG_DOWNLOAD_DUPLICATE = "DUPLICATE";
 
     private static Map<String, String> tasks;
     private boolean downloadFailedImages;

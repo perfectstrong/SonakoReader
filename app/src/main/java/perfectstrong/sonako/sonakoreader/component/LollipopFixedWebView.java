@@ -29,7 +29,7 @@ public class LollipopFixedWebView extends WebView {
         super(getFixedContext(context), attrs, defStyleAttr, privateBrowsing);
     }
 
-    public static Context getFixedContext(Context context) {
+    private static Context getFixedContext(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             return context.createConfigurationContext(new Configuration());
         } else {

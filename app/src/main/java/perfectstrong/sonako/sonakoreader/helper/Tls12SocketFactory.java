@@ -6,7 +6,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,12 +26,12 @@ import okhttp3.TlsVersion;
  * @link https://developer.android.com/reference/javax/net/ssl/SSLSocket.html
  * @see SSLSocketFactory
  */
-public class Tls12SocketFactory extends SSLSocketFactory {
+class Tls12SocketFactory extends SSLSocketFactory {
     private static final String[] TLS_V12_ONLY = {"TLSv1.2"};
 
     private final SSLSocketFactory delegate;
 
-    public Tls12SocketFactory(SSLSocketFactory base) {
+    private Tls12SocketFactory(SSLSocketFactory base) {
         this.delegate = base;
     }
 
@@ -52,12 +51,12 @@ public class Tls12SocketFactory extends SSLSocketFactory {
     }
 
     @Override
-    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port) throws IOException {
         return patch(delegate.createSocket(host, port));
     }
 
     @Override
-    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
         return patch(delegate.createSocket(host, port, localHost, localPort));
     }
 

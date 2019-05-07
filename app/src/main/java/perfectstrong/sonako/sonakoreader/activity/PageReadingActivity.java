@@ -285,7 +285,7 @@ public class PageReadingActivity extends SonakoActivity {
      *
      * @param view common view
      */
-    public void slideUp(View view) {
+    private void slideUp(View view) {
         Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_up);
         view.startAnimation(bottomUp);
         view.setVisibility(View.VISIBLE);
@@ -296,7 +296,7 @@ public class PageReadingActivity extends SonakoActivity {
      *
      * @param view common view
      */
-    public void slideDown(View view) {
+    private void slideDown(View view) {
         Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_down);
         view.startAnimation(bottomUp);
         view.setVisibility(View.GONE);

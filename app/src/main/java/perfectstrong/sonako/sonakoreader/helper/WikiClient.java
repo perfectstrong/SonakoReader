@@ -26,8 +26,8 @@ import okhttp3.Response;
 public class WikiClient {
 
     private final String USER_AGENT;
-    private OkHttpClient okHttpClient;
-    private HttpUrl apiEndpoint;
+    private final OkHttpClient okHttpClient;
+    private final HttpUrl apiEndpoint;
     private static final int MAX_TITLES_PER_CALL = 50;
     private static final int CATEGORIES_LIST_MAX = 500;
     private static final int MAX_IMG_RESIZED_PER_CALL = 50;

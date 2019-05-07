@@ -1,13 +1,8 @@
 <resources>
     <string name="app_name">Sonako Reader</string>
     <string name="action_settings">Tùy chỉnh</string>
-    <string name="lnPreview">LN Preview</string>
     <string name="lnTitle">LN Title</string>
-    <string name="lnCategories">LN Categories</string>
-    <string name="wikiname">Sonako Light Novel</string>
-    <string name="loading">Đang tải</string>
     <string name="error_occurred">Đã có lỗi xảy ra:</string>
-    <string name="lnCategoriesLabel">Thể loại:</string>
     <string name="filter">Lọc danh sách</string>
     <string name="ln_title_keyword">Từ khóa trong tiêu đề</string>
     <string name="genres_selection_label">Thể loại</string>
@@ -26,18 +21,14 @@
     <string name="downloading_image">Tải ảnh</string>
     <string name="not_having">Sonako không chứa</string>
     <string name="register_favorite">Thêm vào Yêu Thích</string>
-    <string name="download_all_internal_links">Tải toàn bộ link</string>
     <string name="unregister_favorite">Bỏ khỏi Yêu Thích</string>
     <string name="ok">OK</string>
     <string name="no">Thoai</string>
-    <string name="downloading_patient">đang được tải. Hãy bình tĩnh.</string>
     <string name="start_downloading">Bắt đầu tải</string>
     <string name="download_finish">Đã tải xong</string>
     <string name="last_read">Lần đọc cuối:</string>
     <string name="download_all_chapters">Tải hàng loạt chương truyện</string>
-    <string name="download_all">Tải tuốt</string>
     <string name="all">Tất cả</string>
-    <string name="loading_links">Đang tìm link</string>
     <string name="refresh_text">Tải lại trang chủ</string>
     <string name="no_links_download">Không có link để tải</string>
     <string name="which_link_to_download">Bạn muốn tải link nào?</string>
@@ -57,8 +48,6 @@
     <string name="key_pref_download_noncached_pages">key_pref_download_noncached_pages</string>
     <string name="title_pref_download_noncached_pages">Tự động tải trang mới</string>
     <string name="download_when_wifi">Chỉ khi có Wifi</string>
-    <string name="skin_holy">Hâu-ly</string>
-    <string name="skin_dark">Đắc</string>
     <string name="skin_holy_value">holy</string>
     <string name="skin_dark_value">dark</string>
     <string name="download_when_cellular">3G, 4G cũng chơi</string>
@@ -78,7 +67,6 @@
     <string name="pref_app_info">Thông tin</string>
     <string name="summary_pref_about">Tàng kinh các cho đêm trường không trăng không net</string>
     <string name="title_app_version">Phiên bản</string>
-    <string name="app_version">1.0</string>
     <string name="title_update_lndb">Cập nhật danh sách LN</string>
     <string name="title_clear_lndb">Xóa danh sách LN</string>
     <string name="title_clear_history">Xóa lịch sử đọc</string>
@@ -116,13 +104,10 @@
     <string name="title_copyright">Copyright</string>
     <string name="title_issue_report">Báo lỗi</string>
     <string name="title_contact">Liên hệ</string>
-    <string name="key_copyright">key_copyright</string>
     <string name="label_history_date_limit">Thời gian:</string>
     <string name="yesterday">Hôm qua</string>
     <string name="last_week">Tuần rồi</string>
     <string name="last_month">Tháng rồi</string>
-    <string name="label_tag">Tag:</string>
-    <string name="label_last_cached">Lần cập nhật cuối:</string>
     <string name="start_scanning">Bắt đầu quét</string>
     <string name="clear_biblio">Dọn tủ truyện</string>
     <string name="update_biblio">Cập nhật tủ truyện</string>
@@ -133,12 +118,10 @@
     <string name="ln_status_stalled">Tình trạng: Không cập nhật trong 6 tháng qua</string>
     <string name="ln_status_completed">Tình trạng: Hoàn thành</string>
     <string name="ln_status_inactive">Tình trạng: Không cập nhật trong 1 năm qua</string>
-    <string name="ln_tag_keyword">Từ khóa trong tag</string>
     <string name="label_cache_date_limit">Lần cập nhật cuối:</string>
     <string name="return_home">Trở về cửa sổ xuất phát</string>
     <string name="forward">Tiến tới</string>
     <string name="backward">Quay lui</string>
-    <string name="key_word">Từ khóa</string>
     <string name="biblio_empty">Tủ truyện trống trơn :(</string>
     <string name="theme_changing_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
 </resources>

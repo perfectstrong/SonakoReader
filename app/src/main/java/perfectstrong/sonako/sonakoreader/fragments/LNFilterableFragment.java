@@ -15,7 +15,7 @@ import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 
 public abstract class LNFilterableFragment extends SonakoFragment {
-    protected LNListAdapter adapter;
+    LNListAdapter adapter;
 
     @Override
     public void showFilterDialog() {

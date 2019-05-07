@@ -33,7 +33,6 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 public class Utils {
 
     public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
-    private static final int MAGICAL_NUMBER = 6134;
 
     public static String getSaveDir() {
         return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())

@@ -26,7 +26,6 @@
             android:summary="%s"
             android:title="@string/title_pref_download_when" />
         <CheckBoxPreference
-            android:id="@+id/pref_download_noncached_pages"
             android:defaultValue="@bool/default_download_noncached_pages"
             android:key="@string/key_pref_download_noncached_pages"
             android:summary="@string/summary_download_noncached_pages"
@@ -39,13 +38,11 @@
             android:summary="%s"
             android:title="@string/title_pref_download_wikia_images" />
         <CheckBoxPreference
-            android:id="@+id/pref_download_webp"
             android:defaultValue="@bool/default_download_webp"
             android:key="@string/key_pref_download_webp"
             android:summary="@string/summary_download_webp"
             android:title="@string/title_pref_download_webp" />
         <CheckBoxPreference
-            android:id="@+id/pref_download_external_images"
             android:defaultValue="@bool/default_download_external_images"
             android:key="@string/key_pref_download_external_images"
             android:summary="@string/summary_download_external_images"
