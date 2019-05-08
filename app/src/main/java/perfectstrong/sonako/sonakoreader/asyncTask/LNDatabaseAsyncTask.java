@@ -362,6 +362,6 @@ public class LNDatabaseAsyncTask {
                         Objects.requireNonNull(map.get(ln.getTitle())).isFavorite());
         }
         // Bulk update and replace
-        lndb.lnDao().update(newTitles.toArray(new LightNovel[0]));
+        lndb.lnDao().insert(newTitles.toArray(new LightNovel[0]));
     }
 }
