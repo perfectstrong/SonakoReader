@@ -411,7 +411,11 @@ public class PageDownloadService extends IntentService {
                 if (file.exists())
                     continue;
                 // Already cached webp
-                String imgWebp = imageName.substring(0, imageName.lastIndexOf(".")) + ".webp";
+                String imgWebp;
+                if (imageName.lastIndexOf(".") > -1)
+                    imgWebp = imageName.substring(0, imageName.lastIndexOf(".")) + ".webp";
+                else
+                    imgWebp = imageName + ".webp";
                 if (new File(dir, imgWebp).exists()) {
                     // Refer to cached image
                     img.attr("src", imgWebp);
@@ -462,7 +466,10 @@ public class PageDownloadService extends IntentService {
                     continue;
                 }
                 // Change extension
-                imageName = imageName.substring(0, imageName.lastIndexOf(".")) + "." + mime.subtype();
+                if (imageName.lastIndexOf(".") > -1)
+                    imageName = imageName.substring(0, imageName.lastIndexOf(".")) + "." + mime.subtype();
+                else
+                    imageName += "." + mime.subtype();
                 file = new File(dir, imageName);
 
                 // Saving
