@@ -6,7 +6,7 @@ Một app con con để lưu trữ tàng kinh các, phòng trường hợp _mấ
 ## Copyright Notice
 * [JSoup](https://github.com/jhy/jsoup/)
 * [OkHttp](https://github.com/square/okhttp)
-* UVN Bay Buom Nang & UVN Bai Sau
+* Literata Book & Roboto
 * Ảnh nền 1: https://www.pixiv.net/member_illust.php?mode=medium&illust_id=47769818
 * Ảnh nền 2: (đang tìm sauce)
 
