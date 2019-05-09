@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -105,11 +104,7 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setAppCachePath(this.getCacheDir().getAbsolutePath());
         webviewclient = new PageReadingWebViewClient(settings);
         pageview.setWebViewClient(webviewclient);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            pageview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        } else {
-            pageview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
+        pageview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
     private void setupSearchBox() {
@@ -130,18 +125,14 @@ public class PageReadingActivity extends SonakoActivity {
             public boolean onQueryTextSubmit(String query) {
                 if (query != null && !query.isEmpty()) {
                     if (!onTextSearching) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                            pageview.findAllAsync(query);
-                            try {
-                                //noinspection JavaReflectionMemberAccess
-                                Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
-                                m.invoke(pageview, true);
-                            } catch (Throwable ignored) {
-                            }
+                        pageview.findAllAsync(query);
+                        try {
+                            //noinspection JavaReflectionMemberAccess
+                            Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
+                            m.invoke(pageview, true);
+                        } catch (Throwable ignored) {
                         }
                         onTextSearching = true;
-                    } else {
-                        pageview.findNext(true);
                     }
                 }
                 return false;
@@ -350,7 +341,6 @@ public class PageReadingActivity extends SonakoActivity {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             String u = Uri.decode(url);
             Log.d(TAG, "Opening link " + u);
-            Context context = view.getContext();
             if (u.startsWith("file://" + Utils.getSavDirForTag(tag)) && u.contains("?title=")) {
                 // Maybe this is an internal page, indicating a chapter
                 String newTitle = u.substring(
@@ -420,11 +410,7 @@ public class PageReadingActivity extends SonakoActivity {
 
         private void executeJS(WebView view,
                                String js) {
-            if (Build.VERSION.SDK_INT >= 19) {
-                view.evaluateJavascript(js, null);
-            } else {
-                view.loadUrl(js);
-            }
+            view.evaluateJavascript(js, null);
         }
 
         /**

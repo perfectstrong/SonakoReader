@@ -77,8 +77,8 @@ class Tls12SocketFactory extends SSLSocketFactory {
         return s;
     }
 
-    public static OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
-        if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+    static OkHttpClient.Builder enableTls12OnPreLollipop(OkHttpClient.Builder client) {
+        if (Build.VERSION.SDK_INT < 22) {
             try {
                 SSLContext sc = SSLContext.getInstance("TLSv1.2");
                 sc.init(null, null, null);

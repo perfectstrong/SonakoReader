@@ -1,15 +1,13 @@
 package perfectstrong.sonako.sonakoreader.database;
 
-import android.os.Build;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.TypeConverters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.TypeConverters;
 
 @Entity(
         primaryKeys = {"title"}
@@ -68,11 +66,7 @@ public class LightNovel extends Item {
 
     @Override
     public int hashCode() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return Objects.hash(title);
-        } else {
-            return super.hashCode();
-        }
+        return Objects.hash(title);
     }
 
     public static class ProjectType {

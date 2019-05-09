@@ -1,6 +1,5 @@
 package perfectstrong.sonako.sonakoreader.adapter;
 
-import android.os.Build;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,11 +9,12 @@ import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
@@ -168,11 +168,7 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             PopupMenu popupMenu;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
-            } else {
-                popupMenu = new PopupMenu(v.getContext(), v);
-            }
+            popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
             popupMenu.getMenuInflater().inflate(R.menu.ln_title_context_menu, popupMenu.getMenu());
             if (item.isFavorite()) {
                 popupMenu.getMenu()
