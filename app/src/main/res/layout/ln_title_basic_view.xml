@@ -12,17 +12,21 @@
 
     <TextView
         android:id="@+id/ln_title"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:contentDescription="@string/lnTitle"
         android:textSize="@dimen/title"
+        app:layout_constraintEnd_toStartOf="@+id/ln_fav_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/ln_type"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/subtitle"
+        app:layout_constraintEnd_toStartOf="@+id/ln_fav_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ln_title" />
 
     <TextView
@@ -30,8 +34,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/subtitle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ln_fav_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ln_type" />
 
     <TextView
@@ -39,8 +43,19 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/subtitle"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ln_fav_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ln_categories" />
+
+    <ImageView
+        android:id="@+id/ln_fav_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/btn_star_big_off" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -113,6 +114,12 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
         LNTitleViewHolder(View v) {
             super(v);
             v.setOnCreateContextMenuListener(this);
+            v.findViewById(R.id.ln_fav_icon).setOnClickListener(v1 -> {
+                if (!item.isFavorite())
+                    viewModel.registerFavorite(item);
+                else
+                    viewModel.unregisterFavorite(item);
+            });
         }
 
         @Override
@@ -163,6 +170,11 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
                     ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_inactive);
                     break;
             }
+            // Fav icon
+            ((ImageView) view.findViewById(R.id.ln_fav_icon)).setImageResource(
+                    item.isFavorite() ? android.R.drawable.btn_star_big_on
+                            : android.R.drawable.btn_star_big_off
+            );
         }
 
         @Override
