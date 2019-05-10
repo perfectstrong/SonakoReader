@@ -3,10 +3,13 @@ package perfectstrong.sonako.sonakoreader.fragments;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -61,12 +64,16 @@ public class HistoryFragment extends SonakoFragment {
                                     .getSelectedItemPosition()
                             ];
                     adapter.filterPages(keyword, daysLimit);
+                    showShowAllBtn();
                 }
         );
         alertDialog.setButton(
                 Dialog.BUTTON_NEUTRAL,
                 getString(R.string.filter_reset),
-                (dialog, which) -> adapter.showAll()
+                (dialog, which) -> {
+                    adapter.showAll();
+                    hideShowAllBtn();
+                }
         );
 
         // Show
@@ -89,6 +96,21 @@ public class HistoryFragment extends SonakoFragment {
                 adapter::setDatalist
         );
     }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        if (v != null
+                && v.findViewById(R.id.lnfilterable_show_all) != null) {
+            final View showAllBtn = v.findViewById(R.id.lnfilterable_show_all);
+            showAllBtn.setOnClickListener(v1 -> {
+                adapter.showAll();
+                hideShowAllBtn();
+            });
+        }
+        return v;
+    }
+
 
     @Override
     protected void updateView(View rootView) {

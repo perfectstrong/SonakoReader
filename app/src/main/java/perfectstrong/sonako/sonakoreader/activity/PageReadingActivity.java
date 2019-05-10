@@ -12,8 +12,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -262,34 +260,12 @@ public class PageReadingActivity extends SonakoActivity {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * slide the view from below itself to the current position
-     *
-     * @param view common view
-     */
-    private void slideUp(View view) {
-        Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_up);
-        view.startAnimation(bottomUp);
-        view.setVisibility(View.VISIBLE);
-    }
-
-    /**
-     * Slide the view from its current position to below itself
-     *
-     * @param view common view
-     */
-    private void slideDown(View view) {
-        Animation bottomUp = AnimationUtils.loadAnimation(this, R.anim.bottom_down);
-        view.startAnimation(bottomUp);
-        view.setVisibility(View.GONE);
-    }
-
     public void toggleReadingTools(View view) {
         if (isShowingReadingTools) {
             closeSearchBox();
-            slideDown(readingTools);
+            Utils.slideOut(readingTools, R.anim.bottom_down);
         } else
-            slideUp(readingTools);
+            Utils.slideIn(readingTools, R.anim.bottom_up);
         isShowingReadingTools = !isShowingReadingTools;
     }
 
@@ -306,9 +282,9 @@ public class PageReadingActivity extends SonakoActivity {
     public void toggleSearchBox(View view) {
         if (isShowingSearchBox) {
             closeSearchBox();
-            slideDown(findViewById(R.id.search_box));
+            Utils.slideOut(findViewById(R.id.search_box), R.anim.bottom_down);
         } else
-            slideUp(findViewById(R.id.search_box));
+            Utils.slideIn(findViewById(R.id.search_box), R.anim.bottom_up);
         isShowingSearchBox = !isShowingSearchBox;
     }
 

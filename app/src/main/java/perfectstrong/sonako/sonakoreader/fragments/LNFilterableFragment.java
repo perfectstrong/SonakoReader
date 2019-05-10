@@ -1,13 +1,17 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.app.Dialog;
+import android.os.Bundle;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
@@ -21,6 +25,20 @@ public abstract class LNFilterableFragment extends SonakoFragment {
     @Override
     public LNListAdapter getAdapter() {
         return adapter;
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        if (v != null
+                && v.findViewById(R.id.lnfilterable_show_all) != null) {
+            final View showAllBtn = v.findViewById(R.id.lnfilterable_show_all);
+            showAllBtn.setOnClickListener(v1 -> {
+                adapter.showAll();
+                hideShowAllBtn();
+            });
+        }
+        return v;
     }
 
     @Override
@@ -87,12 +105,16 @@ public abstract class LNFilterableFragment extends SonakoFragment {
                             status,
                             genres
                     );
+                    showShowAllBtn();
                 }
         );
         alertDialog.setButton(
                 Dialog.BUTTON_NEUTRAL,
                 getString(R.string.filter_reset),
-                (dialog, which) -> adapter.showAll()
+                (dialog, which) -> {
+                    adapter.showAll();
+                    hideShowAllBtn();
+                }
         );
 
         // Show

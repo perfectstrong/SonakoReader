@@ -3,10 +3,13 @@ package perfectstrong.sonako.sonakoreader.fragments;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
@@ -49,6 +52,21 @@ public class BiblioFragment extends SonakoFragment {
                 }
         );
     }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        if (v != null
+                && v.findViewById(R.id.lnfilterable_show_all) != null) {
+            final View showAllBtn = v.findViewById(R.id.lnfilterable_show_all);
+            showAllBtn.setOnClickListener(v1 -> {
+                showAll();
+                hideShowAllBtn();
+            });
+        }
+        return v;
+    }
+
 
     private void updateBackData(List<CachePage> cachedPages) {
         itemsList = BiblioExpandableAdapter.regroupCaches(cachedPages);
@@ -116,12 +134,16 @@ public class BiblioFragment extends SonakoFragment {
                     int daysLimit = getResources()
                             .getIntArray(R.array.date_limit_values)[sp.getSelectedItemPosition()];
                     filterPages(titleKeyword, daysLimit);
+                    showShowAllBtn();
                 }
         );
         alertDialog.setButton(
                 Dialog.BUTTON_NEUTRAL,
                 getString(R.string.filter_reset),
-                (dialog, which) -> showAll()
+                (dialog, which) -> {
+                    hideShowAllBtn();
+                    showAll();
+                }
         );
 
         // Show

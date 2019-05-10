@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public abstract class SonakoFragment extends Fragment {
 
@@ -43,5 +44,17 @@ public abstract class SonakoFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(getAdapter());
         return rootView;
+    }
+
+    void showShowAllBtn() {
+        if (this.getView() != null
+                && this.getView().findViewById(R.id.lnfilterable_show_all) != null)
+            Utils.slideIn(this.getView().findViewById(R.id.lnfilterable_show_all), R.anim.top_down);
+    }
+
+    void hideShowAllBtn() {
+        if (this.getView() != null
+                && this.getView().findViewById(R.id.lnfilterable_show_all) != null)
+            Utils.slideOut(this.getView().findViewById(R.id.lnfilterable_show_all), R.anim.top_up);
     }
 }

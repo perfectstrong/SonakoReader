@@ -7,7 +7,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -419,5 +422,31 @@ public class Utils {
         Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(i);
+    }
+
+    /**
+     * slide the view from none to display
+     *
+     * @param view      regular view
+     * @param animation id
+     */
+    public static void slideIn(View view, int animation) {
+        if (view.getVisibility() == View.VISIBLE) return;
+        Animation bottomUp = AnimationUtils.loadAnimation(view.getContext(), animation);
+        view.startAnimation(bottomUp);
+        view.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Slide the view from its current position to none
+     *
+     * @param view      regular view
+     * @param animation id
+     */
+    public static void slideOut(View view, int animation) {
+        if (view.getVisibility() == View.GONE) return;
+        Animation bottomUp = AnimationUtils.loadAnimation(view.getContext(), animation);
+        view.startAnimation(bottomUp);
+        view.setVisibility(View.GONE);
     }
 }
