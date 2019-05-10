@@ -23,7 +23,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -32,7 +31,6 @@ import java.util.Calendar;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
-import perfectstrong.sonako.sonakoreader.component.MovableFloatingActionButton;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
@@ -69,7 +67,6 @@ public class PageReadingActivity extends SonakoActivity {
         setSupportActionBar(toolbar);
         setupPageview();
         setupSearchBox();
-        setupMovableFAB();
         if (savedInstanceState == null) {
             setTagAndTitle(getIntent());
             openPage();
@@ -156,12 +153,6 @@ public class PageReadingActivity extends SonakoActivity {
             closeSearchBox();
             return false;
         });
-    }
-
-    private void setupMovableFAB() {
-        MovableFloatingActionButton fab = findViewById(R.id.fab);
-        CoordinatorLayout.LayoutParams lp = fab.getCoordinatorLayout();
-        fab.setCoordinatorLayout(lp);
     }
 
     private void closeSearchBox() {

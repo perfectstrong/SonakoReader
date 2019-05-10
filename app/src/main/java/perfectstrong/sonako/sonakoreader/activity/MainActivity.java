@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import perfectstrong.sonako.sonakoreader.R;
@@ -23,6 +23,9 @@ import perfectstrong.sonako.sonakoreader.fragments.LNShowcaseFragment;
 import perfectstrong.sonako.sonakoreader.fragments.PageDownloadFragment;
 
 public class MainActivity extends SonakoActivity {
+
+    private ViewPager viewPager;
+    private MainActivityPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +39,8 @@ public class MainActivity extends SonakoActivity {
         setSupportActionBar(toolbar);
         setTitle(R.string.app_name);
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
-        MainActivityPagerAdapter adapter = new MainActivityPagerAdapter(getSupportFragmentManager());
+        viewPager = findViewById(R.id.viewpager);
+        adapter = new MainActivityPagerAdapter(getSupportFragmentManager());
         // In order of @array/pref_first_page_values
         adapter.addFragment(new LNShowcaseFragment(), getString(R.string.page_ln_showcase));
         adapter.addFragment(new FavoriteLNsFragment(), getString(R.string.page_ln_favorites));
@@ -54,9 +57,10 @@ public class MainActivity extends SonakoActivity {
 
         TabLayout tabLayout = findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+    }
 
-        final FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(l -> adapter.getItem(viewPager.getCurrentItem()).showFilterDialog());
+    public void showFilterDialog(View v) {
+        adapter.getItem(viewPager.getCurrentItem()).showFilterDialog();
     }
 
     @Override

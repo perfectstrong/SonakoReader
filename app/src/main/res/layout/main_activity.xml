@@ -47,10 +47,10 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                app:titleTextAppearance="@style/ToolbarTitle"
                 app:layout_constraintEnd_toEndOf="@+id/header_background_overlay"
                 app:layout_constraintStart_toStartOf="@+id/header_background_overlay"
-                app:layout_constraintTop_toTopOf="@+id/header_background_overlay" />
+                app:layout_constraintTop_toTopOf="@+id/header_background_overlay"
+                app:titleTextAppearance="@style/ToolbarTitle" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tablayout"
@@ -74,15 +74,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/app_bar" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <perfectstrong.sonako.sonakoreader.component.MovableFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
+        android:clickable="true"
+        android:onClick="showFilterDialog"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:useCompatPadding="true"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        app:srcCompat="@android:drawable/ic_menu_search"
+        app:useCompatPadding="true" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
