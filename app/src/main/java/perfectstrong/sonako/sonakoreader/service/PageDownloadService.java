@@ -273,6 +273,8 @@ public class PageDownloadService extends IntentService {
         Element localNav = doc.selectFirst(".localNav");
         // Remove unrelated section
         doc.getElementsByClass("entry-unrelated").remove();
+        // Remove hidden section
+        doc.getElementsByClass("hidden").remove();
         // Reappend local nav at the end
         if (localNav != null)
             doc.body().appendChild(localNav);
