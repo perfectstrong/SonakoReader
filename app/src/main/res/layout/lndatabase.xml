@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/NoDatabaseGroup"
+        layout="@layout/no_database" />
+
+    <include layout="@layout/ln_recycler_list" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

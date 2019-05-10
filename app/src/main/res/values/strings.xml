@@ -124,4 +124,5 @@
     <string name="backward">Quay lui</string>
     <string name="biblio_empty">Tủ truyện trống trơn :(</string>
     <string name="theme_changing_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
+    <string name="show_all">Hiện tất cả</string>
 </resources>

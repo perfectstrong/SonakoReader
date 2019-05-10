@@ -1,14 +1,10 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
@@ -43,7 +39,8 @@ public class LNShowcaseFragment extends LNFilterableFragment {
         );
     }
 
-    private void updateView(View view) {
+    @Override
+    protected void updateView(View view) {
         if (view == null) return;
         if (adapter.getItemCount() == 0) {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
@@ -57,17 +54,8 @@ public class LNShowcaseFragment extends LNFilterableFragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_lnshowcase, container, false);
-        updateView(rootView);
-        RecyclerView recyclerView = rootView.findViewById(R.id.RecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-        return rootView;
+    protected int getLayout() {
+        return R.layout.lndatabase;
     }
 
     private void forceDownload() {

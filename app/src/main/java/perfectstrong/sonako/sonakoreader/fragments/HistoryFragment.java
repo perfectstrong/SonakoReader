@@ -3,18 +3,14 @@ package perfectstrong.sonako.sonakoreader.fragments;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.HistoryAdapter;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
@@ -29,6 +25,11 @@ public class HistoryFragment extends SonakoFragment {
 
     public HistoryFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public HistoryAdapter getAdapter() {
+        return adapter;
     }
 
     @Override
@@ -90,16 +91,12 @@ public class HistoryFragment extends SonakoFragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
-        RecyclerView recyclerView = rootView.findViewById(R.id.HistoryRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+    protected void updateView(View rootView) {
+        // Do nothing
+    }
 
-        return rootView;
+    @Override
+    protected int getLayout() {
+        return R.layout.lndatabase;
     }
 }

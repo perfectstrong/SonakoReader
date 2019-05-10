@@ -10,12 +10,18 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
+
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
 
 public abstract class LNFilterableFragment extends SonakoFragment {
     LNListAdapter adapter;
+
+    @Override
+    public LNListAdapter getAdapter() {
+        return adapter;
+    }
 
     @Override
     public void showFilterDialog() {

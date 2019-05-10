@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.R;
 
 /**
@@ -39,25 +39,13 @@ public class PageDownloadFragment extends SonakoFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void updateView(View rootView) {
+        // Do nothing
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        View rootView = inflater.inflate(R.layout.fragment_download, container, false);
-        RecyclerView recyclerView = rootView.findViewById(R.id.DownloadJobRecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
-        // Adapter
-        recyclerView.setAdapter(adapter);
-
-        return rootView;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     public void addJob(String title) {
@@ -163,5 +151,10 @@ public class PageDownloadFragment extends SonakoFragment {
                 ((TextView) view.findViewById(R.id.job_progress)).setText(job.getProgress());
             }
         }
+    }
+
+    @Override
+    public PageDownloadAdapter getAdapter() {
+        return adapter;
     }
 }

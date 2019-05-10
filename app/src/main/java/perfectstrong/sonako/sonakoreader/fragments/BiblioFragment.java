@@ -3,19 +3,14 @@ package perfectstrong.sonako.sonakoreader.fragments;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,8 +29,11 @@ public class BiblioFragment extends SonakoFragment {
     private BiblioExpandableAdapter adapter;
     private List<LNTag> itemsList;
     private boolean onFilter = false;
-    private RecyclerView recyclerView;
 
+    @Override
+    public BiblioExpandableAdapter getAdapter() {
+        return adapter;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +57,8 @@ public class BiblioFragment extends SonakoFragment {
         }
     }
 
-    private void updateView(View view) {
+    @Override
+    protected void updateView(View view) {
         if (view == null) return;
         if (adapter == null || adapter.getItemCount() == 0) {
             view.findViewById(R.id.NoDatabaseGroup).setVisibility(View.VISIBLE);
@@ -75,21 +74,13 @@ public class BiblioFragment extends SonakoFragment {
         }
     }
 
-    private void forceRefresh() {
-        new BiblioAsyncTask.ScanSaveDirectory().execute();
+    @Override
+    protected int getLayout() {
+        return R.layout.lndatabase;
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_biblio, container, false);
-        updateView(rootView);
-        recyclerView = rootView.findViewById(R.id.RecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-        return rootView;
+    private void forceRefresh() {
+        new BiblioAsyncTask.ScanSaveDirectory().execute();
     }
 
     @Override
