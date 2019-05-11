@@ -6,8 +6,8 @@ android {
         applicationId "perfectstrong.sonako.sonakoreader"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 6
-        versionName "1.0.6"
+        versionCode 7
+        versionName "1.1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
