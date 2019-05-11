@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -169,6 +170,24 @@ public class Utils {
                                       String tag,
                                       PageDownloadService.ACTION action,
                                       Context context) {
+        if (title == null) {
+            Toast.makeText(
+                    context,
+                    R.string.not_having_title,
+                    Toast.LENGTH_LONG
+            )
+                    .show();
+            return;
+        }
+        if (tag == null) {
+            Toast.makeText(
+                    context,
+                    R.string.tag_is_null,
+                    Toast.LENGTH_LONG
+            )
+                    .show();
+            return;
+        }
         if (action == null)
             // Read or first download
             if (isNotCached(title, tag)) {

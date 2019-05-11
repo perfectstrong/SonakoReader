@@ -125,4 +125,6 @@
     <string name="biblio_empty">Tủ truyện trống trơn :(</string>
     <string name="theme_changing_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
     <string name="show_all">Hiện tất cả</string>
+    <string name="not_having_title">Sonako không chứa tiêu đề này</string>
+    <string name="tag_is_null">Tag không xác định</string>
 </resources>

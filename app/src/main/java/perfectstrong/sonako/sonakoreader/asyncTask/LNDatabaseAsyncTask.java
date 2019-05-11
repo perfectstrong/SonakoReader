@@ -243,6 +243,7 @@ public class LNDatabaseAsyncTask {
             if (t.startsWith("Category:")) {
                 continue;
             }
+            Log.d(TAG, t);
             LightNovel ln = new LightNovel(t);
             ln.setStatus(LightNovel.ProjectType.OFFICIAL);
             titles.add(ln);
@@ -309,10 +310,10 @@ public class LNDatabaseAsyncTask {
         for (String lntitle : result.keySet()) {
             Set<String> categories = result.get(lntitle);
             LightNovel title = mapLN.get(lntitle);
+            assert title != null;
             assert categories != null;
             for (String category : categories) {
                 category = category.substring("Category:".length());
-                assert title != null;
                 switch (category) {
                     // Status
                     case LightNovel.ProjectStatus.ACTIVE:
@@ -356,7 +357,7 @@ public class LNDatabaseAsyncTask {
             map.put(ln.getTitle(), ln);
         }
         // Conserve favorite status
-        for (LightNovel ln: newTitles) {
+        for (LightNovel ln : newTitles) {
             if (map.containsKey(ln.getTitle()))
                 ln.setFavorite(
                         Objects.requireNonNull(map.get(ln.getTitle())).isFavorite());

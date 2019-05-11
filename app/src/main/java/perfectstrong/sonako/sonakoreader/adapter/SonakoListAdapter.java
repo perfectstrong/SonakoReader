@@ -3,11 +3,12 @@ package perfectstrong.sonako.sonakoreader.adapter;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import perfectstrong.sonako.sonakoreader.database.Item;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 

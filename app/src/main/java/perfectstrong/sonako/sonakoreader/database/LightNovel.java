@@ -64,6 +64,19 @@ public class LightNovel extends Item {
         isFavorite = favorite;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "LightNovel{" +
+                "type='" + type + '\'' +
+                ", status='" + status + '\'' +
+                ", genres=" + genres +
+                ", isFavorite=" + isFavorite +
+                ", title='" + title + '\'' +
+                ", tag='" + tag + '\'' +
+                '}';
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(title);
