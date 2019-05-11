@@ -34,6 +34,29 @@ public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAda
         _itemsList.addAll(pages);
         if (!onFilter)
             show(_itemsList);
+        else
+            updateItemsList();
+    }
+
+    /**
+     * Update filtered list
+     */
+    private void updateItemsList() {
+        // Remove removed items
+        for (I i : itemsList) {
+            if (!_itemsList.contains(i)) {
+                itemsList.remove(i);
+            }
+        }
+        notifyDataSetChanged();
+        // Update existing items
+        for (I i : _itemsList) {
+            int idx = itemsList.indexOf(i);
+            if (idx > -1) {
+                itemsList.set(idx, i);
+                notifyItemChanged(idx);
+            }
+        }
     }
 
     public void showAll() {
