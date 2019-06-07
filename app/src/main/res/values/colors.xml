@@ -1,10 +1,13 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="holyPrimaryColor">#f06292</color>
-    <color name="holyPrimaryDarkColor">#ba2d65</color>
-    <color name="holySecondaryColor">#ab47bc</color>
+    <color name="holyPrimaryColor">#D81B60</color>
+    <color name="holyPrimaryDarkColor">#880E4F</color>
+    <color name="holySecondaryColor">#F06292</color>
 
-    <color name="darkPrimaryColor">#1976d2</color>
-    <color name="darkPrimaryDarkColor">#004ba0</color>
-    <color name="darkSecondaryColor">#fa5788</color>
+    <color name="darkPrimaryColor">#004ba0</color>
+    <color name="darkPrimaryDarkColor">#1A237E</color>
+    <color name="darkSecondaryColor">#F06292</color>
+
+    <color name="darkBackground">#353535</color>
+    <color name="lightBackground">#F0F0F0</color>
 </resources>

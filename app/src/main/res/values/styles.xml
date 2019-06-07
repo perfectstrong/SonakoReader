@@ -2,9 +2,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="isLightTheme">true</item>
+        <item name="android:colorBackground">@color/lightBackground</item>
         <item name="colorPrimary">@color/holyPrimaryColor</item>
-        <item name="colorPrimaryDark">@color/holyPrimaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/holyPrimaryDarkColor</item>
         <item name="colorAccent">@color/holySecondaryColor</item>
         <item name="fontFamily">@font/holy</item>
     </style>
@@ -20,6 +20,7 @@
 
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>
