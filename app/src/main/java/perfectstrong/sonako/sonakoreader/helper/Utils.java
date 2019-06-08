@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.preference.PreferenceManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -39,8 +40,9 @@ public class Utils {
     public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
     public static String getSaveDir() {
-        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
-                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
+//        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
+//                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
+        return Config.DEFAULT_SAVE_LOCATION;
     }
 
     public static String getSavDirForTag(String tag) {
@@ -467,5 +469,33 @@ public class Utils {
         Animation bottomUp = AnimationUtils.loadAnimation(view.getContext(), animation);
         view.startAnimation(bottomUp);
         view.setVisibility(View.GONE);
+    }
+
+    public static void hideImagesFromGallery(Context context) {
+        File appFolder = new File(getSaveDir());
+        if (!appFolder.exists())
+            //noinspection ResultOfMethodCallIgnored
+            appFolder.mkdirs();
+        File noMediaFile = new File((getSaveDir() + ".nomedia"));
+        if (!noMediaFile.exists()) {
+            try {
+                if (noMediaFile.createNewFile()) {
+                    Toast.makeText(
+                            context,
+                            R.string.has_hidden_img,
+                            Toast.LENGTH_SHORT
+                    )
+                            .show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(
+                        context,
+                        R.string.cannot_hidden_img,
+                        Toast.LENGTH_SHORT
+                )
+                        .show();
+            }
+        }
     }
 }

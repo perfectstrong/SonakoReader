@@ -17,6 +17,7 @@ public class SonakoReaderApp extends Application {
     public void onCreate() {
         instance = this;
         Utils.updateTheme(this);
+        Utils.hideImagesFromGallery(this);
         super.onCreate();
     }
 }

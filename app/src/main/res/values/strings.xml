@@ -127,4 +127,6 @@
     <string name="show_all">Hiện tất cả</string>
     <string name="not_having_title">Sonako không chứa tiêu đề này</string>
     <string name="tag_is_null">Tag không xác định</string>
+    <string name="cannot_hidden_img">Không thể giấu ảnh khỏi gallery</string>
+    <string name="has_hidden_img">Đã giấu ảnh khỏi gallery</string>
 </resources>
