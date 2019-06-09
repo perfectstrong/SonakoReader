@@ -101,7 +101,7 @@ public class LightNovel extends Item {
     }
 
     public static class ProjectGenre {
-        public static final List<String> ALL = Arrays.asList("Action", "Adult", "Adventure", "Comedy", "Drama", "Ecchi", "Fantasy", "Game", "Gender Bender", "Harem", "Historical", "Horror", "Martial Arts", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "School Life", "Sci-fi", "Seinen", "Shotocon", "Shoujo", "Shounen", "Slice of life", "Supernatural", "Tragedy", "Yuri", "Magic", "Chinese", "Lolicon", "Sports", "Military", "Post-Apocalypse", "Reincarnation", "Transported", "Warfare", "Demons", "Josei", "Funny");
+        public static final List<String> ALL = Arrays.asList("Action", "Adult", "Adventure", "Comedy", "Drama", "Ecchi", "Fantasy", "Game", "Gender Bender", "Harem", "Historical", "Horror", "Martial Arts", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "School Life", "Sci-fi", "Seinen", "Shotacon", "Shoujo", "Shoujo Ai", "Shounen", "Slice of life", "Supernatural", "Tragedy", "Yuri", "Magic", "Chinese", "Lolicon", "Sports", "Military", "Post-Apocalypse", "Reincarnation", "Transported", "Warfare", "Demons", "Josei", "Funny");
     }
 
     public static class ExceptionTag {
