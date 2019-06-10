@@ -52,7 +52,7 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
     @Override
     public LNTagViewHolder onCreateGroupViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.biblio_tag_basic_view,
+                .inflate(R.layout.biblio_ln_tag_basic_view,
                         parent,
                         false);
         return new LNTagViewHolder(view);
@@ -62,7 +62,7 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
     @Override
     public CachePageViewHolder onCreateChildViewHolder(@NonNull ViewGroup childViewGroup, int viewType) {
         View view = LayoutInflater.from(childViewGroup.getContext())
-                .inflate(R.layout.cache_basic_view,
+                .inflate(R.layout.biblio_chapter_basic_view,
                         childViewGroup,
                         false);
         return new CachePageViewHolder(view);

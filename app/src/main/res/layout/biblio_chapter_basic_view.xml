@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
+    android:longClickable="true"
     android:padding="@dimen/basic_item_padding"
     android:paddingStart="@dimen/child_item_padding_start"
     tools:ignore="Overdraw">
@@ -15,7 +16,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="start"
-        android:textSize="@dimen/title"
+        android:textSize="@dimen/subtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

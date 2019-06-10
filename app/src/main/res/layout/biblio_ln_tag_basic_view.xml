@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
+    android:longClickable="true"
     android:padding="@dimen/basic_item_padding"
     tools:ignore="Overdraw">
 
