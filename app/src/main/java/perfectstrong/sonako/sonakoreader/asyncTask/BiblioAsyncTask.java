@@ -36,16 +36,7 @@ public class BiblioAsyncTask {
     /**
      * Tag name of ln
      */
-    public static class ScanSaveDirectory extends AsyncTask<String, Integer, Void> {
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            Toast.makeText(
-                    SonakoReaderApp.getContext(),
-                    values[0],
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
+    public static class ScanSaveDirectory extends StaticMessageUpdateAsyncTask<String, Void> {
 
         @Override
         protected Void doInBackground(String... strings) {
@@ -131,16 +122,7 @@ public class BiblioAsyncTask {
         }
     }
 
-    public static class Clear extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            Toast.makeText(
-                    SonakoReaderApp.getContext(),
-                    values[0],
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-
+    public static class Clear extends StaticMessageUpdateAsyncTask<Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
             publishProgress(R.string.delete_biblio_start);
@@ -158,16 +140,7 @@ public class BiblioAsyncTask {
         }
     }
 
-    public static class DeleteLNTag extends AsyncTask<String, Integer, Void> {
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            Toast.makeText(
-                    SonakoReaderApp.getContext(),
-                    values[0],
-                    Toast.LENGTH_SHORT
-            ).show();
-        }
-
+    public static class DeleteLNTag extends StaticMessageUpdateAsyncTask<String, Void> {
         @Override
         protected Void doInBackground(String... strings) {
             publishProgress(R.string.delete_ln_start);
@@ -180,6 +153,5 @@ public class BiblioAsyncTask {
             publishProgress(R.string.delete_ln_end);
             return null;
         }
-
     }
 }
