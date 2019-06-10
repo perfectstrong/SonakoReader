@@ -32,6 +32,7 @@ import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.activity.MainActivity;
 import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
+import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
 @SuppressWarnings("WeakerAccess")
@@ -115,6 +116,10 @@ public class Utils {
         // calculate the end index
         int endIndex = Math.min(lastQMPos, lastHashPos);
         return url.substring(startIndex, endIndex);
+    }
+
+    public static File getCachedFile(CachePage page) {
+        return getTextFile(page.getTitle(), page.getTag());
     }
 
     public static boolean isNotCached(String title, String tag) {

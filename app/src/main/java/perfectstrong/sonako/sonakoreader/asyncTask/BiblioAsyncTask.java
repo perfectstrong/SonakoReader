@@ -10,6 +10,7 @@ import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
+import perfectstrong.sonako.sonakoreader.database.BiblioDAO;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabase;
 import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
@@ -151,6 +152,25 @@ public class BiblioAsyncTask {
                 LightNovelsDatabaseClient.getInstance().biblioDAO().clearTag(lnTag);
             }
             publishProgress(R.string.delete_ln_end);
+            return null;
+        }
+    }
+
+    public static class DeleteCachedPage extends StaticMessageUpdateAsyncTask<CachePage, Void> {
+        @Override
+        protected Void doInBackground(CachePage... cachePages) {
+            publishProgress(R.string.delete_chapter_start);
+            BiblioDAO dao = LightNovelsDatabaseClient.getInstance().biblioDAO();
+            for (CachePage page : cachePages) {
+                // Delete entry
+                dao.clearChapters(page);
+                // Delete on disk
+                File f = Utils.getCachedFile(page);
+                if (f.exists())
+                    //noinspection ResultOfMethodCallIgnored
+                    f.delete();
+            }
+            publishProgress(R.string.delete_chapter_end);
             return null;
         }
     }

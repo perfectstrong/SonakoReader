@@ -1,4 +1,4 @@
-﻿package perfectstrong.sonako.sonakoreader.asyncTask;
+package perfectstrong.sonako.sonakoreader.asyncTask;
 
 import android.os.AsyncTask;
 import android.widget.Toast;

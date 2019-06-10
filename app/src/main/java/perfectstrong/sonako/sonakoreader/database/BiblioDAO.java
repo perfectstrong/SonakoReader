@@ -2,6 +2,7 @@ package perfectstrong.sonako.sonakoreader.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -19,6 +20,9 @@ public interface BiblioDAO {
 
     @Query("DELETE FROM CachePage WHERE tag = :tag")
     void clearTag(String tag);
+
+    @Delete
+    void clearChapters(CachePage... page);
 
     @Query("DELETE FROM CachePage")
     void clearAll();

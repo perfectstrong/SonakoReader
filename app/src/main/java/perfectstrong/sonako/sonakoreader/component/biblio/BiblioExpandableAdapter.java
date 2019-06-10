@@ -210,8 +210,15 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(MenuItem menuItem) {
             // TODO
+            switch (menuItem.getItemId()) {
+                case R.id.biblio_chapter_delete_chapter:
+                    new BiblioAsyncTask.DeleteCachedPage().execute(item);
+                    break;
+                case R.id.biblio_chapter_delete_chapter_and_img:
+                    break;
+            }
             return false;
         }
     }
