@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/biblio_chapter_delete_chapter"
+        android:title="@string/delete_chapter" />
+    <item
+        android:id="@+id/biblio_chapter_delete_chapter_and_img"
+        android:title="@string/delete_chapter_and_img" />
+</menu>

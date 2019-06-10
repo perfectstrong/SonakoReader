@@ -1,10 +1,14 @@
 package perfectstrong.sonako.sonakoreader.component.biblio;
 
+import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -78,10 +82,11 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
         holder.bind((LNTag) group);
     }
 
-    class LNTagViewHolder extends GroupViewHolder {
+    class LNTagViewHolder extends GroupViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
         View view;
         private ImageView arrow;
+        LNTag item;
 
         /**
          * Default constructor.
@@ -92,9 +97,11 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
             super(itemView);
             view = itemView;
             arrow = view.findViewById(R.id.biblio_item_show_childs);
+            itemView.setOnCreateContextMenuListener(this);
         }
 
         void bind(LNTag tag) {
+            item = tag;
             ((TextView) view.findViewById(R.id.biblio_item_tag)).setText(tag.getTag());
         }
 
@@ -135,9 +142,24 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
             rotate.setFillAfter(true);
             arrow.setAnimation(rotate);
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            PopupMenu popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
+            popupMenu.getMenuInflater()
+                    .inflate(R.menu.biblio_ln_tag_context_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.show();
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            // TODO
+            return false;
+        }
     }
 
-    class CachePageViewHolder extends ChildViewHolder implements View.OnClickListener {
+    class CachePageViewHolder extends ChildViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
         View view;
         CachePage item;
@@ -151,6 +173,7 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
             super(itemView);
             view = itemView;
             view.setOnClickListener(this);
+            view.setOnCreateContextMenuListener(this);
         }
 
         void bind(CachePage cachePage) {
@@ -166,6 +189,21 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
                     null,
                     v.getContext()
             );
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            PopupMenu popupMenu = new PopupMenu(v.getContext(), v, Gravity.END);
+            popupMenu.getMenuInflater()
+                    .inflate(R.menu.biblio_chapter_context_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(this);
+            popupMenu.show();
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            // TODO
+            return false;
         }
     }
 }

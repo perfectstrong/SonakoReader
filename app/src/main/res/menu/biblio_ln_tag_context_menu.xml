@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="perfectstrong.sonako.sonakoreader.activity.MainActivity">
+    <item
+        android:id="@+id/biblio_ln_tag_context_menu_rescan_ln"
+        android:title="@string/rescan_ln" />
+    <item
+        android:id="@+id/biblio_ln_tag_context_menu_delete_ln"
+        android:title="@string/delete_ln" />
+</menu>

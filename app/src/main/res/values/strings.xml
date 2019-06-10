@@ -129,4 +129,8 @@
     <string name="tag_is_null">Tag không xác định</string>
     <string name="cannot_hidden_img">Không thể giấu ảnh khỏi gallery</string>
     <string name="has_hidden_img">Đã giấu ảnh khỏi gallery</string>
+    <string name="delete_ln">Xóa bộ truyện</string>
+    <string name="delete_chapter">Xóa chương</string>
+    <string name="delete_chapter_and_img">Xóa chương và ảnh</string>
+    <string name="rescan_ln">Quét lại bộ nhớ</string>
 </resources>
