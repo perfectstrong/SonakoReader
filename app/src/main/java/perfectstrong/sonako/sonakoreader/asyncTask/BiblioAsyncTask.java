@@ -3,7 +3,12 @@ package perfectstrong.sonako.sonakoreader.asyncTask;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -165,13 +170,60 @@ public class BiblioAsyncTask {
                 // Delete entry
                 dao.clearChapters(page);
                 // Delete on disk
-                File f = Utils.getCachedFile(page);
+                File f = Utils.getCachedTextFile(page);
                 if (f.exists())
                     //noinspection ResultOfMethodCallIgnored
                     f.delete();
             }
             publishProgress(R.string.delete_chapter_end);
             return null;
+        }
+    }
+
+    public static class DeleteCachedPageWithImages extends StaticMessageUpdateAsyncTask<CachePage, Void> {
+
+        @Override
+        protected Void doInBackground(CachePage... cachePages) {
+            publishProgress(R.string.delete_chapter_start);
+            BiblioDAO dao = LightNovelsDatabaseClient.getInstance().biblioDAO();
+            for (CachePage page : cachePages) {
+                // Delete entry
+                dao.clearChapters(page);
+                // Find included images in page
+                String pageDir = Utils.getSaveDirForTag(page.getTag());
+                for (String imgName : findIncludedImages(page)) {
+                    File imgPath = new File(pageDir + imgName);
+                    if (imgPath.exists())
+                        //noinspection ResultOfMethodCallIgnored
+                        imgPath.delete();
+                }
+                // Delete page text
+                File f = Utils.getCachedTextFile(page);
+                if (f.exists())
+                    //noinspection ResultOfMethodCallIgnored
+                    f.delete();
+            }
+            publishProgress(R.string.delete_biblio_end);
+            return null;
+        }
+
+        List<String> findIncludedImages(CachePage page) {
+            File f = Utils.getCachedTextFile(page);
+            if (f.exists()) {
+                try {
+                    Document doc = Jsoup.parse(f, "UTF-8");
+                    List<String> imagesLinks = new ArrayList<>();
+                    for (Element img : doc.getElementsByTag("img")) {
+                        if (img.hasAttr("src")) {
+                            imagesLinks.add(img.attr("src"));
+                        }
+                    }
+                    return imagesLinks;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return new ArrayList<>();
         }
     }
 }

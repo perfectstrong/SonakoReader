@@ -118,7 +118,7 @@ public class Utils {
         return url.substring(startIndex, endIndex);
     }
 
-    public static File getCachedFile(CachePage page) {
+    public static File getCachedTextFile(CachePage page) {
         return getTextFile(page.getTitle(), page.getTag());
     }
 
