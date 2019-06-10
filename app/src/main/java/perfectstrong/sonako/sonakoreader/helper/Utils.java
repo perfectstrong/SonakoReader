@@ -45,7 +45,7 @@ public class Utils {
         return Config.DEFAULT_SAVE_LOCATION;
     }
 
-    public static String getSavDirForTag(String tag) {
+    public static String getSaveDirForTag(String tag) {
         return getSaveDir() + sanitize(tag) + "/";
     }
 
@@ -59,7 +59,7 @@ public class Utils {
 
     public static String getFilepath(String title, String tag) {
         return "file://"
-                + Utils.getSavDirForTag(tag)
+                + Utils.getSaveDirForTag(tag)
                 + Utils.sanitize(title)
                 + ".html";
     }
@@ -70,6 +70,10 @@ public class Utils {
 
     private static final String REPLACEMENT_CHAR = " ";
 
+    /**
+     * @param tag retrieved from wikia
+     * @return valid path for directory
+     */
     public static String sanitize(String tag) {
         return tag.replaceAll("[|?*<\":>+\\[\\]/'_]", REPLACEMENT_CHAR);
     }
@@ -119,7 +123,7 @@ public class Utils {
 
     public static File getTextFile(String title, String tag) {
         return new File(
-                getSavDirForTag(tag),
+                getSaveDirForTag(tag),
                 sanitize(title) + ".html"
         );
     }

@@ -308,7 +308,7 @@ public class PageReadingActivity extends SonakoActivity {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             String u = Uri.decode(url);
             Log.d(TAG, "Opening link " + u);
-            if (u.startsWith("file://" + Utils.getSavDirForTag(tag)) && u.contains("?title=")) {
+            if (u.startsWith("file://" + Utils.getSaveDirForTag(tag)) && u.contains("?title=")) {
                 // Maybe this is an internal page, indicating a chapter
                 String newTitle = u.substring(
                         u.lastIndexOf("?title=") + "?title=".length()

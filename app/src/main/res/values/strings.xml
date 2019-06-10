@@ -133,4 +133,5 @@
     <string name="delete_chapter">Xóa chương</string>
     <string name="delete_chapter_and_img">Xóa chương và ảnh</string>
     <string name="rescan_ln">Quét lại bộ nhớ</string>
+    <string name="rescan_ln_done">Đã quét xong</string>
 </resources>

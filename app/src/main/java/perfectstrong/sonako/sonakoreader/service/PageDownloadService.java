@@ -156,7 +156,7 @@ public class PageDownloadService extends IntentService {
 
         // Register
         publishProgress(getString(R.string.download_starting));
-        saveLocation = Utils.getSavDirForTag(tag);
+        saveLocation = Utils.getSaveDirForTag(tag);
         filename = Utils.sanitize(Utils.decode(title)) + ".html";
         if (action != null)
             switch (action) {

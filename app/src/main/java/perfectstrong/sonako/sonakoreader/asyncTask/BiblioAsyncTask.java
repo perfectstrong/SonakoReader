@@ -16,7 +16,10 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAsyncTask {
-    public static class ScanSaveDirectory extends AsyncTask<Void, Integer, Void> {
+    /**
+     * Tag name of ln
+     */
+    public static class ScanSaveDirectory extends AsyncTask<String, Integer, Void> {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
@@ -28,42 +31,62 @@ public class BiblioAsyncTask {
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(String... strings) {
             publishProgress(R.string.start_scanning);
             LightNovelsDatabase lndb = LightNovelsDatabaseClient.getInstance();
 
-            File saveDir = new File(Utils.getSaveDir());
-            // Get all subfolders
-            File[] dirs = saveDir.listFiles(File::isDirectory);
-            if (dirs == null || dirs.length == 0) {
-                publishProgress(R.string.biblio_empty);
-                return null;
-            }
-            List<CachePage> cachePages = new ArrayList<>();
-            for (File dir : dirs) {
-                String tag = dir.getName();
-                File[] htmlFiles = dir.listFiles(pathname -> pathname.getName().endsWith(".html"));
-                // Suppose each html is cache page
-                for (File html : htmlFiles) {
-                    String name = html.getName();
-                    String title = name.substring(0, name.lastIndexOf(".html"));
-                    cachePages.add(new CachePage(
-                            title,
-                            tag,
-                            new Date(html.lastModified())
-                    ));
+            if (strings.length == 0) {
+                // Total scan and re-update
+                File saveDir = new File(Utils.getSaveDir());
+                // Get all subfolders
+                File[] dirs = saveDir.listFiles(File::isDirectory);
+                if (dirs == null || dirs.length == 0) {
+                    publishProgress(R.string.biblio_empty);
+                    return null;
                 }
+                List<CachePage> allCachePages = new ArrayList<>();
+                for (File dir : dirs) {
+                    allCachePages.addAll(scanTag(dir));
+                }
+
+                // Clear database
+                publishProgress(R.string.clear_biblio);
+                lndb.biblioDAO().clearAll();
+
+                // Insert to database
+                publishProgress(R.string.update_biblio);
+                lndb.biblioDAO().insert(allCachePages.toArray(new CachePage[0]));
+            } else {
+                for (String tag : strings) {
+                    File tagDir = new File(Utils.getSaveDirForTag(tag));
+                    List<CachePage> caches = scanTag(tagDir);
+                    if (!caches.isEmpty()) {
+                        lndb.biblioDAO().clearTag(tag);
+                        lndb.biblioDAO().insert(caches.toArray(new CachePage[0]));
+                    }
+                }
+                publishProgress(R.string.rescan_ln_done);
             }
-
-            // Clear database
-            publishProgress(R.string.clear_biblio);
-            lndb.biblioDAO().clearAll();
-
-            // Insert to database
-            publishProgress(R.string.update_biblio);
-            lndb.biblioDAO().insert(cachePages.toArray(new CachePage[0]));
-
             return null;
+        }
+
+        List<CachePage> scanTag(File dir) {
+            if (!dir.exists() || !dir.isDirectory())
+                return new ArrayList<>();
+            String tag = dir.getName();
+            File[] htmlFiles = dir.listFiles(pathname -> pathname.getName().endsWith(".html"));
+            List<CachePage> cachePages = new ArrayList<>();
+            // Suppose each html is cache page
+            for (File html : htmlFiles) {
+                String name = html.getName();
+                String title = name.substring(0, name.lastIndexOf(".html"));
+                cachePages.add(new CachePage(
+                        title,
+                        tag,
+                        new Date(html.lastModified())
+                ));
+            }
+            return cachePages;
         }
     }
 

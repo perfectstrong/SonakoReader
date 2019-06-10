@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
@@ -153,8 +154,15 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
         }
 
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onMenuItemClick(MenuItem menuItem) {
             // TODO
+            switch (menuItem.getItemId()) {
+                case R.id.biblio_ln_tag_context_menu_rescan_ln:
+                    new BiblioAsyncTask.ScanSaveDirectory().execute(item.getTag());
+                    break;
+                case R.id.biblio_ln_tag_context_menu_delete_ln:
+                    break;
+            }
             return false;
         }
     }
