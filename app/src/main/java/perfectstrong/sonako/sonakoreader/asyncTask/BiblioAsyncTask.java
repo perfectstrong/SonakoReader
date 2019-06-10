@@ -16,6 +16,23 @@ import perfectstrong.sonako.sonakoreader.database.LightNovelsDatabaseClient;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class BiblioAsyncTask {
+    private static void delete(String lnTag) {
+        File lnDir = new File(Utils.getSaveDirForTag(lnTag));
+        if (!lnDir.exists() || !lnDir.isDirectory())
+            return;
+        deleteRecursive(lnDir);
+    }
+
+    private static void deleteRecursive(File f) {
+        if (f.isDirectory()) {
+            for (File child : f.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+        //noinspection ResultOfMethodCallIgnored
+        f.delete();
+    }
+
     /**
      * Tag name of ln
      */
@@ -114,13 +131,55 @@ public class BiblioAsyncTask {
         }
     }
 
-    public static class Clear extends AsyncTask<Void, Void, Void> {
+    public static class Clear extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Toast.makeText(
+                    SonakoReaderApp.getContext(),
+                    values[0],
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+
         @Override
         protected Void doInBackground(Void... voids) {
+            publishProgress(R.string.delete_biblio_start);
+            File lnsDir = new File(Utils.getSaveDir());
+            if (!lnsDir.exists() || !lnsDir.isDirectory())
+                return null;
             LightNovelsDatabaseClient.getInstance()
                     .biblioDAO()
                     .clearAll();
+            for (File lnTag : lnsDir.listFiles((dir, name) -> dir.isDirectory())) {
+                deleteRecursive(lnTag);
+            }
+            publishProgress(R.string.delete_biblio_end);
             return null;
         }
+    }
+
+    public static class DeleteLNTag extends AsyncTask<String, Integer, Void> {
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            Toast.makeText(
+                    SonakoReaderApp.getContext(),
+                    values[0],
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            publishProgress(R.string.delete_ln_start);
+            for (String lnTag : strings) {
+                // Delete on disk
+                delete(lnTag);
+                // Delete entry
+                LightNovelsDatabaseClient.getInstance().biblioDAO().clearTag(lnTag);
+            }
+            publishProgress(R.string.delete_ln_end);
+            return null;
+        }
+
     }
 }

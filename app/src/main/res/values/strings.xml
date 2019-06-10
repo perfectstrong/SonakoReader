@@ -134,4 +134,8 @@
     <string name="delete_chapter_and_img">Xóa chương và ảnh</string>
     <string name="rescan_ln">Quét lại bộ nhớ</string>
     <string name="rescan_ln_done">Đã quét xong</string>
+    <string name="delete_ln_start">Bắt đầu xóa truyện</string>
+    <string name="delete_ln_end">Đã xóa xong</string>
+    <string name="delete_biblio_start">Bắt đầu xóa thư viện</string>
+    <string name="delete_biblio_end">Đã xóa xong thư viện</string>
 </resources>

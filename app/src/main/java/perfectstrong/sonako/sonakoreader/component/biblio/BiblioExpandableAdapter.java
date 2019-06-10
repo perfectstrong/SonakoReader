@@ -161,6 +161,7 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
                     new BiblioAsyncTask.ScanSaveDirectory().execute(item.getTag());
                     break;
                 case R.id.biblio_ln_tag_context_menu_delete_ln:
+                    new BiblioAsyncTask.DeleteLNTag().execute(item.getTag());
                     break;
             }
             return false;
