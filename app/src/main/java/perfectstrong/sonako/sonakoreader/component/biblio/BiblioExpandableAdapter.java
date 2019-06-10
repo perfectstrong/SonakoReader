@@ -155,7 +155,6 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
 
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            // TODO
             switch (menuItem.getItemId()) {
                 case R.id.biblio_ln_tag_context_menu_rescan_ln:
                     new BiblioAsyncTask.ScanSaveDirectory().execute(item.getTag());
