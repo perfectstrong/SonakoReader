@@ -34,6 +34,15 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
         super(lnTags);
     }
 
+    public BiblioExpandableAdapter(List<LNTag> filteredTags, Map<LNTag, Boolean> toggleState) {
+        super(filteredTags);
+        for (LNTag tag : filteredTags) {
+            if (toggleState.containsKey(tag) && toggleState.get(tag) == Boolean.TRUE) {
+                this.toggleGroup(tag);
+            }
+        }
+    }
+
     public static List<LNTag> regroupCaches(List<CachePage> cachedPages) {
         Map<String, List<CachePage>> tagMap = new HashMap<>();
         for (CachePage cachedPage : cachedPages) {
@@ -81,6 +90,14 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
     @Override
     public void onBindGroupViewHolder(LNTagViewHolder holder, int flatPosition, ExpandableGroup group) {
         holder.bind((LNTag) group);
+    }
+
+    public Map<LNTag, Boolean> getToggleState() {
+        Map<LNTag, Boolean> toggleState = new HashMap<>();
+        for (ExpandableGroup group : this.getGroups()) {
+            toggleState.put((LNTag) group, this.isGroupExpanded(group));
+        }
+        return toggleState;
     }
 
     class LNTagViewHolder extends GroupViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {

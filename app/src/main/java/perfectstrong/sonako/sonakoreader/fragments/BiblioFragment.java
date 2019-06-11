@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,8 +182,18 @@ public class BiblioFragment extends SonakoFragment {
     }
 
     private void show(List<LNTag> filteredTags) {
-        adapter = new BiblioExpandableAdapter(filteredTags);
-        if (recyclerView != null)
-            recyclerView.setAdapter(adapter);
+        if (adapter != null) {
+            adapter = new BiblioExpandableAdapter(filteredTags, adapter.getToggleState());
+        } else
+            adapter = new BiblioExpandableAdapter(filteredTags);
+        if (recyclerView != null) {
+            LinearLayoutManager l = (LinearLayoutManager) recyclerView.getLayoutManager();
+            if (l != null) {
+                int oldVisibleItemPosition = l.findFirstVisibleItemPosition();
+                recyclerView.setAdapter(adapter);
+                l.scrollToPosition(oldVisibleItemPosition);
+            } else
+                recyclerView.setAdapter(adapter);
+        }
     }
 }
