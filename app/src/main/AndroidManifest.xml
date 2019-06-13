@@ -32,7 +32,6 @@
             android:name=".activity.PageReadingActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="PageReading"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.MainActivity"

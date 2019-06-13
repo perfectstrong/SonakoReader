@@ -157,16 +157,6 @@ public class PageReadingActivity extends SonakoActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_backward:
-                if (webViewClient != null)
-                    webViewClient.assetsLoaded = false;
-                pageViewer.goBack();
-                break;
-            case R.id.action_forward:
-                if (webViewClient != null)
-                    webViewClient.assetsLoaded = false;
-                pageViewer.goForward();
-                break;
             case R.id.action_return_home:
                 Utils.goHome(this);
                 break;
@@ -193,13 +183,6 @@ public class PageReadingActivity extends SonakoActivity {
                 break;
         }
         return true;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setTagAndTitle(intent);
-        openPage();
     }
 
     private void setTagAndTitle(Intent intent) {
