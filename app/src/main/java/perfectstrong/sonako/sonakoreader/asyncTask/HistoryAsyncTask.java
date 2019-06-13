@@ -35,4 +35,29 @@ public class HistoryAsyncTask {
             return null;
         }
     }
+
+    public static class LookUp extends AsyncTask<Void, Void, Page> {
+        private final OnLookUpCallback callback;
+        private String title;
+
+        public LookUp(String title,
+                      OnLookUpCallback callback) {
+            this.title = title;
+            this.callback = callback;
+        }
+
+        @Override
+        protected Page doInBackground(Void... voids) {
+            return LightNovelsDatabaseClient.getInstance().historyDAO().getPage(title);
+        }
+
+        @Override
+        protected void onPostExecute(Page page) {
+            this.callback.execute(page);
+        }
+
+        public interface OnLookUpCallback {
+            void execute(Page page);
+        }
+    }
 }

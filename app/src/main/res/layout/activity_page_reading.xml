@@ -27,7 +27,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <perfectstrong.sonako.sonakoreader.component.LollipopFixedWebView
+    <perfectstrong.sonako.sonakoreader.component.PageReadingWebView
         android:id="@+id/page_viewer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -35,9 +35,7 @@
         app:layout_constraintBottom_toTopOf="@id/reading_tools"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/page_reading_appbar">
-
-    </perfectstrong.sonako.sonakoreader.component.LollipopFixedWebView>
+        app:layout_constraintTop_toBottomOf="@+id/page_reading_appbar" />
 
     <perfectstrong.sonako.sonakoreader.component.MovableFloatingActionButton
         android:id="@+id/fab"

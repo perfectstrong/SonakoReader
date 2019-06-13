@@ -25,7 +25,7 @@ public class LollipopFixedWebView extends WebView {
         super(getFixedContext(context), attrs, defStyleAttr, defStyleRes);
     }
 
-    private static Context getFixedContext(Context context) {
+    static Context getFixedContext(Context context) {
         return context.createConfigurationContext(new Configuration());
     }
 }

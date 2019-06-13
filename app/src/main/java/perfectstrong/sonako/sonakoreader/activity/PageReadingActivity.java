@@ -6,18 +6,19 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.ValueCallback;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -29,6 +30,7 @@ import java.util.Calendar;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
+import perfectstrong.sonako.sonakoreader.component.PageReadingWebView;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
@@ -41,14 +43,11 @@ public class PageReadingActivity extends SonakoActivity {
 
     private static final String UNDEFINED = "Undefined";
     private static final String TAG = PageReadingActivity.class.getSimpleName();
-    private static final String LAST_INTENT_KEY = "lastIntentKey";
-    private static final String SHOULD_RESTORE_HISTORY_KEY = "shouldRestoreHistoryKey";
 
     private String title;
     private String tag;
-    private WebView pageview;
-    private PageReadingWebViewClient webviewclient;
-    private boolean shouldRestoreHistory;
+    private PageReadingWebView pageViewer;
+    private PageReadingWebViewClient webViewClient;
     private View readingTools;
     private boolean isShowingReadingTools;
     private boolean onTextSearching = false;
@@ -63,7 +62,7 @@ public class PageReadingActivity extends SonakoActivity {
         setContentView(R.layout.activity_page_reading);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupPageview();
+        setupPageViewer();
         setupSearchBox();
         if (savedInstanceState == null) {
             setTagAndTitle(getIntent());
@@ -73,21 +72,11 @@ public class PageReadingActivity extends SonakoActivity {
         isShowingReadingTools = false;
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        shouldRestoreHistory = savedInstanceState.getBoolean(SHOULD_RESTORE_HISTORY_KEY);
-        Intent lastIntent = savedInstanceState.getParcelable(LAST_INTENT_KEY);
-        if (shouldRestoreHistory && lastIntent != null) {
-            setTagAndTitle(lastIntent);
-            pageview.restoreState(savedInstanceState);
-        }
-    }
-
-    private void setupPageview() {
-        pageview = findViewById(R.id.page_viewer);
-        pageview.setInitialScale(1);
-        pageview.setScrollContainer(false);
-        WebSettings settings = pageview.getSettings();
+    private void setupPageViewer() {
+        pageViewer = findViewById(R.id.page_viewer);
+        pageViewer.setInitialScale(1);
+        pageViewer.setScrollContainer(false);
+        WebSettings settings = pageViewer.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
@@ -97,9 +86,10 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setAppCacheEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setAppCachePath(this.getCacheDir().getAbsolutePath());
-        webviewclient = new PageReadingWebViewClient(settings);
-        pageview.setWebViewClient(webviewclient);
-        pageview.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        webViewClient = new PageReadingWebViewClient(settings);
+        pageViewer.setWebViewClient(webViewClient);
+        pageViewer.setOnScrollCallback((l, t, oldl, oldt) -> webViewClient.saveCurrentReadingPosition());
+        pageViewer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
 
     private void setupSearchBox() {
@@ -120,11 +110,11 @@ public class PageReadingActivity extends SonakoActivity {
             public boolean onQueryTextSubmit(String query) {
                 if (query != null && !query.isEmpty()) {
                     if (!onTextSearching) {
-                        pageview.findAllAsync(query);
+                        pageViewer.findAllAsync(query);
                         try {
                             //noinspection JavaReflectionMemberAccess
                             Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
-                            m.invoke(pageview, true);
+                            m.invoke(pageViewer, true);
                         } catch (Throwable ignored) {
                         }
                         onTextSearching = true;
@@ -139,7 +129,7 @@ public class PageReadingActivity extends SonakoActivity {
                     try {
                         //noinspection JavaReflectionMemberAccess
                         Method m = WebView.class.getMethod("setFindIsUp", Boolean.TYPE);
-                        m.invoke(pageview, false);
+                        m.invoke(pageViewer, false);
                     } catch (Throwable ignored) {
                     }
                     onTextSearching = false;
@@ -155,7 +145,7 @@ public class PageReadingActivity extends SonakoActivity {
 
     private void closeSearchBox() {
         onTextSearching = false;
-        pageview.clearMatches();
+        pageViewer.clearMatches();
     }
 
     @Override
@@ -168,14 +158,14 @@ public class PageReadingActivity extends SonakoActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_backward:
-                if (webviewclient != null)
-                    webviewclient.assetsLoaded = false;
-                pageview.goBack();
+                if (webViewClient != null)
+                    webViewClient.assetsLoaded = false;
+                pageViewer.goBack();
                 break;
             case R.id.action_forward:
-                if (webviewclient != null)
-                    webviewclient.assetsLoaded = false;
-                pageview.goForward();
+                if (webViewClient != null)
+                    webViewClient.assetsLoaded = false;
+                pageViewer.goForward();
                 break;
             case R.id.action_return_home:
                 Utils.goHome(this);
@@ -229,36 +219,10 @@ public class PageReadingActivity extends SonakoActivity {
 
     private void openPage() {
         // The file should be ready
-        webviewclient.assetsLoaded = false;
-        pageview.loadUrl(Utils.getFilepath(title, tag));
-
-        // Register to history
-        new HistoryAsyncTask.Register()
-                .execute(new Page(
-                        title,
-                        tag,
-                        Calendar.getInstance().getTime()
-                ));
+        webViewClient.assetsLoaded = false;
+        pageViewer.loadUrl(Utils.getFilepath(title, tag));
     }
 
-    @Override
-    public void recreate() {
-        shouldRestoreHistory = true;
-        super.recreate();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        if (shouldRestoreHistory) {
-            pageview.saveState(outState);
-            outState.putBoolean(SHOULD_RESTORE_HISTORY_KEY, true);
-            Intent lastIntent = new Intent();
-            lastIntent.putExtra(Config.EXTRA_TITLE, title);
-            lastIntent.putExtra(Config.EXTRA_TAG, tag);
-            outState.putParcelable(LAST_INTENT_KEY, lastIntent);
-        }
-        super.onSaveInstanceState(outState);
-    }
 
     public void toggleReadingTools(View view) {
         if (isShowingReadingTools) {
@@ -271,12 +235,12 @@ public class PageReadingActivity extends SonakoActivity {
 
     public void plusTextSize(View v) {
         // Delegate to webviewclient
-        webviewclient.plusTextSize();
+        webViewClient.plusTextSize();
     }
 
     public void minusTextSize(View v) {
         // Delegate to webviewclient
-        webviewclient.minusTextSize();
+        webViewClient.minusTextSize();
     }
 
     public void toggleSearchBox(View view) {
@@ -288,10 +252,13 @@ public class PageReadingActivity extends SonakoActivity {
         isShowingSearchBox = !isShowingSearchBox;
     }
 
-    private class PageReadingWebViewClient extends WebViewClient {
+    public class PageReadingWebViewClient extends WebViewClient {
 
         private final WebSettings settings;
         private boolean assetsLoaded = false;
+        private Page currentPage;
+        private long lastSaveTimestamp;
+        private final long MINIMUM_SAVE_INTERVAL = 200;
 
         PageReadingWebViewClient(WebSettings settings) {
             super();
@@ -330,29 +297,38 @@ public class PageReadingActivity extends SonakoActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            if (!assetsLoaded) {
+                loadAssetIntoHead(view,
+                        "style",
+                        "text/css",
+                        "css/" + Config.SKIN_BASE + ".css",
+                        value -> loadAssetIntoHead(view,
+                                "style",
+                                "text/css",
+                                "css/" + Utils.getCurrentSkin() + ".css",
+                                value1 -> loadAssetIntoHead(view,
+                                        "script",
+                                        "text/javascript",
+                                        "js/script.js",
+                                        null
+                                )
+                        )
+                );
+                assetsLoaded = true;
+            }
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            if (!assetsLoaded) {
-                loadAssetIntoHead(view,
-                        "style",
-                        "text/css",
-                        "css/" + Config.SKIN_BASE + ".css");
-                loadAssetIntoHead(view,
-                        "style",
-                        "text/css",
-                        "css/" + Utils.getCurrentSkin() + ".css");
-                loadAssetIntoHead(view, "script", "text/javascript", "js/script.js");
-                assetsLoaded = true;
-            }
+            new HistoryAsyncTask.LookUp(title, this::restoreCurrentReadingPosition).execute();
         }
 
         private void loadAssetIntoHead(WebView view,
                                        String elementType,
                                        String srcType,
-                                       String filepath) {
+                                       String filepath,
+                                       ValueCallback<String> callback) {
             Log.d(TAG, "Loading asset " + filepath + " into head");
             try {
                 InputStream inputStream = getAssets().open(filepath);
@@ -361,7 +337,7 @@ public class PageReadingActivity extends SonakoActivity {
                 inputStream.read(buffer);
                 inputStream.close();
                 String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
-                String js = "javascript:(function() {" +
+                String js = "(function() {" +
                         "var parent = document.getElementsByTagName('head').item(0);" +
                         "var x = document.createElement('" + elementType + "');" +
                         "x.type = '" + srcType + "';" +
@@ -369,15 +345,48 @@ public class PageReadingActivity extends SonakoActivity {
                         "x.innerHTML = window.atob('" + encoded + "');" +
                         "parent.appendChild(x)" +
                         "})()";
-                executeJS(view, js);
+                executeJS(view, js, callback);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
         }
 
         private void executeJS(WebView view,
-                               String js) {
-            view.evaluateJavascript(js, null);
+                               String js, ValueCallback<String> callback) {
+            view.evaluateJavascript(js, callback);
+        }
+
+        void restoreCurrentReadingPosition(Page page) {
+            currentPage = page;
+            if (currentPage == null)
+                currentPage = new Page(title, tag, Calendar.getInstance().getTime(), 0);
+            Log.d(TAG, "restoringPosition = " + currentPage.getCurrentReadingPosition());
+            // Restore last reading position
+            executeJS(pageViewer,
+                    "(function() {" +
+                            "window.scrollTo(0, document.body.scrollHeight * "
+                            + currentPage.getCurrentReadingPosition() + ")" +
+                            "})()", null);
+        }
+
+        void saveCurrentReadingPosition() {
+            if (currentPage == null) return;
+            // Debounce logic to reduce saving calls
+            final long currentTimestamp = SystemClock.uptimeMillis();
+            if (currentTimestamp - lastSaveTimestamp >= MINIMUM_SAVE_INTERVAL) {
+                executeJS(pageViewer,
+                        "(function() {" +
+                                "return window.pageYOffset / document.body.scrollHeight;" +
+                                "})()",
+                        value -> {
+                            currentPage.setLastRead(Calendar.getInstance().getTime());
+                            currentPage.setCurrentReadingPosition(Float.parseFloat(value));
+                            Log.d(TAG, "currentReadingPosition = " + currentPage.getCurrentReadingPosition());
+                            new HistoryAsyncTask.Register().execute(currentPage);
+                            lastSaveTimestamp = currentTimestamp;
+                        }
+                );
+            }
         }
 
         /**
@@ -388,13 +397,17 @@ public class PageReadingActivity extends SonakoActivity {
         private static final int STEP_ZOOM = 20;
 
         void minusTextSize() {
-            if (settings.getTextZoom() - STEP_ZOOM >= MIN_ZOOM)
+            if (settings.getTextZoom() - STEP_ZOOM >= MIN_ZOOM) {
                 settings.setTextZoom(settings.getTextZoom() - STEP_ZOOM);
+                saveCurrentReadingPosition();
+            }
         }
 
         void plusTextSize() {
-            if (settings.getTextZoom() + STEP_ZOOM <= MAX_ZOOM)
+            if (settings.getTextZoom() + STEP_ZOOM <= MAX_ZOOM) {
                 settings.setTextZoom(settings.getTextZoom() + STEP_ZOOM);
+                saveCurrentReadingPosition();
+            }
         }
     }
 }
