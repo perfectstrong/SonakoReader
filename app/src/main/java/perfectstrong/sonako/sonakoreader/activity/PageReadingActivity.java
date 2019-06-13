@@ -239,6 +239,7 @@ public class PageReadingActivity extends SonakoActivity {
 
         private final WebSettings settings;
         private boolean assetsLoaded = false;
+        private boolean restored = false;
         private Page currentPage;
         private long lastSaveTimestamp;
         private final long MINIMUM_SAVE_INTERVAL = 200;
@@ -304,6 +305,7 @@ public class PageReadingActivity extends SonakoActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            if (restored) return;
             new HistoryAsyncTask.LookUp(title, this::restoreCurrentReadingPosition).execute();
         }
 
@@ -349,7 +351,7 @@ public class PageReadingActivity extends SonakoActivity {
                     "(function() {" +
                             "window.scrollTo(0, document.body.scrollHeight * "
                             + currentPage.getCurrentReadingPosition() + ")" +
-                            "})()", null);
+                            "})()", value -> restored = true);
         }
 
         void saveCurrentReadingPosition() {
