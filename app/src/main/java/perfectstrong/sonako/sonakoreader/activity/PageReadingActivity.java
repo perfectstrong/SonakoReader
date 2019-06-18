@@ -13,19 +13,27 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
@@ -52,6 +60,9 @@ public class PageReadingActivity extends SonakoActivity {
     private boolean isShowingReadingTools;
     private boolean onTextSearching = false;
     private boolean isShowingSearchBox = false;
+    private List<String> headers = new ArrayList<>();
+    private Map<String, String> headersId = new HashMap<>();
+    private AlertDialog tocDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +99,7 @@ public class PageReadingActivity extends SonakoActivity {
         settings.setAppCachePath(this.getCacheDir().getAbsolutePath());
         webViewClient = new PageReadingWebViewClient(settings);
         pageViewer.setWebViewClient(webViewClient);
+        pageViewer.setWebChromeClient(new PageReadingWebChromeClient());
         pageViewer.setOnScrollCallback((l, t, oldl, oldt) -> webViewClient.saveCurrentReadingPosition());
         pageViewer.setLayerType(View.LAYER_TYPE_HARDWARE, null);
     }
@@ -235,6 +247,28 @@ public class PageReadingActivity extends SonakoActivity {
         isShowingSearchBox = !isShowingSearchBox;
     }
 
+    private void buildTOCDialog() {
+        tocDialog = new AlertDialog.Builder(this, R.style.small_dialog)
+                .setTitle(R.string.toc_title)
+                .setCancelable(true)
+                .setItems(headers.toArray(new String[0]), (dialog, which) ->
+                        webViewClient.scrollToId(headersId.get(headers.get(which)))
+                )
+                .setNegativeButton(R.string.no, null)
+                .create();
+    }
+
+    public void showTOCDialog(View view) {
+        if (tocDialog != null)
+            tocDialog.show();
+        else
+            Toast.makeText(
+                    this,
+                    R.string.please_wait,
+                    Toast.LENGTH_SHORT
+            ).show();
+    }
+
     public class PageReadingWebViewClient extends WebViewClient {
 
         private final WebSettings settings;
@@ -283,35 +317,57 @@ public class PageReadingActivity extends SonakoActivity {
             super.onPageStarted(view, url, favicon);
             if (!assetsLoaded) {
                 loadAssetIntoHead(view,
-                        "style",
-                        "text/css",
                         "css/" + Config.SKIN_BASE + ".css",
                         value -> loadAssetIntoHead(view,
-                                "style",
-                                "text/css",
                                 "css/" + Utils.getCurrentSkin() + ".css",
-                                value1 -> loadAssetIntoHead(view,
-                                        "script",
-                                        "text/javascript",
-                                        "js/script.js",
-                                        null
-                                )
+                                null
                         )
                 );
                 assetsLoaded = true;
             }
         }
 
+        private final String KEY_VALUE_DELIMITER = "______";
+        private final String ELEMENT_DELIMITER = ";;;;;;";
+
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             if (restored) return;
+            // Collect headers
+            executeJS(view,
+                    "(function(){var headings = [].slice.call(document.body.querySelectorAll('h1, h2, h3, h4, h5, h6'));\n" +
+                            "var headingAutoName = 0;\n" +
+                            "var encodedHeaders = '';\n" +
+                            "headings.forEach(function (heading) {\n" +
+                            "    if (!heading.id) {\n" +
+                            "        headingAutoName += 1;\n" +
+                            "        heading.id = '' + headingAutoName;\n" +
+                            "    }\n" +
+                            "    var space='';\n" +
+                            "    for (var i=1;i<parseInt(heading.tagName.substring(1));i++)\n" +
+                            "         space += '    ';\n" +
+                            "    encodedHeaders += space + heading.textContent.trim() + '" + KEY_VALUE_DELIMITER + "' + heading.id + '" + ELEMENT_DELIMITER + "';\n" +
+                            "});\n" +
+                            "return encodedHeaders;})()",
+                    value -> {
+                        // Decode headers
+                        value = value.substring(1, value.length() - 2); // Remove surrounding " "
+                        String[] keyValues = value.split(ELEMENT_DELIMITER);
+                        for (String keyValue : keyValues) {
+                            String[] decoded = keyValue.split(KEY_VALUE_DELIMITER);
+                            if (decoded.length == 2) {
+                                headers.add(decoded[0]);
+                                headersId.put(decoded[0], decoded[1]);
+                            }
+                        }
+                        buildTOCDialog();
+                    }
+            );
             new HistoryAsyncTask.LookUp(title, this::restoreCurrentReadingPosition).execute();
         }
 
         private void loadAssetIntoHead(WebView view,
-                                       String elementType,
-                                       String srcType,
                                        String filepath,
                                        ValueCallback<String> callback) {
             Log.d(TAG, "Loading asset " + filepath + " into head");
@@ -323,9 +379,9 @@ public class PageReadingActivity extends SonakoActivity {
                 inputStream.close();
                 String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
                 String js = "(function() {" +
-                        "var parent = document.getElementsByTagName('head').item(0);" +
-                        "var x = document.createElement('" + elementType + "');" +
-                        "x.type = '" + srcType + "';" +
+                        "var parent = document.head;" +
+                        "var x = document.createElement('style');" +
+                        "x.type = 'text/css';" +
                         // Tell the browser to BASE64-decode the string into your script !!!
                         "x.innerHTML = window.atob('" + encoded + "');" +
                         "parent.appendChild(x)" +
@@ -349,8 +405,10 @@ public class PageReadingActivity extends SonakoActivity {
             // Restore last reading position
             executeJS(pageViewer,
                     "(function() {" +
-                            "window.scrollTo(0, document.body.scrollHeight * "
-                            + currentPage.getCurrentReadingPosition() + ")" +
+                            "var top = document.body.scrollHeight * " + currentPage.getCurrentReadingPosition() + ";" +
+                            "var isSmoothScrollSupported = 'scrollBehavior' in document.documentElement.style;" +
+                            "if (isSmoothScrollSupported) window.scrollTo({behavior: 'smooth', top: top});" +
+                            "else window.scrollTo(0, top);" +
                             "})()", value -> restored = true);
         }
 
@@ -393,6 +451,22 @@ public class PageReadingActivity extends SonakoActivity {
                 settings.setTextZoom(settings.getTextZoom() + STEP_ZOOM);
                 saveCurrentReadingPosition();
             }
+        }
+
+        void scrollToId(String id) {
+            executeJS(pageViewer,
+                    "document.getElementById('" + id + "').scrollIntoView({behavior: 'smooth'})",
+                    null);
+        }
+    }
+
+    class PageReadingWebChromeClient extends WebChromeClient {
+        public boolean onConsoleMessage(ConsoleMessage cm) {
+            Log.d(TAG + "WebviewMessage" + cm.messageLevel().name(),
+                    cm.message() + " \nFrom line "
+                            + cm.lineNumber() + " of "
+                            + cm.sourceId());
+            return true;
         }
     }
 }

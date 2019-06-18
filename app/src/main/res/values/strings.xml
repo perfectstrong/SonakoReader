@@ -140,4 +140,6 @@
     <string name="delete_biblio_end">Đã xóa xong thư viện</string>
     <string name="delete_chapter_start">Bắt đầu xóa chương</string>
     <string name="delete_chapter_end">Đã xóa chương xong</string>
+    <string name="toc_title">Mục lục</string>
+    <string name="please_wait">Xin bình tĩnh một chút</string>
 </resources>

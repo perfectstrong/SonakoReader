@@ -112,6 +112,14 @@
                 android:onClick="toggleSearchBox"
                 app:srcCompat="@drawable/ic_find" />
 
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:onClick="showTOCDialog"
+                app:srcCompat="@drawable/baseline_toc" />
+
         </LinearLayout>
 
     </LinearLayout>
