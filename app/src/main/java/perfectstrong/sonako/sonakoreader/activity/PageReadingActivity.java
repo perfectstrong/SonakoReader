@@ -77,6 +77,7 @@ public class PageReadingActivity extends SonakoActivity {
             WebView.enableSlowWholeDocumentDraw();
         }
         setContentView(R.layout.activity_page_reading);
+        hideSystemUI();
         readingTools = findViewById(R.id.reading_tools);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -305,10 +306,24 @@ public class PageReadingActivity extends SonakoActivity {
             toggleReadingTools(v);
             // Hide toolbar
             Utils.slideOut(toolbar, R.anim.top_up);
+            hideSystemUI();
         } else {
             Utils.slideIn(toolbar, R.anim.top_down);
             toggleReadingTools(v);
         }
+    }
+
+    private void hideSystemUI() {
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     public class PageReadingWebViewClient extends WebViewClient {
