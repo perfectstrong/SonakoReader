@@ -462,9 +462,24 @@ public class Utils {
      */
     public static void slideIn(View view, int animation) {
         if (view.getVisibility() == View.VISIBLE) return;
-        Animation bottomUp = AnimationUtils.loadAnimation(view.getContext(), animation);
-        view.startAnimation(bottomUp);
-        view.setVisibility(View.VISIBLE);
+        Animation animIn = AnimationUtils.loadAnimation(view.getContext(), animation);
+        animIn.setFillBefore(true);
+        animIn.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        view.startAnimation(animIn);
     }
 
     /**
@@ -475,9 +490,24 @@ public class Utils {
      */
     public static void slideOut(View view, int animation) {
         if (view.getVisibility() == View.GONE) return;
-        Animation bottomUp = AnimationUtils.loadAnimation(view.getContext(), animation);
-        view.startAnimation(bottomUp);
-        view.setVisibility(View.GONE);
+        Animation animOut = AnimationUtils.loadAnimation(view.getContext(), animation);
+        animOut.setFillBefore(true);
+        animOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                view.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+        view.startAnimation(animOut);
     }
 
     public static void hideImagesFromGallery(Context context) {

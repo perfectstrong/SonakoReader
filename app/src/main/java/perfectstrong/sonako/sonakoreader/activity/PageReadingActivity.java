@@ -12,6 +12,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.ValueCallback;
@@ -51,18 +52,23 @@ public class PageReadingActivity extends SonakoActivity {
 
     private static final String UNDEFINED = "Undefined";
     private static final String TAG = PageReadingActivity.class.getSimpleName();
+    private static final long MAX_TOUCH_DURATION = 200;
+    private static final float MAX_Y_FLING = 100;
+    private static boolean onImmersiveLayout = false;
 
     private String title;
     private String tag;
     private PageReadingWebView pageViewer;
     private PageReadingWebViewClient webViewClient;
     private View readingTools;
-    private boolean isShowingReadingTools;
+    private Toolbar toolbar;
     private boolean onTextSearching = false;
     private boolean isShowingSearchBox = false;
     private List<String> headers = new ArrayList<>();
     private Map<String, String> headersId = new HashMap<>();
     private AlertDialog tocDialog;
+    private long m_DownTime;
+    private float m_Y;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,20 +77,24 @@ public class PageReadingActivity extends SonakoActivity {
             WebView.enableSlowWholeDocumentDraw();
         }
         setContentView(R.layout.activity_page_reading);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        readingTools = findViewById(R.id.reading_tools);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (onImmersiveLayout) {
+            toolbar.setVisibility(View.GONE);
+            readingTools.setVisibility(View.GONE);
+        }
         setupPageViewer();
         setupSearchBox();
         if (savedInstanceState == null) {
             setTagAndTitle(getIntent());
             openPage();
         }
-        readingTools = findViewById(R.id.reading_tools);
-        isShowingReadingTools = false;
     }
 
     private void setupPageViewer() {
         pageViewer = findViewById(R.id.page_viewer);
+        pageViewer.setOnTouchCallback(this::onTouchHandler);
         pageViewer.setInitialScale(1);
         pageViewer.setScrollContainer(false);
         WebSettings settings = pageViewer.getSettings();
@@ -220,12 +230,11 @@ public class PageReadingActivity extends SonakoActivity {
 
 
     public void toggleReadingTools(View view) {
-        if (isShowingReadingTools) {
+        if (onImmersiveLayout) {
             closeSearchBox();
             Utils.slideOut(readingTools, R.anim.bottom_down);
         } else
             Utils.slideIn(readingTools, R.anim.bottom_up);
-        isShowingReadingTools = !isShowingReadingTools;
     }
 
     public void plusTextSize(View v) {
@@ -267,6 +276,39 @@ public class PageReadingActivity extends SonakoActivity {
                     R.string.please_wait,
                     Toast.LENGTH_SHORT
             ).show();
+    }
+
+    private void onTouchHandler(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                m_DownTime = event.getEventTime(); //init time
+                m_Y = event.getY();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (event.getEventTime() - m_DownTime <= MAX_TOUCH_DURATION
+                        && Math.abs(event.getY() - m_Y) <= MAX_Y_FLING)
+                    // On touch action
+                    this.toggleImmersiveLayout(pageViewer);
+                break;
+            default:
+                break; //No-Op
+        }
+    }
+
+    private void toggleImmersiveLayout(View v) {
+        onImmersiveLayout = !onImmersiveLayout;
+        if (onImmersiveLayout) {
+            // Close search box
+            if (isShowingSearchBox)
+                toggleSearchBox(v);
+            // Close reading tool
+            toggleReadingTools(v);
+            // Hide toolbar
+            Utils.slideOut(toolbar, R.anim.top_up);
+        } else {
+            Utils.slideIn(toolbar, R.anim.top_down);
+            toggleReadingTools(v);
+        }
     }
 
     public class PageReadingWebViewClient extends WebViewClient {
@@ -401,7 +443,6 @@ public class PageReadingActivity extends SonakoActivity {
             currentPage = page;
             if (currentPage == null)
                 currentPage = new Page(title, tag, Calendar.getInstance().getTime(), 0);
-            Log.d(TAG, "restoringPosition = " + currentPage.getCurrentReadingPosition());
             // Restore last reading position
             executeJS(pageViewer,
                     "(function() {" +
@@ -424,7 +465,6 @@ public class PageReadingActivity extends SonakoActivity {
                         value -> {
                             currentPage.setLastRead(Calendar.getInstance().getTime());
                             currentPage.setCurrentReadingPosition(Float.parseFloat(value));
-                            Log.d(TAG, "currentReadingPosition = " + currentPage.getCurrentReadingPosition());
                             new HistoryAsyncTask.Register().execute(currentPage);
                             lastSaveTimestamp = currentTimestamp;
                         }

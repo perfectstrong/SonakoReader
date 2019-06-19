@@ -4,13 +4,12 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-
-import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
+import android.view.MotionEvent;
 
 public class PageReadingWebView extends LollipopFixedWebView {
 
-    private PageReadingActivity.PageReadingWebViewClient client;
     private OnScrollCallback onScrollCallback;
+    private OnTouchCallback onTouchCallback;
 
     public PageReadingWebView(Context context) {
         super(context);
@@ -41,5 +40,20 @@ public class PageReadingWebView extends LollipopFixedWebView {
 
     public interface OnScrollCallback {
         void execute(int l, int t, int oldl, int oldt);
+    }
+
+    public interface OnTouchCallback {
+        void execute(MotionEvent event);
+
+    }
+
+    public void setOnTouchCallback(OnTouchCallback onTouchCallback) {
+        this.onTouchCallback = onTouchCallback;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        onTouchCallback.execute(event);
+        return super.onTouchEvent(event);
     }
 }
