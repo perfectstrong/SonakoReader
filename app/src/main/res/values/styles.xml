@@ -23,9 +23,4 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
-    <style name="small_dialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="windowFixedHeightMinor">70%</item>
-        <item name="windowFixedHeightMajor">50%</item>
-    </style>
-
 </resources>

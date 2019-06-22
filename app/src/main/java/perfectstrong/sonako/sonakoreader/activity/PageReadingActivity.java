@@ -8,12 +8,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.ConsoleMessage;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -258,7 +261,7 @@ public class PageReadingActivity extends SonakoActivity {
     }
 
     private void buildTOCDialog() {
-        tocDialog = new AlertDialog.Builder(this, R.style.small_dialog)
+        tocDialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.toc_title)
                 .setCancelable(true)
                 .setItems(headers.toArray(new String[0]), (dialog, which) ->
@@ -269,9 +272,29 @@ public class PageReadingActivity extends SonakoActivity {
     }
 
     public void showTOCDialog(View view) {
-        if (tocDialog != null)
+        if (tocDialog != null) {
             tocDialog.show();
-        else
+            // Set height
+            Window window = tocDialog.getWindow();
+            assert window != null;
+            // Get screen width and height in pixels
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            // The absolute height of the available display size in pixels.
+            int displayHeight = displayMetrics.heightPixels;
+
+            // Initialize a new window manager layout parameters
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            // Copy the alert dialog window attributes to new layout parameter instance
+            layoutParams.copyFrom(window.getAttributes());
+
+            // Set alert dialog max height equal to screen height 70%
+            if (layoutParams.height > displayHeight * 0.7f) {
+                layoutParams.height = (int) (displayHeight * 0.7f);
+                // Apply the newly created layout parameters to the alert dialog window
+                tocDialog.getWindow().setAttributes(layoutParams);
+            }
+        } else
             Toast.makeText(
                     this,
                     R.string.please_wait,
