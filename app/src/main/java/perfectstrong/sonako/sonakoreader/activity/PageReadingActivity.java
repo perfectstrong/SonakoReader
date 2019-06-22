@@ -408,14 +408,22 @@ public class PageReadingActivity extends SonakoActivity {
                             "});\n" +
                             "return encodedHeaders;})()",
                     value -> {
-                        // Decode headers
-                        value = value.substring(1, value.length() - 2); // Remove surrounding " "
-                        String[] keyValues = value.split(ELEMENT_DELIMITER);
-                        for (String keyValue : keyValues) {
-                            String[] decoded = keyValue.split(KEY_VALUE_DELIMITER);
-                            if (decoded.length == 2) {
-                                headers.add(decoded[0]);
-                                headersId.put(decoded[0], decoded[1]);
+                        if (value.length() < 3) {
+                            Toast.makeText(
+                                    PageReadingActivity.this,
+                                    R.string.no_heading_no_toc,
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        } else {
+                            // Decode headers
+                            value = value.substring(1, value.length() - 1); // Remove surrounding " "
+                            String[] keyValues = value.split(ELEMENT_DELIMITER);
+                            for (String keyValue : keyValues) {
+                                String[] decoded = keyValue.split(KEY_VALUE_DELIMITER);
+                                if (decoded.length == 2) {
+                                    headers.add(decoded[0]);
+                                    headersId.put(decoded[0], decoded[1]);
+                                }
                             }
                         }
                         buildTOCDialog();

@@ -142,4 +142,5 @@
     <string name="delete_chapter_end">Đã xóa chương xong</string>
     <string name="toc_title">Mục lục</string>
     <string name="please_wait">Xin bình tĩnh một chút</string>
+    <string name="no_heading_no_toc">Trang không có đề mục nên sẽ không có mục lục</string>
 </resources>
