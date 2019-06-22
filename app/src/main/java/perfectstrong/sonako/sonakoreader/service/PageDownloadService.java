@@ -261,6 +261,7 @@ public class PageDownloadService extends IntentService {
             if (LightNovel.ProjectGenre.ALL.contains(t)) continue;
             if (LightNovel.ProjectStatus.ALL.contains(t)) continue;
             if (LightNovel.ProjectType.ALL.contains(t)) continue;
+            if (LightNovel.ExceptionTag.ALL.contains(t)) continue;
             tag = t;
             break; // At the first occurrence
         }
@@ -307,6 +308,9 @@ public class PageDownloadService extends IntentService {
             } else {
                 // Fix direct wiki images
                 Element realImg = figure.selectFirst("noscript > img");
+                if (realImg == null)
+                    // Non existing image
+                    continue;
                 realImg.attr("src",
                         realImg.attr("src").replaceAll("/revision.*", ""));
                 Log.d(TAG, realImg.attr("src"));
