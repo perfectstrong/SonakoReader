@@ -69,13 +69,14 @@ public class Utils {
         return Uri.decode(encodedString);
     }
 
-    private static final String REPLACEMENT_CHAR = " ";
+    public static final String REPLACEMENT_CHAR = " ";
 
     /**
      * @param tag retrieved from wikia
      * @return valid path for directory
      */
     public static String sanitize(String tag) {
+        if (tag == null) return "";
         return tag.replaceAll("[|?*<\":>+\\[\\]/'_]", REPLACEMENT_CHAR);
     }
 
@@ -123,6 +124,7 @@ public class Utils {
     }
 
     public static boolean isNotCached(String title, String tag) {
+        if (tag == null) return true;
         return !getTextFile(title, tag).exists();
     }
 
@@ -184,47 +186,46 @@ public class Utils {
         if (title == null) {
             Toast.makeText(
                     context,
-                    R.string.not_having_title,
+                    R.string.undefined_title,
                     Toast.LENGTH_LONG
             )
                     .show();
             return;
         }
-        if (tag == null) {
-            Toast.makeText(
-                    context,
-                    R.string.tag_is_null,
-                    Toast.LENGTH_LONG
-            )
-                    .show();
-            return;
-        }
-        if (action == null)
+        if (action == null) {
             // Read or first download
+            if (tag == null) {
+                // Undefined tag
+                // We try to check in save dir
+                tag = getCachedTagFor(title);
+                // If tag is still null, no cached has been saved
+            }
             if (isNotCached(title, tag)) {
+                // If auto download, no need to create dialog
                 if (PreferenceManager.getDefaultSharedPreferences(context)
                         .getBoolean(
                                 context.getString(R.string.key_pref_download_noncached_pages),
                                 context.getResources().getBoolean(R.bool.default_download_noncached_pages)
-                        )) {
-                    // If auto download, no need to create dialog
+                        ))
                     startDownloadTask(context, title, tag, null);
-                } else {
-                    final boolean[] autodownload = {
+                else {
+                    // Request sent from internal activity
+                    // Demand before downloading
+                    final boolean[] autoDownload = {
                             context.getResources().getBoolean(R.bool.default_download_noncached_pages)
                     };
-                    // Demand before downloading
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    String finalTag = tag;
                     builder.setTitle(context.getString(R.string.wanna_download))
                             .setMultiChoiceItems(
                                     AUTO_DOWNLOAD_CHOICES,
                                     null,
-                                    (dialog, which, isChecked) -> autodownload[0] = which == 0 && isChecked
+                                    (dialog, which, isChecked) -> autoDownload[0] = which == 0 && isChecked
                             )
                             .setPositiveButton(
                                     context.getString(R.string.ok),
                                     (dialog, which) -> {
-                                        if (autodownload[0]) {
+                                        if (autoDownload[0]) {
                                             PreferenceManager
                                                     .getDefaultSharedPreferences(context)
                                                     .edit()
@@ -233,7 +234,7 @@ public class Utils {
                                                             true)
                                                     .apply();
                                         }
-                                        startDownloadTask(context, title, tag, null);
+                                        startDownloadTask(context, title, finalTag, null);
                                     }
                             )
                             .setNegativeButton(
@@ -244,9 +245,23 @@ public class Utils {
                 }
             } else
                 startReadingActivity(context, title, tag);
-        else
+        } else
             // Special action
             startDownloadTask(context, title, tag, action);
+    }
+
+    public static String getCachedTagFor(String title) {
+        File saveDir = new File(getSaveDir());
+        // Get all subfolders
+        File[] dirs = saveDir.listFiles(File::isDirectory);
+        if (dirs != null && dirs.length > 0) {
+            for (File dir : dirs) {
+                File[] htmlFiles = dir.listFiles(pathname -> pathname.getName().endsWith(".html") && pathname.getName().contains(sanitize(title)));
+                if (htmlFiles.length > 0)
+                    return dir.getName();
+            }
+        }
+        return null;
     }
 
     /**
@@ -256,9 +271,9 @@ public class Utils {
      * @param title   of new page
      * @param tag     tag of series
      */
-    private static void startReadingActivity(Context context,
-                                             String title,
-                                             String tag) {
+    public static void startReadingActivity(Context context,
+                                            String title,
+                                            String tag) {
         Intent i = new Intent(context, PageReadingActivity.class);
         i.putExtra(Config.EXTRA_TITLE, title);
         i.putExtra(Config.EXTRA_TAG, tag);
@@ -273,10 +288,10 @@ public class Utils {
      * @param tag     tag of series
      * @param action  see {@link PageDownloadService.ACTION}
      */
-    private static void startDownloadTask(Context context,
-                                          String title,
-                                          String tag,
-                                          PageDownloadService.ACTION action) {
+    public static void startDownloadTask(Context context,
+                                         String title,
+                                         String tag,
+                                         PageDownloadService.ACTION action) {
         Intent i = new Intent(context, PageDownloadService.class);
         i.putExtra(Config.EXTRA_TITLE, title);
         i.putExtra(Config.EXTRA_TAG, tag);

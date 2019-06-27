@@ -156,7 +156,6 @@ public class PageDownloadService extends IntentService {
 
         // Register
         publishProgress(getString(R.string.download_starting));
-        saveLocation = Utils.getSaveDirForTag(tag);
         filename = Utils.sanitize(Utils.decode(title)) + ".html";
         if (action != null)
             switch (action) {
@@ -187,8 +186,9 @@ public class PageDownloadService extends IntentService {
                 } else {
                     downloadText();
                     preprocess();
-                    downloadImages();
+                    saveLocation = Utils.getSaveDirForTag(tag); // tag shall be not null
                     cacheText();
+                    downloadImages();
                 }
             }
             postToast(getString(R.string.download_finish) + " " + title);
@@ -201,6 +201,8 @@ public class PageDownloadService extends IntentService {
     }
 
     private void loadImageLinksFromCachedText() throws IOException {
+        if (tag == null)
+            throw new IOException(getString(R.string.no_cached));
         publishProgress(getString(R.string.analyzing_text));
         imagesLinks = new ArrayList<>();
         Document doc = Jsoup.parse(
@@ -252,18 +254,20 @@ public class PageDownloadService extends IntentService {
         JSONObject parse = jsonObject.getJSONObject("parse");
         // Raw text
         text = parse.getJSONObject("text").getString("*");
-        // Get tag
-        JSONArray elements = parse.getJSONArray("categories");
-        for (int i = 0; i < elements.length(); i++) {
-            JSONObject element = elements.getJSONObject(i);
-            // Skip status, type and genres
-            String t = Utils.removeSubtrait(element.getString("*"));
-            if (LightNovel.ProjectGenre.ALL.contains(t)) continue;
-            if (LightNovel.ProjectStatus.ALL.contains(t)) continue;
-            if (LightNovel.ProjectType.ALL.contains(t)) continue;
-            if (LightNovel.ExceptionTag.ALL.contains(t)) continue;
-            tag = t;
-            break; // At the first occurrence
+        // Get tag if not defined
+        if (tag == null) {
+            JSONArray elements = parse.getJSONArray("categories");
+            for (int i = 0; i < elements.length(); i++) {
+                JSONObject element = elements.getJSONObject(i);
+                // Skip status, type and genres
+                String t = Utils.removeSubtrait(element.getString("*"));
+                if (LightNovel.ProjectGenre.ALL.contains(t)) continue;
+                if (LightNovel.ProjectStatus.ALL.contains(t)) continue;
+                if (LightNovel.ProjectType.ALL.contains(t)) continue;
+                if (LightNovel.ExceptionTag.ALL.contains(t)) continue;
+                tag = t;
+                break; // At the first occurrence
+            }
         }
     }
 
@@ -544,4 +548,9 @@ public class PageDownloadService extends IntentService {
          */
         REFRESH_ALL,
     }
+
+    /**
+     * Download the page
+     */
+    public static final String DOWNLOAD = Config.EXTRA_ACTION + ".download";
 }

@@ -125,7 +125,7 @@
     <string name="biblio_empty">Tủ truyện trống trơn :(</string>
     <string name="theme_changing_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
     <string name="show_all">Hiện tất cả</string>
-    <string name="not_having_title">Sonako không chứa tiêu đề này</string>
+    <string name="not_having_title">Sonako không chứa trang</string>
     <string name="tag_is_null">Tag không xác định</string>
     <string name="cannot_hidden_img">Không thể giấu ảnh khỏi gallery</string>
     <string name="has_hidden_img">Đã giấu ảnh khỏi gallery</string>
@@ -143,4 +143,6 @@
     <string name="toc_title">Mục lục</string>
     <string name="please_wait">Xin bình tĩnh một chút</string>
     <string name="no_heading_no_toc">Trang không có đề mục nên sẽ không có mục lục</string>
+    <string name="undefined_title">Tiêu đề không xác định</string>
+    <string name="no_cached">Văn bản chưa tồn tại trong bộ nhớ</string>
 </resources>

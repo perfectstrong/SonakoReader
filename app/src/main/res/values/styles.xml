@@ -23,4 +23,5 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.Headless" parent="android:Theme.NoDisplay" />
 </resources>
