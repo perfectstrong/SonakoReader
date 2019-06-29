@@ -349,6 +349,18 @@ public class PageReadingActivity extends SonakoActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        hideSystemUI();
+    }
+
     public class PageReadingWebViewClient extends WebViewClient {
 
         private final WebSettings settings;
