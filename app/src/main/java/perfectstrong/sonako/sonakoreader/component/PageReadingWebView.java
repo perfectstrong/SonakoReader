@@ -53,7 +53,14 @@ public class PageReadingWebView extends LollipopFixedWebView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        onTouchCallback.execute(event);
-        return super.onTouchEvent(event);
+        HitTestResult hitResult = getHitTestResult();
+        if (HitTestResult.SRC_ANCHOR_TYPE == hitResult.getType()) {
+            // An url
+            // Do not execute callback
+            return super.onTouchEvent(event);
+        } else {
+            onTouchCallback.execute(event);
+            return super.onTouchEvent(event);
+        }
     }
 }

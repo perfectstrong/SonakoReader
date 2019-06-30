@@ -57,7 +57,7 @@ public class PageReadingActivity extends SonakoActivity {
     private static final String TAG = PageReadingActivity.class.getSimpleName();
     private static final long MAX_TOUCH_DURATION = 200;
     private static final float MAX_Y_FLING = 100;
-    private static boolean onImmersiveLayout = false;
+    private static boolean onImmersiveLayout = true;
 
     private String title;
     private String tag;
@@ -80,16 +80,12 @@ public class PageReadingActivity extends SonakoActivity {
             WebView.enableSlowWholeDocumentDraw();
         }
         setContentView(R.layout.activity_page_reading);
-        hideSystemUI();
         readingTools = findViewById(R.id.reading_tools);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (onImmersiveLayout) {
-            toolbar.setVisibility(View.GONE);
-            readingTools.setVisibility(View.GONE);
-        }
         setupPageViewer();
         setupSearchBox();
+        if (!onImmersiveLayout) toggleImmersiveLayout(pageViewer);
         if (savedInstanceState == null) {
             setTagAndTitle(getIntent());
             openPage();
@@ -357,13 +353,15 @@ public class PageReadingActivity extends SonakoActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        hideSystemUI();
+        onImmersiveLayout = false;
+        toggleImmersiveLayout(pageViewer);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        hideSystemUI();
+        onImmersiveLayout = false;
+        toggleImmersiveLayout(pageViewer);
     }
 
     public class PageReadingWebViewClient extends WebViewClient {
@@ -402,7 +400,6 @@ public class PageReadingActivity extends SonakoActivity {
                         null,
                         PageReadingActivity.this
                 );
-                return true;
             } else {
                 Utils.viewExternalLink(PageReadingActivity.this, url);
             }
