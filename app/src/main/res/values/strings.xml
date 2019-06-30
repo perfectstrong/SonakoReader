@@ -148,4 +148,5 @@
     <string name="error_on_downloading">Đã có lỗi xảy ra khi tải</string>
     <string name="connection_error">Lỗi đường truyền</string>
     <string name="downloader_notification_channel_description">Thông tin về quá trình tải</string>
+    <string name="reload">Mở lại trang</string>
 </resources>

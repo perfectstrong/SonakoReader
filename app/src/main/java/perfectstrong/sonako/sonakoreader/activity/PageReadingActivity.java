@@ -186,6 +186,11 @@ public class PageReadingActivity extends SonakoActivity {
             case R.id.action_return_home:
                 Utils.goHome(this);
                 break;
+            case R.id.action_reload:
+                Intent currentIntent = getIntent();
+                finish();
+                startActivity(currentIntent);
+                break;
             case R.id.action_download_all_chapters:
                 Log.d(TAG, "Download all chapters of " + title);
                 new AsyncMassLinkDownloader(title, tag, this).execute();
