@@ -8,7 +8,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.view.ViewCompat;
 import androidx.preference.PreferenceManager;
 
 import perfectstrong.sonako.sonakoreader.R;
@@ -58,30 +57,29 @@ public class DumbActivity extends AppCompatActivity {
         // If tag is still null, no cached has been saved
         // Or if title has not been created
         if (tag == null || Utils.isNotCached(title, tag)) {
+            int intentId = Utils.getUniqueNotificationId();
+            Intent downloadIntent = new Intent(this, PageDownloadService.class);
+            downloadIntent.putExtra(Config.EXTRA_TITLE, title);
+            downloadIntent.putExtra(Config.EXTRA_TAG, tag);
+            downloadIntent.putExtra(Config.EXTRA_ID, intentId);
             if (PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(
                             this.getString(R.string.key_pref_download_noncached_pages),
                             this.getResources().getBoolean(R.bool.default_download_noncached_pages)
-                    ))
-                Utils.startDownloadTask(this, title, tag, null);
-            else {
-                // Create push notification to download
-                Intent downloadIntent = new Intent(this, DumbActivity.class);
-                downloadIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                downloadIntent.putExtra(Config.EXTRA_TITLE, title);
-                downloadIntent.putExtra(Config.EXTRA_TAG, tag);
-                downloadIntent.putExtra(Config.EXTRA_ACTION, PageDownloadService.DOWNLOAD);
-                int intentId = ViewCompat.generateViewId();
-                downloadIntent.putExtra(Config.EXTRA_ID, intentId);
-
+                    )) {
+                // Direct start
+                this.startService(downloadIntent);
+            } else {
+                // Create push notification to request download
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Config.CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_sonakoreaderlogo_bw)
                         .setColor(getResources().getColor(R.color.holySecondaryColor))
                         .setContentTitle(title)
                         .setContentText(getString(R.string.wanna_download))
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(PendingIntent.getActivity(this, 0, downloadIntent, 0))
-                        .setAutoCancel(true);
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setContentIntent(PendingIntent.getService(this, intentId, downloadIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                        .setAutoCancel(true)
+                        .setOnlyAlertOnce(true);
 
                 NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
                 notificationManagerCompat.notify(intentId, builder.build());

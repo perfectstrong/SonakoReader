@@ -24,7 +24,7 @@
     <string name="unregister_favorite">Bỏ khỏi Yêu Thích</string>
     <string name="ok">OK</string>
     <string name="no">Thoai</string>
-    <string name="start_downloading">Bắt đầu tải</string>
+    <string name="start_downloading">Đang tải</string>
     <string name="download_finish">Đã tải xong</string>
     <string name="last_read">Lần đọc cuối:</string>
     <string name="download_all_chapters">Tải hàng loạt chương truyện</string>
@@ -33,7 +33,7 @@
     <string name="no_links_download">Không có link để tải</string>
     <string name="which_link_to_download">Bạn muốn tải link nào?</string>
     <string name="try_redownload_text">Hãy thử download trang chủ lại</string>
-    <string name="download_waiting">Đang chờ</string>
+    <string name="download_waiting">Đã vào danh sách chờ tải</string>
     <string name="download_already_scheduled">đã ở sẵn trong lịch tải</string>
     <string name="download_starting">Khởi động</string>
     <string name="download_terminated">Kết thúc</string>
@@ -75,7 +75,7 @@
     <string name="default_download_wikia_images">@string/download_wikia_images_not_over_1024px_value</string>
     <string name="summary_download_noncached_pages">Mỗi khi nhấp vào link chưa có trong bộ nhớ</string>
     <string name="summary_download_external_images">Chú ý: Hình ảnh ngoài wikia sẽ không được nén kích cỡ khi tải</string>
-    <string name="wanna_download">Trang này chưa được tải. Bạn có muốn tải?</string>
+    <string name="wanna_download">Trang này chưa có trong tủ truyện. Bạn có muốn tải?</string>
     <string name="confirm_delete">Are you sure about this ? T_T</string>
     <string name="update_completed">Đã cập nhật xong</string>
     <string name="no_internet">Không có internet</string>
@@ -145,4 +145,7 @@
     <string name="no_heading_no_toc">Trang không có đề mục nên sẽ không có mục lục</string>
     <string name="undefined_title">Tiêu đề không xác định</string>
     <string name="no_cached">Văn bản chưa tồn tại trong bộ nhớ</string>
+    <string name="error_on_downloading">Đã có lỗi xảy ra khi tải</string>
+    <string name="connection_error">Lỗi đường truyền</string>
+    <string name="downloader_notification_channel_description">Thông tin về quá trình tải</string>
 </resources>

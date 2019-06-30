@@ -1,6 +1,7 @@
 package perfectstrong.sonako.sonakoreader.service;
 
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +40,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
 import perfectstrong.sonako.sonakoreader.database.LightNovel;
@@ -52,9 +57,11 @@ public class PageDownloadService extends IntentService {
     private static final String TAG = PageDownloadService.class.getSimpleName();
     private String title;
     private String tag;
+    private ACTION action;
+    private int intentId;
+    private String flag;
     private String saveLocation;
     private String filename;
-    private ACTION action;
     private boolean forceRefreshText;
     private boolean forceRefreshImages;
     private WikiClient wiki;
@@ -62,12 +69,14 @@ public class PageDownloadService extends IntentService {
     private List<Element> imagesLinks;
     private Handler mHandler;
 
-    private static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flagDownload";
+    private static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flag.download";
     private static final String FLAG_DOWNLOAD_DUPLICATE = "DUPLICATE";
 
     private static Map<String, String> tasks;
     private boolean downloadFailedImages;
     private Document doc;
+    private NotificationCompat.Builder notificationBuilder;
+    private NotificationManagerCompat notificationManager;
 
     public PageDownloadService() {
         super(TAG);
@@ -99,6 +108,13 @@ public class PageDownloadService extends IntentService {
                 return super.remove(key);
             }
         };
+        notificationBuilder = new NotificationCompat.Builder(this, Config.CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_sonakoreaderlogo_bw)
+                .setColor(getResources().getColor(R.color.holySecondaryColor))
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setAutoCancel(true) // Some notifications will disappear on dev mode
+                .setOnlyAlertOnce(true);
+        notificationManager = NotificationManagerCompat.from(this);
     }
 
     @Override
@@ -106,35 +122,67 @@ public class PageDownloadService extends IntentService {
         Bundle bundle = intent.getExtras();
         if (bundle != null) {
             String title = bundle.getString(Config.EXTRA_TITLE);
-            if (title != null)
-                if (!tasks.containsKey(title))
+            int intentId = bundle.getInt(Config.EXTRA_ID);
+            if (title != null && !title.isEmpty())
+                if (!tasks.containsKey(title)) {
                     tasks.put(title, getString(R.string.download_waiting));
-                else {
-                    postToast(title + " " + getString(R.string.download_already_scheduled));
-                    intent.putExtra(FLAG_DOWNLOAD, FLAG_DOWNLOAD_DUPLICATE);
+                    announce(title, getString(R.string.download_waiting), intentId, null, false, NotificationCompat.PRIORITY_MIN);
+                } else {
+                    bundle.putString(FLAG_DOWNLOAD, FLAG_DOWNLOAD_DUPLICATE);
+                    intent.putExtras(bundle);
                 }
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void postToast(String msg) {
-        mHandler.post(() -> Toast.makeText(
-                this,
-                msg,
-                Toast.LENGTH_LONG)
-                .show()
-        );
+    private void publishNotification(String title,
+                                     String msg,
+                                     int intentId,
+                                     PendingIntent pendingIntent,
+                                     boolean onProgress,
+                                     int importance) {
+        if (title != null && !title.isEmpty() && intentId != 0) {
+            notificationBuilder.setContentTitle(title)
+                    .setContentText(msg)
+                    .setContentIntent(pendingIntent)
+                    .setProgress(0, 0, onProgress)
+                    .setPriority(importance)
+            ;
+            notificationManager.notify(intentId, notificationBuilder.build());
+        }
+    }
+
+    private void announce(String title,
+                          String msg,
+                          int intentId,
+                          PendingIntent pendingIntent,
+                          boolean onProgress,
+                          int importance) {
+        if (intentId == 0)
+            mHandler.post(() -> Toast.makeText(
+                    this,
+                    msg,
+                    Toast.LENGTH_SHORT)
+                    .show()
+            );
+        else
+            publishNotification(title, msg, intentId, pendingIntent, onProgress, importance);
+    }
+
+    private void publishProgress(String str) {
+        tasks.put(title, str);
+        Log.v(TAG, title + " " + str);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
-        String flag = null;
         if (bundle != null) {
             title = bundle.getString(Config.EXTRA_TITLE);
             tag = bundle.getString(Config.EXTRA_TAG);
             action = (ACTION) bundle.getSerializable(Config.EXTRA_ACTION);
+            intentId = bundle.getInt(Config.EXTRA_ID);
             flag = bundle.getString(FLAG_DOWNLOAD);
         }
         if (title == null) {
@@ -149,7 +197,8 @@ public class PageDownloadService extends IntentService {
         try {
             Utils.checkConnection();
         } catch (ConnectException e) {
-            postToast(e.getMessage());
+            Log.w(TAG, e.getMessage());
+            announce(title, getString(R.string.connection_error), intentId, null, false, NotificationCompat.PRIORITY_MAX);
             stopSelf();
             return;
         }
@@ -173,7 +222,7 @@ public class PageDownloadService extends IntentService {
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
         try {
             // Real start
-            postToast(getString(R.string.start_downloading) + " " + title);
+            announce(title, getString(R.string.start_downloading) + " " + title, intentId, null, true, NotificationCompat.PRIORITY_MAX);
             if (Utils.isNotCached(title, tag) || forceRefreshText) {
                 // Check cache
                 wiki = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
@@ -191,12 +240,22 @@ public class PageDownloadService extends IntentService {
                     downloadImages();
                 }
             }
-            postToast(getString(R.string.download_finish) + " " + title);
+            // Reading intent to open
+            Intent readingIntent = new Intent(this, PageReadingActivity.class);
+            Bundle bundle1 = new Bundle();
+            bundle1.putString(Config.EXTRA_TITLE, title);
+            bundle1.putString(Config.EXTRA_TAG, tag);
+            readingIntent.putExtras(bundle1);
+            announce(title,
+                    getString(R.string.download_finish) + " " + title,
+                    intentId,
+                    PendingIntent.getActivity(this, intentId, readingIntent, 0),
+                    false,
+                    NotificationCompat.PRIORITY_MAX);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            postToast(e.getMessage());
+            announce(title, getString(R.string.error_on_downloading), 0, null, false, NotificationCompat.PRIORITY_MAX);
         }
-        publishProgress(getString(R.string.download_terminated));
         tasks.remove(title);
     }
 
@@ -220,10 +279,6 @@ public class PageDownloadService extends IntentService {
                 }
             }
         }
-    }
-
-    private void publishProgress(String str) {
-        tasks.put(title, str);
     }
 
     private void downloadText() throws IOException, JSONException {

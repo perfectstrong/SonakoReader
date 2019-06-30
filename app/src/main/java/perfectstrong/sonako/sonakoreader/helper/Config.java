@@ -18,7 +18,7 @@ public class Config {
     public static final String EXTRA_ACTION = APP_PREFIX + ".action";
     public static final String EXTRA_TITLE = APP_PREFIX + ".title";
     public static final String EXTRA_TAG = APP_PREFIX + ".tag";
-    public static final String EXTRA_ID = APP_PREFIX + ".notification_id";
+    public static final String EXTRA_ID = APP_PREFIX + ".notification.id";
     public static final String SKIN_BASE = "common";
     public static final String DEFAULT_SAVE_LOCATION = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + APP_NAME + "/";
@@ -28,5 +28,5 @@ public class Config {
             BuildConfig.APPLICATION_ID,
             BuildConfig.VERSION_NAME
     );
-    public static final String CHANNEL_ID = APP_PREFIX;
+    public static final String CHANNEL_ID = APP_PREFIX + ".downloader";
 }

@@ -24,6 +24,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -551,5 +552,12 @@ public class Utils {
                         .show();
             }
         }
+    }
+
+    /**
+     * @return unique id which will not be repeated before 68 years
+     */
+    public static int getUniqueNotificationId() {
+        return (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
     }
 }

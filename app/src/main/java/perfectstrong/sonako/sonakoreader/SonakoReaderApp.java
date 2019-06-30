@@ -22,18 +22,17 @@ public class SonakoReaderApp extends Application {
         instance = this;
         Utils.updateTheme(this);
         Utils.hideImagesFromGallery(this);
-        createNotificationChannel();
+        createDownloaderNotificationChannel();
         super.onCreate();
     }
 
-    private void createNotificationChannel() {
+    private void createDownloaderNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = Config.APP_NAME;
-            String description = Config.APP_NAME;
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(Config.CHANNEL_ID, name, importance);
+            CharSequence name = Config.APP_NAME + " Downloader";
+            String description = getString(R.string.downloader_notification_channel_description);
+            NotificationChannel channel = new NotificationChannel(Config.CHANNEL_ID, name, NotificationManager.IMPORTANCE_HIGH);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
