@@ -236,8 +236,8 @@ public class PageDownloadService extends IntentService {
                     downloadText();
                     preprocess();
                     saveLocation = Utils.getSaveDirForTag(tag); // tag shall be not null
-                    cacheText();
                     downloadImages();
+                    cacheText();
                 }
             }
             // Reading intent to open
