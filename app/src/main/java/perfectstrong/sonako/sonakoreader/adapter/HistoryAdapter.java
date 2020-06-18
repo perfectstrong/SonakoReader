@@ -5,15 +5,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.database.Page;
-import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.HistoryEntryViewHolder> {
 
@@ -60,7 +62,7 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
             ((TextView) view.findViewById(R.id.page_title)).setText(item.getTitle());
             // Last read
             ((TextView) view.findViewById(R.id.page_last_read))
-                    .setText(Utils.FORMATTER.format(item.getLastRead()));
+                    .setText(new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi")).format(item.getLastRead()));
         }
     }
 }

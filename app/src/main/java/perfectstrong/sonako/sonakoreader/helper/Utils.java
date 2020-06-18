@@ -23,10 +23,9 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import perfectstrong.sonako.sonakoreader.R;
@@ -39,7 +38,7 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 @SuppressWarnings("WeakerAccess")
 public class Utils {
 
-    public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
+    private static final List<String> NAMESPACE_PREFIXES = Arrays.asList("Blog:", "Blog_talk:", "Board:", "Board_Thread:", "Category:", "Category_talk:", "File:", "File_talk:", "Help:", "Help_talk:", "Image:", "Media:", "MediaWiki:", "MediaWiki_talk:", "Message_Wall:", "Message_Wall_Greeting:", "Module:", "Module_talk:", "Project:", "Project_talk:", "Related_Videos:", "Special:", "Talk:", "Template:", "Template_talk:", "Thread:", "Topic:", "User:", "User_talk:", "User_blog:", "User_blog_comment:", "Phương tiện:", "Đặc biệt:", "Thảo luận:", "Thành viên:", "Thảo luận Thành viên:", "Sonako Light Novel Wiki:", "Thảo luận Sonako Light Novel Wiki:", "Tập tin:", "Thảo luận Tập tin:", "MediaWiki:", "Thảo luận MediaWiki:", "Bản mẫu:", "Thảo luận Bản mẫu:", "Trợ giúp:", "Thảo luận Trợ giúp:", "Thể loại:", "Thảo luận Thể loại:", "Diễn đàn:", "Thảo luận Diễn đàn:", "Blog thành viên:", "Bình luận blog thành viên:", "Blog:", "Thảo luận Blog:", "Mô đun:", "Thảo luận Mô đun:", "Tường tin nhắn:", "Luồng:", "Thông điệp Tường tin nhắn:", "Bảng:", "Luồng bảng:", "Vấn đề:");
 
     @SuppressWarnings("SameReturnValue")
     public static String getSaveDir() {
@@ -138,37 +137,12 @@ public class Utils {
     }
 
     public static boolean isMainpage(String href) {
-        return !(href.startsWith("Blog:")
-                || href.startsWith("Blog_talk:")
-                || href.startsWith("Board:")
-                || href.startsWith("Board_Thread:")
-                || href.startsWith("Category:")
-                || href.startsWith("Category_talk:")
-                || href.startsWith("File:")
-                || href.startsWith("File_talk:")
-                || href.startsWith("Help:")
-                || href.startsWith("Help_talk:")
-                || href.startsWith("Image:")
-                || href.startsWith("Media:")
-                || href.startsWith("MediaWiki:")
-                || href.startsWith("MediaWiki_talk:")
-                || href.startsWith("Message_Wall:")
-                || href.startsWith("Message_Wall_Greeting:")
-                || href.startsWith("Module:")
-                || href.startsWith("Module_talk:")
-                || href.startsWith("Project:")
-                || href.startsWith("Project_talk:")
-                || href.startsWith("Related_Videos:")
-                || href.startsWith("Special:")
-                || href.startsWith("Talk:")
-                || href.startsWith("Template:")
-                || href.startsWith("Template_talk:")
-                || href.startsWith("Thread:")
-                || href.startsWith("Topic:")
-                || href.startsWith("User:")
-                || href.startsWith("User_talk:")
-                || href.startsWith("User_blog:")
-                || href.startsWith("User_blog_comment:"));
+        for (String s : NAMESPACE_PREFIXES) {
+            if (href.startsWith(s)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static final String[] AUTO_DOWNLOAD_CHOICES = {"Luôn tự động tải nếu chưa có trong bộ nhớ"};
