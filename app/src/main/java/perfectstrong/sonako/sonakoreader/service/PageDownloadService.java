@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -78,6 +80,7 @@ public class PageDownloadService extends IntentService {
     private Document doc;
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManagerCompat notificationManager;
+    private final Pattern internalLinkRegex = Pattern.compile("/(\\w+/)?wiki/(.*)");
 
     public PageDownloadService() {
         super(TAG);
@@ -402,15 +405,16 @@ public class PageDownloadService extends IntentService {
         // Fix internal links
         for (Element element : doc.getElementsByTag("a")) {
             String href = element.attr("href");
-            if (href.startsWith("/wiki/")) {// internal link
+            Matcher m = internalLinkRegex.matcher(href);
+            if (m.matches()) {// internal link
                 // Check namespace
-                href = href.substring("/wiki/".length());
+                href = m.group(m.groupCount());
+                assert href != null;
                 if (Utils.isMainpage(href)) {
                     // Main page
                     href = Utils.removeSubtrait(Utils.decode(href));
                     element.attr("href",
-                            Utils.sanitize(href) + ".html"
-                                    + "?title=" + href
+                            String.format("%s.html?title=%s", Utils.sanitize(href), href)
                     );
                     element.attr("data-ns", "0"); // Main page namespace
                 } else {
