@@ -50,7 +50,8 @@ public class DumbActivity extends AppCompatActivity {
         String title = data.getLastPathSegment();
         if (title == null || title.isEmpty())
             return;
-        title = title.replace("_", Utils.REPLACEMENT_CHAR);
+        title = Utils.sanitize(title.replace("_", Utils.REPLACEMENT_CHAR));
+        if (!Utils.isMainpage(title)) return;
         // Check existence
         // We try to check in save dir
         String tag = Utils.getCachedTagFor(title);
