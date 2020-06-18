@@ -31,7 +31,6 @@
 
                 <data
                     android:host="sonako.wikia.com"
-                    android:pathPrefix="/wiki"
                     android:scheme="http" />
                 <data
                     android:host="sonako.fandom.com"
