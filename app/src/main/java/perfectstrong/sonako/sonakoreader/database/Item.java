@@ -2,10 +2,9 @@ package perfectstrong.sonako.sonakoreader.database;
 
 import androidx.annotation.NonNull;
 
-@SuppressWarnings("NullableProblems")
 public abstract class Item {
     @NonNull
-    String title;
+    String title = "";
     String tag;
 
     @NonNull

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Sonako Reader</string>
     <string name="action_settings">Tùy chỉnh</string>
     <string name="lnTitle">LN Title</string>
@@ -34,9 +34,9 @@
     <string name="which_link_to_download">Bạn muốn tải link nào?</string>
     <string name="try_redownload_text">Hãy thử download trang chủ lại</string>
     <string name="download_waiting">Đã vào danh sách chờ tải</string>
-    <string name="download_already_scheduled">đã ở sẵn trong lịch tải</string>
+    <string name="download_already_scheduled" tools:keep="@string/download_already_scheduled">đã ở sẵn trong lịch tải</string>
     <string name="download_starting">Khởi động</string>
-    <string name="download_terminated">Kết thúc</string>
+    <string name="download_terminated" tools:keep="@string/download_terminated">Kết thúc</string>
     <string name="download_select_all">Chọn tất cả</string>
     <string name="app_name_short">SNK Reader</string>
     <string name="download_db">Cơ sở dữ liệu chưa có.</string>
@@ -120,13 +120,13 @@
     <string name="ln_status_inactive">Tình trạng: Không cập nhật trong 1 năm qua</string>
     <string name="label_cache_date_limit">Lần cập nhật cuối:</string>
     <string name="return_home">Trở về cửa sổ xuất phát</string>
-    <string name="forward">Tiến tới</string>
-    <string name="backward">Quay lui</string>
+    <string name="forward" tools:keep="@string/forward">Tiến tới</string>
+    <string name="backward" tools:keep="@string/backward">Quay lui</string>
     <string name="biblio_empty">Tủ truyện trống trơn :(</string>
     <string name="theme_changing_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
     <string name="show_all">Hiện tất cả</string>
-    <string name="not_having_title">Sonako không chứa trang</string>
-    <string name="tag_is_null">Tag không xác định</string>
+    <string name="not_having_title" tools:keep="@string/not_having_title">Sonako không chứa trang</string>
+    <string name="tag_is_null" tools:keep="@string/tag_is_null">Tag không xác định</string>
     <string name="cannot_hidden_img">Không thể giấu ảnh khỏi gallery</string>
     <string name="has_hidden_img">Đã giấu ảnh khỏi gallery</string>
     <string name="delete_ln">Xóa bộ truyện</string>

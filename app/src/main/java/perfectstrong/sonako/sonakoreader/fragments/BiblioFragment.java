@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class BiblioFragment extends SonakoFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LNDBViewModel viewModel = ViewModelProviders.of(this).get(LNDBViewModel.class);
+        LNDBViewModel viewModel = new ViewModelProvider(this).get(LNDBViewModel.class);
 
         // Observer
         viewModel.getLiveCaches().observe(

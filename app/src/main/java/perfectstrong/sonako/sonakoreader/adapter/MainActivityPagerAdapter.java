@@ -1,11 +1,12 @@
 package perfectstrong.sonako.sonakoreader.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import perfectstrong.sonako.sonakoreader.fragments.SonakoFragment;
 
 public class MainActivityPagerAdapter extends FragmentPagerAdapter {
@@ -14,7 +15,7 @@ public class MainActivityPagerAdapter extends FragmentPagerAdapter {
     private final List<String> fragmentTitles = new ArrayList<>();
 
     public MainActivityPagerAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     @Override

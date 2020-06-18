@@ -27,7 +27,7 @@ import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
  * Generic adapter to show light novel list
  */
 public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.LNTitleViewHolder> {
-    private LNDBViewModel viewModel;
+    private final LNDBViewModel viewModel;
 
     public LNListAdapter(LNDBViewModel viewModel) {
         this.viewModel = viewModel;

@@ -94,16 +94,16 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
 
     public Map<LNTag, Boolean> getToggleState() {
         Map<LNTag, Boolean> toggleState = new HashMap<>();
-        for (ExpandableGroup group : this.getGroups()) {
+        for (ExpandableGroup<?> group : this.getGroups()) {
             toggleState.put((LNTag) group, this.isGroupExpanded(group));
         }
         return toggleState;
     }
 
-    class LNTagViewHolder extends GroupViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
+    static class LNTagViewHolder extends GroupViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
-        View view;
-        private ImageView arrow;
+        final View view;
+        private final ImageView arrow;
         LNTag item;
 
         /**
@@ -184,9 +184,9 @@ public class BiblioExpandableAdapter extends ExpandableRecyclerViewAdapter<Bibli
         }
     }
 
-    class CachePageViewHolder extends ChildViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
+    static class CachePageViewHolder extends ChildViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
-        View view;
+        final View view;
         CachePage item;
 
         /**

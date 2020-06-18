@@ -240,7 +240,7 @@ public class LNDatabaseAsyncTask {
         while (m.find()) {
             String t = m.group(1);
             if (t == null) t = m.group(2);
-            if (t.startsWith("Category:")) {
+            if (Objects.requireNonNull(t).startsWith("Category:")) {
                 continue;
             }
             Log.d(TAG, t);

@@ -19,9 +19,9 @@ import perfectstrong.sonako.sonakoreader.helper.Utils;
  * @param <VH> view holder of item
  */
 @SuppressWarnings("WeakerAccess")
-public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAdapter.ItemViewHolder> extends RecyclerView.Adapter<VH> {
-    List<I> _itemsList = new ArrayList<>();
-    List<I> itemsList = new ArrayList<>();
+public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAdapter<?, ?>.ItemViewHolder> extends RecyclerView.Adapter<VH> {
+    final List<I> _itemsList = new ArrayList<>();
+    final List<I> itemsList = new ArrayList<>();
     boolean onFilter = false;
 
     @Override

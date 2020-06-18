@@ -38,7 +38,7 @@ public class HistoryAsyncTask {
 
     public static class LookUp extends AsyncTask<Void, Void, Page> {
         private final OnLookUpCallback callback;
-        private String title;
+        private final String title;
 
         public LookUp(String title,
                       OnLookUpCallback callback) {

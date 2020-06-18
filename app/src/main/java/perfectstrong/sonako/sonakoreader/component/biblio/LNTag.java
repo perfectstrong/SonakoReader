@@ -8,8 +8,8 @@ import java.util.Objects;
 import perfectstrong.sonako.sonakoreader.database.CachePage;
 
 public class LNTag extends ExpandableGroup<CachePage> {
-    private List<CachePage> cachePages;
-    private String tag;
+    private final List<CachePage> cachePages;
+    private final String tag;
 
     public LNTag(String title, List<CachePage> items) {
         super(title, items);

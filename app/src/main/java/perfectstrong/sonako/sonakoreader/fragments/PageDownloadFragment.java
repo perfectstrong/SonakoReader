@@ -21,7 +21,7 @@ import perfectstrong.sonako.sonakoreader.R;
 public class PageDownloadFragment extends SonakoFragment {
 
     private static PageDownloadFragment instance;
-    private PageDownloadAdapter adapter = new PageDownloadAdapter();
+    private final PageDownloadAdapter adapter = new PageDownloadAdapter();
 
     public static PageDownloadFragment getInstance() {
         if (instance == null)
@@ -60,7 +60,7 @@ public class PageDownloadFragment extends SonakoFragment {
         getInstance().adapter.removeJob(title);
     }
 
-    private class PageDownloadJob {
+    private static class PageDownloadJob {
         private final String title;
         private String progress;
 
@@ -81,9 +81,9 @@ public class PageDownloadFragment extends SonakoFragment {
         }
     }
 
-    private class PageDownloadAdapter extends RecyclerView.Adapter<PageDownloadAdapter.PageDownloadViewHolder> {
+    private static class PageDownloadAdapter extends RecyclerView.Adapter<PageDownloadAdapter.PageDownloadViewHolder> {
 
-        private List<PageDownloadJob> jobsList = new ArrayList<>();
+        private final List<PageDownloadJob> jobsList = new ArrayList<>();
 
         @NonNull
         @Override
@@ -135,7 +135,7 @@ public class PageDownloadFragment extends SonakoFragment {
 
         private class PageDownloadViewHolder extends RecyclerView.ViewHolder {
 
-            View view;
+            final View view;
             PageDownloadJob job;
 
             PageDownloadViewHolder(@NonNull View itemView) {

@@ -67,8 +67,8 @@ public class PageReadingActivity extends SonakoActivity {
     private Toolbar toolbar;
     private boolean onTextSearching = false;
     private boolean isShowingSearchBox = false;
-    private List<String> headers = new ArrayList<>();
-    private Map<String, String> headersId = new HashMap<>();
+    private final List<String> headers = new ArrayList<>();
+    private final Map<String, String> headersId = new HashMap<>();
     private AlertDialog tocDialog;
     private long m_DownTime;
     private float m_Y;
@@ -560,7 +560,7 @@ public class PageReadingActivity extends SonakoActivity {
         }
     }
 
-    class PageReadingWebChromeClient extends WebChromeClient {
+    static class PageReadingWebChromeClient extends WebChromeClient {
         public boolean onConsoleMessage(ConsoleMessage cm) {
             Log.d(TAG + "WebviewMessage" + cm.messageLevel().name(),
                     cm.message() + " \nFrom line "

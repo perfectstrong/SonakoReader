@@ -30,7 +30,7 @@ public abstract class SonakoFragment extends Fragment {
         return R.layout.ln_recycler_list;
     }
 
-    protected abstract RecyclerView.Adapter getAdapter();
+    protected abstract RecyclerView.Adapter<?> getAdapter();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

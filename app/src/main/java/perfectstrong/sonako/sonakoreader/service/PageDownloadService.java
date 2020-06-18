@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -197,7 +198,7 @@ public class PageDownloadService extends IntentService {
         try {
             Utils.checkConnection();
         } catch (ConnectException e) {
-            Log.w(TAG, e.getMessage());
+            Log.w(TAG, "" + e.getMessage());
             announce(title, getString(R.string.connection_error), intentId, null, false, NotificationCompat.PRIORITY_MAX);
             stopSelf();
             return;
@@ -294,7 +295,7 @@ public class PageDownloadService extends IntentService {
         );
         publishProgress(getString(R.string.analyzing_text) + " " + title);
         assert res.body() != null;
-        JSONObject jsonObject = new JSONObject(res.body().string());
+        JSONObject jsonObject = new JSONObject(Objects.requireNonNull(res.body()).string());
         // Check error
         if (jsonObject.optJSONObject("error") != null) {
             JSONObject error = jsonObject.getJSONObject("error");

@@ -9,7 +9,7 @@ public class FavoriteLNsAsyncTask {
 
     public static class Register extends AsyncTask<LightNovel, Void, Void> {
 
-        private LightNovelsDatabase lndb;
+        private final LightNovelsDatabase lndb;
 
         public Register(LightNovelsDatabase lndb) {
             this.lndb = lndb;
@@ -24,7 +24,7 @@ public class FavoriteLNsAsyncTask {
 
     public static class Unregister extends AsyncTask<LightNovel, Void, Void> {
 
-        private LightNovelsDatabase lndb;
+        private final LightNovelsDatabase lndb;
 
         public Unregister(LightNovelsDatabase lndb) {
             this.lndb = lndb;

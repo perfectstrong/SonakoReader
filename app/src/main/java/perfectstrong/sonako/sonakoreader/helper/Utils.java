@@ -41,6 +41,7 @@ public class Utils {
 
     public static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi"));
 
+    @SuppressWarnings("SameReturnValue")
     public static String getSaveDir() {
 //        return PreferenceManager.getDefaultSharedPreferences(SonakoReaderApp.getContext())
 //                .getString("SAVE_LOCATION", Config.DEFAULT_SAVE_LOCATION);
@@ -258,7 +259,7 @@ public class Utils {
         if (dirs != null && dirs.length > 0) {
             for (File dir : dirs) {
                 File[] htmlFiles = dir.listFiles(pathname -> pathname.getName().endsWith(".html") && pathname.getName().contains(sanitize(title)));
-                if (htmlFiles.length > 0)
+                if (Objects.requireNonNull(htmlFiles).length > 0)
                     return dir.getName();
             }
         }

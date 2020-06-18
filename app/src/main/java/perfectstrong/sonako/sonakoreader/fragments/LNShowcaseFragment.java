@@ -3,7 +3,7 @@ package perfectstrong.sonako.sonakoreader.fragments;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.adapter.LNListAdapter;
@@ -23,8 +23,7 @@ public class LNShowcaseFragment extends LNFilterableFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // View model
-        LNDBViewModel viewModel = ViewModelProviders.of(this)
-                .get(LNDBViewModel.class);
+        LNDBViewModel viewModel = new ViewModelProvider(this).get(LNDBViewModel.class);
 
         // Adapter
         adapter = new LNListAdapter(viewModel);

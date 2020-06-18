@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
@@ -31,7 +32,7 @@ public class BiblioAsyncTask {
 
     private static void deleteRecursive(File f) {
         if (f.isDirectory()) {
-            for (File child : f.listFiles()) {
+            for (File child : Objects.requireNonNull(f.listFiles())) {
                 deleteRecursive(child);
             }
         }
@@ -91,7 +92,7 @@ public class BiblioAsyncTask {
             File[] htmlFiles = dir.listFiles(pathname -> pathname.getName().endsWith(".html"));
             List<CachePage> cachePages = new ArrayList<>();
             // Suppose each html is cache page
-            for (File html : htmlFiles) {
+            for (File html : Objects.requireNonNull(htmlFiles)) {
                 String name = html.getName();
                 String title = name.substring(0, name.lastIndexOf(".html"));
                 cachePages.add(new CachePage(
@@ -138,7 +139,7 @@ public class BiblioAsyncTask {
             LightNovelsDatabaseClient.getInstance()
                     .biblioDAO()
                     .clearAll();
-            for (File lnTag : lnsDir.listFiles((dir, name) -> dir.isDirectory())) {
+            for (File lnTag : Objects.requireNonNull(lnsDir.listFiles((dir, name) -> dir.isDirectory()))) {
                 deleteRecursive(lnTag);
             }
             publishProgress(R.string.delete_biblio_end);

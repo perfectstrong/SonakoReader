@@ -84,7 +84,7 @@ public class WikiClient {
                     "indexpageids", "true"
             );
             assert response.body() != null;
-            JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
+            JSONObject query = new JSONObject(Objects.requireNonNull(response.body()).string()).getJSONObject("query");
             String pageId = query.getJSONArray("pageids").getString(0);
             if ("-1".equals(pageId))
                 return null;
@@ -124,7 +124,7 @@ public class WikiClient {
                     "cmlimit", limit
             );
             assert response.body() != null;
-            JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
+            JSONObject query = new JSONObject(Objects.requireNonNull(response.body()).string()).getJSONObject("query");
             JSONArray arrays = query.getJSONArray("categorymembers");
             for (int i = 0; i < arrays.length(); i++) {
                 titles.add(arrays.getJSONObject(i).getString("title"));
@@ -175,14 +175,14 @@ public class WikiClient {
                                 "clcontinue", clcontinue
                         );
                     assert response.body() != null;
-                    String str = response.body().string();
+                    String str = Objects.requireNonNull(response.body()).string();
                     JSONObject res = new JSONObject(str);
                     JSONObject query = res.getJSONObject("query");
                     JSONArray pageids = query.getJSONArray("pageids");
                     JSONObject pages = query.getJSONObject("pages");
                     for (int i = 0; i < pageids.length(); i++) {
                         String id = pageids.getString(i);
-                        if (Integer.valueOf(id) < 0) continue;
+                        if (Integer.parseInt(id) < 0) continue;
                         JSONObject page = pages.getJSONObject(id);
 
                         // Gather
@@ -236,7 +236,7 @@ public class WikiClient {
                     "titles", title,
                     "indexpageids", "true");
             assert response.body() != null;
-            JSONObject query = new JSONObject(response.body().string()).getJSONObject("query");
+            JSONObject query = new JSONObject(Objects.requireNonNull(response.body()).string()).getJSONObject("query");
             return !"-1".equals(query.getJSONArray("pageids").getString(0));
         } catch (IOException | JSONException e) {
             e.printStackTrace();
@@ -296,7 +296,7 @@ public class WikiClient {
                         "indexpageids", "true"
                 );
                 assert response.body() != null;
-                String str = response.body().string();
+                String str = Objects.requireNonNull(response.body()).string();
                 JSONObject res = new JSONObject(str);
                 JSONObject query = res.getJSONObject("query");
                 JSONArray pageids = query.getJSONArray("pageids");
@@ -306,13 +306,13 @@ public class WikiClient {
                     JSONObject page = pages.getJSONObject(id);
                     String title = page.getString("title").substring("File:".length());
                     // If file exists
-                    if (page.optString("pageid") != null)
-                        links.put(
-                                title,
-                                page.getJSONArray("imageinfo")
-                                        .getJSONObject(0)
-                                        .getString("thumburl")
-                        );
+                    page.optString("pageid");
+                    links.put(
+                            title,
+                            page.getJSONArray("imageinfo")
+                                    .getJSONObject(0)
+                                    .getString("thumburl")
+                    );
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();

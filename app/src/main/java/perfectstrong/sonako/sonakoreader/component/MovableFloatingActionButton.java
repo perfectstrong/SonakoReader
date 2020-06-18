@@ -104,11 +104,10 @@ public class MovableFloatingActionButton extends FloatingActionButton implements
 
                 //check if is nearest Y o X
                 if(borderX>borderY) {
-                    if(view.getY()>viewParent2.getHeight()/2) { //view near Bottom
+                    if (view.getY() > (float) viewParent2.getHeight() / 2) { //view near Bottom
                         finalY = viewParent2.getBottom() - view.getHeight();
                         finalY = Math.min(viewParent2.getHeight() - view.getHeight(), finalY) - fab_margin; // Don't allow the FAB past the bottom of the parent
-                    }
-                    else {  //view vicina a Top
+                    } else {  //view vicina a Top
                         finalY = viewParent2.getTop();
                         finalY = Math.max(0, finalY) + fab_margin; // Don't allow the FAB past the top of the parent
                     }
@@ -120,11 +119,10 @@ public class MovableFloatingActionButton extends FloatingActionButton implements
                         finalX=viewParent2.getRight()- view.getWidth()-fab_margin;
                 }
                 else {  //view near Right
-                    if(view.getX()>viewParent2.getWidth()/2) {
+                    if (view.getX() > (float) viewParent2.getWidth() / 2) {
                         finalX = viewParent2.getRight() - view.getWidth();
                         finalX = Math.max(0, finalX) - fab_margin; // Don't allow the FAB past the left hand side of the parent
-                    }
-                    else {  //view near Left
+                    } else {  //view near Left
                         finalX = viewParent2.getLeft();
                         finalX = Math.min(viewParent2.getWidth() - view.getWidth(), finalX) + fab_margin; // Don't allow the FAB past the right hand side of the parent
                     }
