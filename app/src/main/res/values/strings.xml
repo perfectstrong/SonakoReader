@@ -149,4 +149,9 @@
     <string name="connection_error">Lỗi đường truyền</string>
     <string name="downloader_notification_channel_description">Thông tin về quá trình tải</string>
     <string name="reload">Mở lại trang</string>
+    <string name="reading_font">Font cho trang truyện</string>
+    <string name="key_reading_font">key_reading_font</string>
+    <string name="default_reading_font_summary">Mặc định theo chủ đề</string>
+    <string name="reading_font_select_dialog_caution">App sẽ tự động khởi động lại để có hiệu lực.</string>
+    <string name="reading_font_select_dialog_select_font">Chọn font khác</string>
 </resources>

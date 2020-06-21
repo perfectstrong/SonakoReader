@@ -2,6 +2,7 @@ package perfectstrong.sonako.sonakoreader.helper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -56,6 +57,15 @@ public class Utils {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(context.getString(R.string.key_pref_skin),
                         context.getResources().getString(R.string.default_skin)
+                );
+    }
+
+    public static String getCurrentFont() {
+        Context context = SonakoReaderApp.getContext();
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(
+                        context.getString(R.string.key_reading_font),
+                        null
                 );
     }
 
@@ -534,5 +544,38 @@ public class Utils {
      */
     public static int getUniqueNotificationId() {
         return (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+    }
+
+    /**
+     * @param context where to read
+     * @param uri     not null
+     * @return <tt>null</tt> if failed
+     */
+    public static String getFileName(Context context, Uri uri) {
+        String result;
+        //if uri is content
+        if (uri.getScheme() != null && uri.getScheme().equals("content")) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    //local filesystem
+                    int index = cursor.getColumnIndex("_data");
+                    if (index == -1)
+                        //google drive
+                        index = cursor.getColumnIndex("_display_name");
+                    result = cursor.getString(index);
+                    if (result != null)
+                        uri = Uri.parse(result);
+                    else
+                        return null;
+                }
+            }
+        }
+        result = uri.getPath();
+        if (result == null) return null;
+        //get filename + ext of path
+        int cut = result.lastIndexOf('/');
+        if (cut != -1)
+            result = result.substring(cut + 1);
+        return result;
     }
 }

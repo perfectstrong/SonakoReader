@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
+
 import perfectstrong.sonako.sonakoreader.fragments.SettingsFragment;
 
 public class SettingsActivity extends SonakoActivity implements PreferenceFragmentCompat.OnPreferenceStartScreenCallback {

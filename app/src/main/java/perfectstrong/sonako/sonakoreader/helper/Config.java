@@ -2,6 +2,7 @@ package perfectstrong.sonako.sonakoreader.helper;
 
 import android.os.Environment;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +22,8 @@ public class Config {
     public static final String EXTRA_ID = APP_PREFIX + ".notification.id";
     public static final String SKIN_BASE = "common";
     public static final String DEFAULT_SAVE_LOCATION = Environment.getExternalStoragePublicDirectory(
-            Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + APP_NAME + "/";
+            Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + File.separator + APP_NAME + File.separator;
+    public static final String FONT_LOCATION = DEFAULT_SAVE_LOCATION + "fonts" + File.separator;
     public static final List<String> SUPPORTED_IMAGE_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
     public static final String USER_AGENT = String.format(
             "%s %s on Android OS",

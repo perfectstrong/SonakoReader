@@ -41,7 +41,6 @@
             android:name=".activity.SettingsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/action_settings"
-            android:noHistory="true"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.PageReadingActivity"
