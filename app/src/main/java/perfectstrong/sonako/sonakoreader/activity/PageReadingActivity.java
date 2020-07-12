@@ -371,7 +371,7 @@ public class PageReadingActivity extends SonakoActivity {
         private boolean restored = false;
         private Page currentPage;
         private long lastSaveTimestamp;
-        private final long MINIMUM_SAVE_INTERVAL = 200;
+        private static final long MINIMUM_SAVE_INTERVAL = 200;
 
         PageReadingWebViewClient(WebSettings settings) {
             super();
