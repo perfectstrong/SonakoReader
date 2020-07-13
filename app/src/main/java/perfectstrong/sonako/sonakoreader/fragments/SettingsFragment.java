@@ -1,9 +1,9 @@
 package perfectstrong.sonako.sonakoreader.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +31,7 @@ import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String FRAGMENT_TAG = "SETTINGS_FRAGMENT";
     private static final String TAG = SettingsFragment.class.getSimpleName();
@@ -66,6 +66,33 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 showReadingFontSelectDialog();
                 return true;
             });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getPreferenceScreen().getSharedPreferences()
+                .registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences()
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Preference readingFontPref = findPreference(getString(R.string.key_reading_font));
+        if (readingFontPref != null) {
+            String currentReadingFont = Utils.getCurrentFont();
+            readingFontPref.setSummary(
+                    currentReadingFont == null
+                            ? getString(R.string.default_reading_font_summary)
+                            : currentReadingFont
+            );
         }
     }
 
@@ -257,14 +284,4 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 )
                 .commit();
     }
-
-    private void restartApp() {
-        // Restart the app
-        Activity activity = getActivity();
-        if (activity != null) {
-            Utils.restartApp(activity);
-            activity.finish();
-        }
-    }
-
 }
