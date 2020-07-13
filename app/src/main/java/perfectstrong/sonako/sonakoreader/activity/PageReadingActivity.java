@@ -427,14 +427,11 @@ public class PageReadingActivity extends SonakoActivity {
                 loadAssetIntoHead(
                         "css/" + Config.SKIN_BASE + ".css",
                         // On call back, overload with skin
-                        __ignoredValue1 -> {
-                            final String currentSkin = Utils.getCurrentSkin();
-                            loadAssetIntoHead(
-                                    "css/" + currentSkin + ".css",
-                                    // On callback, load custom font
-                                    __ignoredValue2 -> loadCustomFont()
-                            );
-                        }
+                        __ignoredValue1 -> loadAssetIntoHead(
+                                "css/" + Utils.getCurrentSkin() + ".css",
+                                // On callback, load custom font
+                                __ignoredValue2 -> loadCustomFont()
+                        )
                 );
                 assetsLoaded = true;
             }
