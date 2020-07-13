@@ -92,6 +92,18 @@ public class PageReadingActivity extends SonakoActivity {
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        updateResources();
+    }
+
+    private void updateResources() {
+        if (pageViewer == null || webViewClient == null) return;
+        // Reload custom fonts
+        webViewClient.loadCustomFont();
+    }
+
     private void setupPageViewer() {
         pageViewer = findViewById(R.id.page_viewer);
         pageViewer.setOnTouchCallback(this::onTouchHandler);
@@ -372,6 +384,7 @@ public class PageReadingActivity extends SonakoActivity {
         private Page currentPage;
         private long lastSaveTimestamp;
         private static final long MINIMUM_SAVE_INTERVAL = 200;
+        private WebView view;
 
         PageReadingWebViewClient(WebSettings settings) {
             super();
@@ -409,16 +422,35 @@ public class PageReadingActivity extends SonakoActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            this.view = view;
             if (!assetsLoaded) {
-                loadAssetIntoHead(view,
+                loadAssetIntoHead(
                         "css/" + Config.SKIN_BASE + ".css",
-                        value -> loadAssetIntoHead(view,
-                                "css/" + Utils.getCurrentSkin() + ".css",
-                                null
-                        )
+                        // On call back, overload with skin
+                        __ignoredValue1 -> {
+                            final String currentSkin = Utils.getCurrentSkin();
+                            loadAssetIntoHead(
+                                    "css/" + currentSkin + ".css",
+                                    // On callback, load custom font
+                                    __ignoredValue2 -> loadCustomFont()
+                            );
+                        }
                 );
                 assetsLoaded = true;
             }
+        }
+
+        private void loadCustomFont() {
+            // Load custom font
+            String customFontFilename = Utils.getCurrentFont();
+            Log.d(TAG, "Loading custom font: " + customFontFilename);
+            String currentFontFileUrl = customFontFilename == null ?
+                    "null" :
+                    Config.FONT_LOCATION + customFontFilename;
+            executeJS(this.view,
+                    String.format("(function loadCustomFonts() { var currentFontFileUrl = \"%s\"; var currentSkin = \"%s\"; var customFontStyleElement = document.querySelector('style#custom-font'); if (!customFontStyleElement) { customFontStyleElement = document.createElement('style'); customFontStyleElement.type = 'text/css'; customFontStyleElement.id = 'custom-font'; document.head.append(customFontStyleElement); } if (currentFontFileUrl === \"null\") customFontStyleElement.innerHTML = '*{font-family: ' + currentSkin + ', sans-serif;}'; else customFontStyleElement.innerHTML = '@font-face {font-family: \"custom\";src: url(\"' + currentFontFileUrl + '\");}*{font-family: custom, sans-serif;}'; })();", currentFontFileUrl, Utils.getCurrentSkin()),
+                    null
+            );
         }
 
         private final String KEY_VALUE_DELIMITER = "______";
@@ -430,20 +462,7 @@ public class PageReadingActivity extends SonakoActivity {
             if (restored) return;
             // Collect headers
             executeJS(view,
-                    "(function(){var headings = [].slice.call(document.body.querySelectorAll('h1, h2, h3, h4, h5, h6'));\n" +
-                            "var headingAutoName = 0;\n" +
-                            "var encodedHeaders = '';\n" +
-                            "headings.forEach(function (heading) {\n" +
-                            "    if (!heading.id) {\n" +
-                            "        headingAutoName += 1;\n" +
-                            "        heading.id = '' + headingAutoName;\n" +
-                            "    }\n" +
-                            "    var space='';\n" +
-                            "    for (var i=1;i<parseInt(heading.tagName.substring(1));i++)\n" +
-                            "         space += '    ';\n" +
-                            "    encodedHeaders += space + heading.textContent.trim() + '" + KEY_VALUE_DELIMITER + "' + heading.id + '" + ELEMENT_DELIMITER + "';\n" +
-                            "});\n" +
-                            "return encodedHeaders;})()",
+                    String.format("(function(){var headings = [].slice.call(document.body.querySelectorAll('h1, h2, h3, h4, h5, h6'));\nvar headingAutoName = 0;\nvar encodedHeaders = '';\nheadings.forEach(function (heading) {\n    if (!heading.id) {\n        headingAutoName += 1;\n        heading.id = '' + headingAutoName;\n    }\n    var space='';\n    for (var i=1;i<parseInt(heading.tagName.substring(1));i++)\n         space += '    ';\n    encodedHeaders += space + heading.textContent.trim() + '%s' + heading.id + '%s';\n});\nreturn encodedHeaders;})()", KEY_VALUE_DELIMITER, ELEMENT_DELIMITER),
                     value -> {
                         if (value.length() < 3) {
                             Toast.makeText(
@@ -469,8 +488,7 @@ public class PageReadingActivity extends SonakoActivity {
             new HistoryAsyncTask.LookUp(title, this::restoreCurrentReadingPosition).execute();
         }
 
-        private void loadAssetIntoHead(WebView view,
-                                       String filepath,
+        private void loadAssetIntoHead(String filepath,
                                        ValueCallback<String> callback) {
             Log.d(TAG, "Loading asset " + filepath + " into head");
             try {
@@ -480,15 +498,9 @@ public class PageReadingActivity extends SonakoActivity {
                 inputStream.read(buffer);
                 inputStream.close();
                 String encoded = Base64.encodeToString(buffer, Base64.NO_WRAP);
-                String js = "(function() {" +
-                        "var parent = document.head;" +
-                        "var x = document.createElement('style');" +
-                        "x.type = 'text/css';" +
-                        // Tell the browser to BASE64-decode the string into your script !!!
-                        "x.innerHTML = window.atob('" + encoded + "');" +
-                        "parent.appendChild(x)" +
-                        "})()";
-                executeJS(view, js, callback);
+                // Tell the browser to BASE64-decode the string into your script !!!
+                String js = String.format("(function() {var parent = document.head;var x = document.createElement('style');x.type = 'text/css';x.innerHTML = window.atob('%s');parent.appendChild(x)})()", encoded);
+                executeJS(this.view, js, callback);
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
@@ -505,12 +517,7 @@ public class PageReadingActivity extends SonakoActivity {
                 currentPage = new Page(title, tag, Calendar.getInstance().getTime(), 0);
             // Restore last reading position
             executeJS(pageViewer,
-                    "(function() {" +
-                            "var top = document.body.scrollHeight * " + currentPage.getCurrentReadingPosition() + ";" +
-                            "var isSmoothScrollSupported = 'scrollBehavior' in document.documentElement.style;" +
-                            "if (isSmoothScrollSupported) window.scrollTo({behavior: 'smooth', top: top});" +
-                            "else window.scrollTo(0, top);" +
-                            "})()", value -> restored = true);
+                    String.format("(function() {var top = document.body.scrollHeight * %s;var isSmoothScrollSupported = 'scrollBehavior' in document.documentElement.style;if (isSmoothScrollSupported) window.scrollTo({behavior: 'smooth', top: top});else window.scrollTo(0, top);})()", currentPage.getCurrentReadingPosition()), value -> restored = true);
         }
 
         void saveCurrentReadingPosition() {
@@ -519,9 +526,7 @@ public class PageReadingActivity extends SonakoActivity {
             final long currentTimestamp = SystemClock.uptimeMillis();
             if (currentTimestamp - lastSaveTimestamp >= MINIMUM_SAVE_INTERVAL) {
                 executeJS(pageViewer,
-                        "(function() {" +
-                                "return window.pageYOffset / document.body.scrollHeight;" +
-                                "})()",
+                        "(function() {return window.pageYOffset / document.body.scrollHeight;})()",
                         value -> {
                             currentPage.setLastRead(Calendar.getInstance().getTime());
                             currentPage.setCurrentReadingPosition(Float.parseFloat(value));
@@ -555,17 +560,15 @@ public class PageReadingActivity extends SonakoActivity {
 
         void scrollToId(String id) {
             executeJS(pageViewer,
-                    "document.getElementById('" + id + "').scrollIntoView({behavior: 'smooth'})",
+                    String.format("document.getElementById('%s').scrollIntoView({behavior: 'smooth'})", id),
                     null);
         }
     }
 
     static class PageReadingWebChromeClient extends WebChromeClient {
         public boolean onConsoleMessage(ConsoleMessage cm) {
-            Log.d(TAG + "WebviewMessage" + cm.messageLevel().name(),
-                    cm.message() + " \nFrom line "
-                            + cm.lineNumber() + " of "
-                            + cm.sourceId());
+            Log.d(String.format("%sWebviewMessage%s", TAG, cm.messageLevel().name()),
+                    String.format("%s \nFrom line %d of %s", cm.message(), cm.lineNumber(), cm.sourceId()));
             return true;
         }
     }

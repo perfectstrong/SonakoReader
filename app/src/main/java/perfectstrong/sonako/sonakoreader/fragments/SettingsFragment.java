@@ -160,7 +160,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                                     : loadedFontNames[which]
                                     )
                                     .apply();
-                            restartApp();
                         }
                 )
                 .setNeutralButton(
@@ -257,7 +256,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         filename
                 )
                 .commit();
-        restartApp();
     }
 
     private void restartApp() {
