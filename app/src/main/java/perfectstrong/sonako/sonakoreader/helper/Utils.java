@@ -318,7 +318,7 @@ public class Utils {
 
     /**
      * @param context <tt>null</tt> to reference to application context
-     * @return <tt>true</tt> if is allowed to download over cellular connection
+     * @return <tt>true</tt> if is not allowed to download over cellular connection
      */
     public static boolean isNotAuthorizedDownloadingOverCellularConnection(Context context) {
         return !Objects.requireNonNull(PreferenceManager.getDefaultSharedPreferences(context)
