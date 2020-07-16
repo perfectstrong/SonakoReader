@@ -3,15 +3,20 @@ package perfectstrong.sonako.sonakoreader.service;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import com.liulishuo.okdownload.DownloadContext;
+import com.liulishuo.okdownload.DownloadTask;
+import com.liulishuo.okdownload.core.cause.EndCause;
+import com.liulishuo.okdownload.core.listener.DownloadListener2;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,10 +30,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,11 +42,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.activity.PageReadingActivity;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
@@ -90,28 +91,7 @@ public class PageDownloadService extends IntentService {
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler();
-        tasks = new HashMap<String, String>() {
-            @Override
-            public String put(String key, String value) {
-                if (this.containsKey(key)) {
-                    // An update status
-                    mHandler.post(() -> PageDownloadFragment.getInstance().updateJob(key, value));
-                } else {
-                    // New download
-                    mHandler.post(() -> PageDownloadFragment.getInstance().addJob(key));
-                }
-                return super.put(key, value);
-            }
-
-            @Override
-            public String remove(Object key) {
-                if (this.containsKey(key) && key instanceof String) {
-                    // Download complete
-                    mHandler.post(() -> PageDownloadFragment.getInstance().removeJob((String) key));
-                }
-                return super.remove(key);
-            }
-        };
+        tasks = new PageDownloadingTaskMap(mHandler);
         notificationBuilder = new NotificationCompat.Builder(this, Config.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_sonakoreaderlogo_bw)
                 .setColor(getResources().getColor(R.color.holySecondaryColor))
@@ -129,8 +109,8 @@ public class PageDownloadService extends IntentService {
             int intentId = bundle.getInt(Config.EXTRA_ID);
             if (title != null && !title.isEmpty())
                 if (!tasks.containsKey(title)) {
-                    tasks.put(title, getString(R.string.download_waiting));
-                    announce(title, getString(R.string.download_waiting), intentId, null, false, NotificationCompat.PRIORITY_MIN);
+                    tasks.put(title, getString(R.string.download_waiting, title));
+                    announce(title, getString(R.string.download_waiting, title), intentId, null, false, NotificationCompat.PRIORITY_MIN);
                 } else {
                     bundle.putString(FLAG_DOWNLOAD, FLAG_DOWNLOAD_DUPLICATE);
                     intent.putExtras(bundle);
@@ -208,8 +188,9 @@ public class PageDownloadService extends IntentService {
         }
 
         // Register
-        publishProgress(getString(R.string.download_starting));
-        filename = Utils.sanitize(Utils.decode(title)) + ".html";
+        String decodedTitle = Utils.sanitize(Utils.decode(title));
+        publishProgress(getString(R.string.download_starting, decodedTitle));
+        filename = decodedTitle + ".html";
         if (action != null)
             switch (action) {
                 case REFRESH_TEXT:
@@ -226,19 +207,19 @@ public class PageDownloadService extends IntentService {
         Log.d(TAG, "title = " + title + ", tag = " + tag + ", action = " + action);
         try {
             // Real start
-            announce(title, getString(R.string.start_downloading) + " " + title, intentId, null, true, NotificationCompat.PRIORITY_MAX);
+            announce(title, getString(R.string.start_downloading_fmt, title), intentId, null, true, NotificationCompat.PRIORITY_MAX);
             if (Utils.isNotCached(title, tag) || forceRefreshText) {
                 // Check cache
                 wiki = new WikiClient(Config.API_ENDPOINT, Config.USER_AGENT);
                 if (!wiki.exists(title)) {
-                    throw new IllegalArgumentException(getString(R.string.not_having) + " " + title);
+                    throw new IllegalArgumentException(getString(R.string.not_having, title));
                 }
                 if (downloadFailedImages) {
                     loadImageLinksFromCachedText();
                     downloadImages();
                 } else {
                     downloadText();
-                    preprocess();
+                    preprocess(); // Including caching temporarily image links from text
                     saveLocation = Utils.getSaveDirForTag(tag); // tag shall be not null
                     downloadImages();
                     cacheText();
@@ -251,22 +232,22 @@ public class PageDownloadService extends IntentService {
             bundle1.putString(Config.EXTRA_TAG, tag);
             readingIntent.putExtras(bundle1);
             announce(title,
-                    getString(R.string.download_finish) + " " + title,
+                    getString(R.string.download_finish, title),
                     intentId,
                     PendingIntent.getActivity(this, intentId, readingIntent, 0),
                     false,
                     NotificationCompat.PRIORITY_MAX);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-            announce(title, getString(R.string.error_on_downloading), 0, null, false, NotificationCompat.PRIORITY_MAX);
+            announce(title, getString(R.string.error_on_downloading, title), 0, null, false, NotificationCompat.PRIORITY_MAX);
         }
         tasks.remove(title);
     }
 
     private void loadImageLinksFromCachedText() throws IOException {
         if (tag == null)
-            throw new IOException(getString(R.string.no_cached));
-        publishProgress(getString(R.string.analyzing_text));
+            throw new IOException(getString(R.string.no_cached, title));
+        publishProgress(getString(R.string.analyzing_text, title));
         imagesLinks = new ArrayList<>();
         Document doc = Jsoup.parse(
                 Utils.getTextFile(title, tag),
@@ -286,7 +267,7 @@ public class PageDownloadService extends IntentService {
     }
 
     private void downloadText() throws IOException, JSONException {
-        publishProgress(getString(R.string.downloading_text) + " " + title);
+        publishProgress(getString(R.string.downloading_text, title));
         Response res = wiki.GET(
                 "parse",
                 "page", title,
@@ -296,7 +277,7 @@ public class PageDownloadService extends IntentService {
                 "prop", "text|categories",
                 "useskin", "mercury"
         );
-        publishProgress(getString(R.string.analyzing_text) + " " + title);
+        publishProgress(getString(R.string.analyzing_text, title));
         assert res.body() != null;
         JSONObject jsonObject = new JSONObject(Objects.requireNonNull(res.body()).string());
         // Check error
@@ -331,7 +312,7 @@ public class PageDownloadService extends IntentService {
     }
 
     private void preprocess() {
-        publishProgress(getString(R.string.preprocessing_text) + " " + title);
+        publishProgress(getString(R.string.preprocessing_text, title));
         doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
         // Retain local navigator
         Element localNav = doc.selectFirst(".localNav");
@@ -424,7 +405,7 @@ public class PageDownloadService extends IntentService {
             }
         }
         // Add head
-        publishProgress(getString(R.string.preprocessing_display) + " " + title);
+        publishProgress(getString(R.string.preprocessing_display, title));
         doc.head()
                 .appendElement("meta")
                 .attr("charset", "utf-8");
@@ -435,7 +416,7 @@ public class PageDownloadService extends IntentService {
     }
 
     private void cacheText() {
-        publishProgress(getString(R.string.caching) + " " + title);
+        publishProgress(getString(R.string.caching, title));
         File dir = new File(saveLocation);
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
@@ -462,6 +443,7 @@ public class PageDownloadService extends IntentService {
     }
 
     private void downloadImages() throws IOException, JSONException {
+        publishProgress(getString(R.string.downloading_starting_images, title));
         // Save location
         File dir = new File(saveLocation);
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
@@ -469,7 +451,14 @@ public class PageDownloadService extends IntentService {
         // Compress images to adapt to max length of screen
         compressWikiaImages();
         // Saving images
-        OkHttpClient client = WikiClient.getNewHttpClient();
+        DownloadContext.Builder taskMassDownloadBuilder = new DownloadContext.QueueSet()
+                .setParentPath(saveLocation)
+                .setWifiRequired(Utils.isNotAuthorizedDownloadingOverCellularConnection(this))
+                .commit();
+        Map<String, List<String>> commonHeaders = new HashMap<>();
+        if (Utils.isWebpPreferred()) // Check webp
+            commonHeaders.put("Accept", Arrays.asList("image/webp", "image/*;q=0.8"));
+        final Map<String, Element> mapUrlsWithCorrespondingImgElement = new HashMap<>();
         for (Element img : imagesLinks) {
             if (!img.hasAttr("data-name")) continue;
             String imageName = img.attr("data-name");
@@ -493,84 +482,39 @@ public class PageDownloadService extends IntentService {
                 }
             }
             boolean isInternalImage = Utils.isInternalImage(url);
+            // If user allows, download external images as it is
+            // Only download not cached images if not forced
             if (isInternalImage
                     || Utils.isAllowedToDownloadExternalImages()) {
-                // If user allows, download external images as it is
-                // Only download not cached images if not forced
-                publishProgress(getString(R.string.downloading_image) + " " + imageName);
-
-                Request.Builder requestBuilder = new Request.Builder().url(url);
-                if (Utils.isWebpPreferred()) // Check webp
-                    requestBuilder.addHeader("Accept", "image/webp,image/*;q=0.8");
-                Request request = requestBuilder.build();
-
-                Bitmap bitmap;
-                MediaType mime;
-                Response response = null;
-                try {
-                    response = client.newCall(request).execute();
-                    ResponseBody body = response.body();
-                    assert body != null;
-                    InputStream inputStream = body.byteStream();
-                    try {
-                        bitmap = BitmapFactory.decodeStream(inputStream);
-                    } finally {
-                        inputStream.close();
-                    }
-                    mime = body.contentType();
-                } catch (IOException e) {
-                    Log.e(TAG, imageName + " downloading failed", e);
-                    continue;
-                } finally {
-                    if (response != null)
-                        response.close();
-                }
-
-                assert mime != null;
-                if (!mime.type().equals("image")) {
-                    Log.e(TAG, "Not an image: " + url);
-                    continue;
-                }
-                if (!Config.SUPPORTED_IMAGE_EXTENSIONS.contains(mime.subtype())) {
-                    Log.e(TAG, "Unsupported image extension " + imageName);
-                    continue;
-                }
-                // Change extension
-                if (imageName.lastIndexOf(".") > -1)
-                    imageName = imageName.substring(0, imageName.lastIndexOf(".")) + "." + mime.subtype();
-                else
-                    imageName += "." + mime.subtype();
-                file = new File(dir, imageName);
-
-                // Saving
-                try {
-                    FileOutputStream fo = new FileOutputStream(file);
-                    try {
-                        switch (mime.subtype()) {
-                            case "jpg":
-                            case "jpeg":
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fo);
-                                break;
-                            case "png":
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fo);
-                                break;
-                            case "webp":
-                                bitmap.compress(Bitmap.CompressFormat.WEBP, 100, fo);
-                                break;
-                            default:
-                                throw new UnsupportedOperationException(mime.subtype() + " unsupported");
-                        }
-                    } finally {
-                        fo.close();
-                    }
-                } catch (IOException | UnsupportedOperationException e) {
-                    Log.e(TAG, imageName + " saving failed", e);
-                }
-                // Refer to cached image
-                img.attr("src", imageName);
-                Log.d(TAG, "imageName = " + imageName + ", link = " + url);
+                // Queue task to downloading context
+                taskMassDownloadBuilder.bind(
+                        new DownloadTask.Builder(url, dir)
+                                .setFilenameFromResponse(true)
+                                .setHeaderMapFields(commonHeaders));
+                mapUrlsWithCorrespondingImgElement.put(url, img);
             }
         }
+        taskMassDownloadBuilder.build().startOnParallel(new DownloadListener2() {
+            @Override
+            public void taskStart(@NonNull DownloadTask task) {
+                // Do nothing
+                publishProgress(getString(R.string.download_starting, title));
+            }
+
+            @Override
+            public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause) {
+                String url = task.getUrl();
+                if (realCause != null)
+                    Log.w(TAG, "downloadImages: Failed for " + url, realCause);
+                else {
+                    if (mapUrlsWithCorrespondingImgElement.containsKey(url)) {
+                        Objects.requireNonNull(mapUrlsWithCorrespondingImgElement.get(url))
+                                .attr("src", task.getFilename());
+                        publishProgress(getString(R.string.download_finish, task.getFilename()));
+                    }
+                }
+            }
+        });
     }
 
     private void compressWikiaImages() throws IOException, JSONException {
@@ -613,4 +557,33 @@ public class PageDownloadService extends IntentService {
      * Download the page
      */
     public static final String DOWNLOAD = Config.EXTRA_ACTION + ".download";
+
+    private static class PageDownloadingTaskMap extends HashMap<String, String> {
+        private final Handler handler;
+
+        public PageDownloadingTaskMap(Handler mHandler) {
+            this.handler = mHandler;
+        }
+
+        @Override
+        public String put(String key, String value) {
+            if (this.containsKey(key)) {
+                // An update status
+                handler.post(() -> PageDownloadFragment.getInstance().updateJob(key, value));
+            } else {
+                // New download
+                handler.post(() -> PageDownloadFragment.getInstance().addJob(key));
+            }
+            return super.put(key, value);
+        }
+
+        @Override
+        public String remove(Object key) {
+            if (this.containsKey(key) && key instanceof String) {
+                // Download complete
+                handler.post(() -> PageDownloadFragment.getInstance().removeJob((String) key));
+            }
+            return super.remove(key);
+        }
+    }
 }
