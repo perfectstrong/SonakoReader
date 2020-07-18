@@ -13,7 +13,7 @@ import perfectstrong.sonako.sonakoreader.database.Item;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 /**
- * Common adapter for fragment
+ * Common adapter for with filterable list
  *
  * @param <I>  containing title and tag
  * @param <VH> view holder of item
@@ -93,25 +93,23 @@ public abstract class SonakoListAdapter<I extends Item, VH extends SonakoListAda
         holder.initAt(position);
     }
 
-    abstract class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        View view;
-        I item;
+    public abstract class ItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        protected I item;
 
-        ItemViewHolder(@NonNull View itemView) {
+        protected ItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
-            view.setOnClickListener(this);
+            this.itemView.setOnClickListener(this);
         }
 
         /**
          * @param pos position in {@link #itemsList}
          */
-        void initAt(int pos) {
+        protected void initAt(int pos) {
             item = itemsList.get(pos);
             decorateView();
         }
 
-        abstract void decorateView();
+        protected abstract void decorateView();
 
         @Override
         public void onClick(View v) {

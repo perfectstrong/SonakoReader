@@ -111,7 +111,7 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
 
     class LNTitleViewHolder extends SonakoListAdapter<LightNovel, LNListAdapter.LNTitleViewHolder>.ItemViewHolder implements View.OnCreateContextMenuListener, PopupMenu.OnMenuItemClickListener {
 
-        LNTitleViewHolder(View v) {
+        protected LNTitleViewHolder(View v) {
             super(v);
             v.setOnCreateContextMenuListener(this);
             v.findViewById(R.id.ln_fav_icon).setOnClickListener(v1 -> {
@@ -123,19 +123,19 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
         }
 
         @Override
-        void decorateView() {
+        protected void decorateView() {
             // Title
-            ((TextView) view.findViewById(R.id.ln_title)).setText(item.getTitle());
+            ((TextView) itemView.findViewById(R.id.ln_title)).setText(item.getTitle());
             // Type
             switch (item.getType()) {
                 case LightNovel.ProjectType.OFFICIAL:
                 case LightNovel.ProjectType.TEASER:
                 case LightNovel.ProjectType.OLN:
-                    ((TextView) view.findViewById(R.id.ln_type)).setText(item.getType());
-                    view.findViewById(R.id.ln_type).setVisibility(View.VISIBLE);
+                    ((TextView) itemView.findViewById(R.id.ln_type)).setText(item.getType());
+                    itemView.findViewById(R.id.ln_type).setVisibility(View.VISIBLE);
                     break;
                 default:
-                    view.findViewById(R.id.ln_type).setVisibility(View.GONE);
+                    itemView.findViewById(R.id.ln_type).setVisibility(View.GONE);
                     break;
             }
             // Genres
@@ -146,32 +146,32 @@ public class LNListAdapter extends SonakoListAdapter<LightNovel, LNListAdapter.L
                     genresStr.append(", ").append(genres.get(i));
                 }
                 String _genres = genresStr.toString();
-                ((TextView) view.findViewById(R.id.ln_categories)).setText(_genres);
-                view.findViewById(R.id.ln_categories).setVisibility(View.VISIBLE);
+                ((TextView) itemView.findViewById(R.id.ln_categories)).setText(_genres);
+                itemView.findViewById(R.id.ln_categories).setVisibility(View.VISIBLE);
             } else {
-                view.findViewById(R.id.ln_categories).setVisibility(View.GONE);
+                itemView.findViewById(R.id.ln_categories).setVisibility(View.GONE);
             }
             // Status
             switch (item.getStatus()) {
                 case LightNovel.ProjectStatus.ACTIVE:
-                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_active);
+                    ((TextView) itemView.findViewById(R.id.ln_status)).setText(R.string.ln_status_active);
                     break;
                 case LightNovel.ProjectStatus.IDLE:
-                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_idle);
+                    ((TextView) itemView.findViewById(R.id.ln_status)).setText(R.string.ln_status_idle);
                     break;
                 case LightNovel.ProjectStatus.STALLED:
-                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_stalled);
+                    ((TextView) itemView.findViewById(R.id.ln_status)).setText(R.string.ln_status_stalled);
                     break;
                 case LightNovel.ProjectStatus.COMPLETED:
-                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_completed);
+                    ((TextView) itemView.findViewById(R.id.ln_status)).setText(R.string.ln_status_completed);
                     break;
                 case LightNovel.ProjectStatus.INACTIVE:
                 default:
-                    ((TextView) view.findViewById(R.id.ln_status)).setText(R.string.ln_status_inactive);
+                    ((TextView) itemView.findViewById(R.id.ln_status)).setText(R.string.ln_status_inactive);
                     break;
             }
             // Fav icon
-            ((ImageView) view.findViewById(R.id.ln_fav_icon)).setImageResource(
+            ((ImageView) itemView.findViewById(R.id.ln_fav_icon)).setImageResource(
                     item.isFavorite() ? android.R.drawable.btn_star_big_on
                             : android.R.drawable.btn_star_big_off
             );

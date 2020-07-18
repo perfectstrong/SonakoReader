@@ -27,11 +27,6 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
         return new HistoryEntryViewHolder(v);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull HistoryEntryViewHolder historyEntryViewHolder, int i) {
-        historyEntryViewHolder.initAt(i);
-    }
-
     public void filterPages(String keyword, int daysLimit) {
         onFilter = true;
         if (daysLimit < 0) daysLimit = Integer.MAX_VALUE;
@@ -50,18 +45,16 @@ public class HistoryAdapter extends SonakoListAdapter<Page, HistoryAdapter.Histo
 
     class HistoryEntryViewHolder extends SonakoListAdapter<Page, HistoryAdapter.HistoryEntryViewHolder>.ItemViewHolder {
 
-        HistoryEntryViewHolder(@NonNull View itemView) {
+        protected HistoryEntryViewHolder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
-            view.setOnClickListener(this);
         }
 
         @Override
-        void decorateView() {
+        protected void decorateView() {
             // Title
-            ((TextView) view.findViewById(R.id.page_title)).setText(item.getTitle());
+            ((TextView) itemView.findViewById(R.id.page_title)).setText(item.getTitle());
             // Last read
-            ((TextView) view.findViewById(R.id.page_last_read))
+            ((TextView) itemView.findViewById(R.id.page_last_read))
                     .setText(new SimpleDateFormat("HH:mm EEEE dd/MM/yy", new Locale("vi")).format(item.getLastRead()));
         }
     }
