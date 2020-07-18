@@ -8,15 +8,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Base64;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.webkit.ConsoleMessage;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -24,25 +23,31 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import perfectstrong.sonako.sonakoreader.R;
+import perfectstrong.sonako.sonakoreader.adapter.SonakoListAdapter;
 import perfectstrong.sonako.sonakoreader.asyncTask.AsyncMassLinkDownloader;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.component.PageReadingWebView;
+import perfectstrong.sonako.sonakoreader.database.CachePage;
+import perfectstrong.sonako.sonakoreader.database.Item;
+import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
@@ -67,11 +72,9 @@ public class PageReadingActivity extends SonakoActivity {
     private Toolbar toolbar;
     private boolean onTextSearching = false;
     private boolean isShowingSearchBox = false;
-    private final List<String> headers = new ArrayList<>();
-    private final Map<String, String> headersId = new HashMap<>();
-    private AlertDialog tocDialog;
     private long m_DownTime;
     private float m_Y;
+    private TOCListAdapter tocListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,94 @@ public class PageReadingActivity extends SonakoActivity {
             setTagAndTitle(getIntent());
             openPage();
         }
+        setupTOCList();
+        setupRelatedPageList();
+    }
+
+    private void setupTOCList() {
+        // Related pages view model
+        RecyclerView relatedPageListView = findViewById(R.id.list_toc);
+        relatedPageListView.setLayoutManager(new LinearLayoutManager(this));
+        tocListAdapter = new TOCListAdapter();
+        relatedPageListView.setAdapter(tocListAdapter);
+        // Adapter will be updated later
+    }
+
+    private void setupRelatedPageList() {
+        // Related pages view model
+        RecyclerView relatedPageListView = findViewById(R.id.list_related_pages);
+        relatedPageListView.setLayoutManager(new LinearLayoutManager(this));
+        final RelatedPageListAdapter adapter = new RelatedPageListAdapter();
+        relatedPageListView.setAdapter(adapter);
+        if (tag != null) {
+            new ViewModelProvider(this).get(LNDBViewModel.class)
+                    .getLiveCachesForTag(tag)
+                    .observe(this,
+                            cachePages -> {
+                                // Hide loading banner
+                                findViewById(R.id.list_related_pages_loading).setVisibility(View.GONE);
+                                // Then show the list
+                                adapter.setDatalist(cachePages);
+                            });
+
+        }
+    }
+
+    static class RelatedPageListAdapter extends SonakoListAdapter<CachePage, RelatedPageListAdapter.RelatedPageViewHolder> {
+
+        @NonNull
+        @Override
+        public RelatedPageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new RelatedPageListAdapter.RelatedPageViewHolder(
+                    LayoutInflater.from((parent.getContext()))
+                            .inflate(R.layout.biblio_chapter_basic_view, parent, false));
+        }
+
+        protected class RelatedPageViewHolder extends SonakoListAdapter<CachePage, RelatedPageListAdapter.RelatedPageViewHolder>.ItemViewHolder {
+
+            public RelatedPageViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+
+            @Override
+            public void decorateView() {
+                ((TextView) itemView.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
+            }
+        }
+    }
+
+    class TOCListAdapter extends SonakoListAdapter<TOCHeader, TOCListAdapter.TOCHeaderViewHolder> {
+
+        @NonNull
+        @Override
+        public TOCHeaderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return new TOCListAdapter.TOCHeaderViewHolder(
+                    LayoutInflater.from((parent.getContext()))
+                            .inflate(R.layout.biblio_chapter_basic_view, parent, false));
+        }
+
+        protected class TOCHeaderViewHolder extends SonakoListAdapter<TOCHeader, TOCListAdapter.TOCHeaderViewHolder>.ItemViewHolder {
+            protected TOCHeaderViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+
+            @Override
+            protected void decorateView() {
+                ((TextView) itemView.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
+            }
+
+            @Override
+            public void onClick(View v) {
+                webViewClient.scrollToId(item.getTag());
+            }
+        }
+    }
+
+    /**
+     * Title = header title<br/>
+     * Tag = id
+     */
+    static final class TOCHeader extends Item {
     }
 
     @Override
@@ -273,48 +364,6 @@ public class PageReadingActivity extends SonakoActivity {
         isShowingSearchBox = !isShowingSearchBox;
     }
 
-    private void buildTOCDialog() {
-        tocDialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.toc_title)
-                .setCancelable(true)
-                .setItems(headers.toArray(new String[0]), (dialog, which) ->
-                        webViewClient.scrollToId(headersId.get(headers.get(which)))
-                )
-                .setNegativeButton(R.string.no, null)
-                .create();
-    }
-
-    public void showTOCDialog(View view) {
-        if (tocDialog != null) {
-            tocDialog.show();
-            // Set height
-            Window window = tocDialog.getWindow();
-            assert window != null;
-            // Get screen width and height in pixels
-            DisplayMetrics displayMetrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-            // The absolute height of the available display size in pixels.
-            int displayHeight = displayMetrics.heightPixels;
-
-            // Initialize a new window manager layout parameters
-            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-            // Copy the alert dialog window attributes to new layout parameter instance
-            layoutParams.copyFrom(window.getAttributes());
-
-            // Set alert dialog max height equal to screen height 70%
-            if (layoutParams.height > displayHeight * 0.7f) {
-                layoutParams.height = (int) (displayHeight * 0.7f);
-                // Apply the newly created layout parameters to the alert dialog window
-                tocDialog.getWindow().setAttributes(layoutParams);
-            }
-        } else
-            Toast.makeText(
-                    this,
-                    R.string.please_wait,
-                    Toast.LENGTH_SHORT
-            ).show();
-    }
-
     private void onTouchHandler(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -471,15 +520,22 @@ public class PageReadingActivity extends SonakoActivity {
                             // Decode headers
                             value = value.substring(1, value.length() - 1); // Remove surrounding " "
                             String[] keyValues = value.split(ELEMENT_DELIMITER);
+                            List<TOCHeader> tocHeaders = new ArrayList<>(keyValues.length);
                             for (String keyValue : keyValues) {
                                 String[] decoded = keyValue.split(KEY_VALUE_DELIMITER);
                                 if (decoded.length == 2) {
-                                    headers.add(decoded[0]);
-                                    headersId.put(decoded[0], decoded[1]);
+                                    TOCHeader tocHeader = new TOCHeader();
+                                    tocHeader.setTitle(decoded[0]);
+                                    tocHeader.setTag(decoded[1]);
+                                    tocHeaders.add(tocHeader);
                                 }
                             }
+                            Log.d(TAG, "onPageFinished: " + tocHeaders);
+                            if (tocListAdapter != null) {
+                                findViewById(R.id.list_toc_loading).setVisibility(View.GONE);
+                                tocListAdapter.setDatalist(tocHeaders);
+                            }
                         }
-                        buildTOCDialog();
                     }
             );
             new HistoryAsyncTask.LookUp(title, this::restoreCurrentReadingPosition).execute();

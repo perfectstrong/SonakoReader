@@ -18,6 +18,9 @@ public interface BiblioDAO {
     @Query("SELECT * FROM CachePage ORDER BY tag ASC, title ASC")
     LiveData<List<CachePage>> getLiveCaches();
 
+    @Query("SELECT * FROM CachePage WHERE tag = :tag ORDER BY title ASC")
+    LiveData<List<CachePage>> getLiveCachesForTag(String tag);
+
     @Query("DELETE FROM CachePage WHERE tag = :tag")
     void clearTag(String tag);
 

@@ -2,11 +2,12 @@ package perfectstrong.sonako.sonakoreader.database;
 
 import android.app.Application;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+
+import java.util.List;
+
 import perfectstrong.sonako.sonakoreader.asyncTask.FavoriteLNsAsyncTask;
 
 public class LNDBViewModel extends AndroidViewModel {
@@ -46,4 +47,7 @@ public class LNDBViewModel extends AndroidViewModel {
         return lndb.biblioDAO().getLiveCaches();
     }
 
+    public LiveData<List<CachePage>> getLiveCachesForTag(String tag) {
+        return lndb.biblioDAO().getLiveCachesForTag(tag);
+    }
 }
