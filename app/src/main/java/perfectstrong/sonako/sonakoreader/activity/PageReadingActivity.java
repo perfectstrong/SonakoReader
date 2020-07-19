@@ -50,6 +50,7 @@ import perfectstrong.sonako.sonakoreader.database.Item;
 import perfectstrong.sonako.sonakoreader.database.LNDBViewModel;
 import perfectstrong.sonako.sonakoreader.database.Page;
 import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.helper.ExtraFontSupport;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 import perfectstrong.sonako.sonakoreader.service.PageDownloadService;
 
@@ -488,15 +489,16 @@ public class PageReadingActivity extends SonakoActivity {
 
         private void loadCustomFont() {
             // Load custom font
-            String customFontFilename = Utils.getCurrentFont();
-            Log.d(TAG, "Loading custom font: " + customFontFilename);
-            String currentFontFileUrl = customFontFilename == null ?
-                    "null" :
-                    Config.FONT_LOCATION + customFontFilename;
-            executeJS(this.view,
-                    String.format("(function loadCustomFonts() { var currentFontFileUrl = \"%s\"; var currentSkin = \"%s\"; var customFontStyleElement = document.querySelector('style#custom-font'); if (!customFontStyleElement) { customFontStyleElement = document.createElement('style'); customFontStyleElement.type = 'text/css'; customFontStyleElement.id = 'custom-font'; document.head.append(customFontStyleElement); } if (currentFontFileUrl === \"null\") customFontStyleElement.innerHTML = '*{font-family: ' + currentSkin + ', sans-serif;}'; else customFontStyleElement.innerHTML = '@font-face {font-family: \"custom\";src: url(\"' + currentFontFileUrl + '\");}*{font-family: custom, sans-serif;}'; })();", currentFontFileUrl, Utils.getCurrentSkin()),
-                    null
-            );
+            ExtraFontSupport.CustomFont customFont = Utils.getCurrentFont();
+            if (!customFont.isDefault()) {
+                Log.d(TAG, "Loading custom font: " + customFont.getEncodedName());
+                executeJS(this.view,
+                        String.format("(function loadCustomFonts() { var currentFontFileUrl = \"%s\"; var currentSkin = \"%s\"; var customFontStyleElement = document.querySelector('style#custom-font'); if (!customFontStyleElement) { customFontStyleElement = document.createElement('style'); customFontStyleElement.type = 'text/css'; customFontStyleElement.id = 'custom-font'; document.head.append(customFontStyleElement); } if (currentFontFileUrl === \"null\") customFontStyleElement.innerHTML = '*{font-family: ' + currentSkin + ', sans-serif;}'; else customFontStyleElement.innerHTML = '@font-face {font-family: \"custom\";src: url(\"' + currentFontFileUrl + '\");}*{font-family: custom, sans-serif;}'; })();", customFont.getUrl(), Utils.getCurrentSkin()),
+                        null
+                );
+            } else {
+                Log.d(TAG, "Using default theme font");
+            }
         }
 
         private final String KEY_VALUE_DELIMITER = "______";
@@ -530,7 +532,6 @@ public class PageReadingActivity extends SonakoActivity {
                                     tocHeaders.add(tocHeader);
                                 }
                             }
-                            Log.d(TAG, "onPageFinished: " + tocHeaders);
                             if (tocListAdapter != null) {
                                 findViewById(R.id.list_toc_loading).setVisibility(View.GONE);
                                 tocListAdapter.setDatalist(tocHeaders);

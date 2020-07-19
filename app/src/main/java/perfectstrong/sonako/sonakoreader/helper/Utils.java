@@ -60,13 +60,13 @@ public class Utils {
                 );
     }
 
-    public static String getCurrentFont() {
+    public static ExtraFontSupport.CustomFont getCurrentFont() {
         Context context = SonakoReaderApp.getContext();
-        return PreferenceManager.getDefaultSharedPreferences(context)
+        return ExtraFontSupport.parseCustomFontName(PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(
                         context.getString(R.string.key_reading_font),
                         null
-                );
+                ));
     }
 
     public static String getFilepath(String title, String tag) {

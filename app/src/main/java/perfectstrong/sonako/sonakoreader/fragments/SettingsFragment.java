@@ -4,13 +4,21 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
@@ -21,14 +29,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.SonakoReaderApp;
 import perfectstrong.sonako.sonakoreader.asyncTask.BiblioAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.HistoryAsyncTask;
 import perfectstrong.sonako.sonakoreader.asyncTask.LNDatabaseAsyncTask;
-import perfectstrong.sonako.sonakoreader.helper.Config;
+import perfectstrong.sonako.sonakoreader.helper.ExtraFontSupport;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -56,11 +65,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
         Preference readingFontPref = findPreference(getString(R.string.key_reading_font));
         if (readingFontPref != null) {
-            String currentReadingFont = Utils.getCurrentFont();
+            ExtraFontSupport.CustomFont currentReadingFont = Utils.getCurrentFont();
             readingFontPref.setSummary(
-                    currentReadingFont == null
+                    currentReadingFont.isDefault()
                             ? getString(R.string.default_reading_font_summary)
-                            : currentReadingFont
+                            : currentReadingFont.name
             );
             readingFontPref.setOnPreferenceClickListener(preference -> {
                 showReadingFontSelectDialog();
@@ -87,11 +96,11 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference readingFontPref = findPreference(getString(R.string.key_reading_font));
         if (readingFontPref != null) {
-            String currentReadingFont = Utils.getCurrentFont();
+            ExtraFontSupport.CustomFont currentReadingFont = Utils.getCurrentFont();
             readingFontPref.setSummary(
-                    currentReadingFont == null
+                    currentReadingFont.isDefault()
                             ? getString(R.string.default_reading_font_summary)
-                            : currentReadingFont
+                            : currentReadingFont.name
             );
         }
     }
@@ -149,46 +158,40 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         FragmentActivity activity = getActivity();
         if (activity == null) return;
         // Build dialog
-        String currentReadingFont = Utils.getCurrentFont();
-        File fontDir = new File(Config.FONT_LOCATION);
+        File fontDir = new File(ExtraFontSupport.EXTERNAL_FONT_LOCATION);
         if (!fontDir.exists()) {
             if (fontDir.mkdirs())
                 Log.d(TAG, "Created font directory");
         }
-        File[] loadedFonts = fontDir.listFiles();
-        if (loadedFonts == null) return;
-        String[] loadedFontNames = new String[loadedFonts.length + 1];
-        loadedFontNames[0] = getString(R.string.default_reading_font_summary);
-        int selectedFontIndex = 0;
-        for (int i = 0; i < loadedFonts.length; i++) {
-            File font = loadedFonts[i];
-            loadedFontNames[i + 1] = font.getName();
-            if (Objects.equals(currentReadingFont, loadedFontNames[i + 1]))
-                selectedFontIndex = i + 1;
+        // List of all possible fonts
+        // The first one represent the choice by theme
+        // Then the internal available fonts
+        // And lastly the downloaded in local font directory
+        List<ExtraFontSupport.CustomFont> customFontList = new ArrayList<>();
+        customFontList.add(ExtraFontSupport.CustomFont.DEFAULT); // Default by theme
+        customFontList.addAll(ExtraFontSupport.getAvailableInternalChoices());
+        File[] externalFonts = fontDir.listFiles();
+        if (externalFonts == null) externalFonts = new File[0];
+        for (File font : externalFonts) {
+            customFontList.add(new ExtraFontSupport.CustomFont(font.getName(), true));
         }
+        ExtraFontSupport.CustomFont currentReadingFont = Utils.getCurrentFont();
+        int selectedFontIndex = customFontList.indexOf(currentReadingFont);
         new AlertDialog.Builder(activity)
-                .setTitle(R.string.reading_font_select_dialog_caution)
-                .setSingleChoiceItems(
-                        loadedFontNames,
+                .setTitle(getString(R.string.reading_font_select_dialog_caution))
+                .setSingleChoiceItems(new CustomFontArrayAdapter(activity, customFontList),
                         selectedFontIndex,
-                        null
-                )
-                .setPositiveButton(
-                        R.string.ok,
                         (dialog, which) -> {
-                            ListView lw = ((AlertDialog) dialog).getListView();
-                            which = lw.getCheckedItemPosition();
+                            ExtraFontSupport.CustomFont chosenFont = customFontList.get(which);
                             PreferenceManager.getDefaultSharedPreferences(this.getActivity())
                                     .edit()
                                     .putString(
                                             getString(R.string.key_reading_font),
-                                            which == 0
-                                                    ? null
-                                                    : loadedFontNames[which]
+                                            chosenFont.getEncodedName()
                                     )
                                     .apply();
-                        }
-                )
+                            dialog.dismiss();
+                        })
                 .setNeutralButton(
                         R.string.reading_font_select_dialog_select_font,
                         (dialog, which) -> selectedFontGetter.launch("font/*")
@@ -199,6 +202,34 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 )
                 .setCancelable(true)
                 .show();
+    }
+
+    private static class CustomFontArrayAdapter extends ArrayAdapter<ExtraFontSupport.CustomFont> {
+
+        public CustomFontArrayAdapter(@NonNull Context context, @NonNull List<ExtraFontSupport.CustomFont> customFonts) {
+            super(context,
+                    R.layout.dialog_custom_font_single_choice,
+                    R.id.custom_font_name,
+                    customFonts);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            Context context = parent.getContext();
+            if (convertView == null)
+                convertView = LayoutInflater.from(context)
+                        .inflate(android.R.layout.simple_list_item_1, parent, false);
+            ExtraFontSupport.CustomFont customFont = super.getItem(position);
+            assert customFont != null;
+            TextView textView = (TextView) convertView;
+            textView.setText(customFont.name == null ? context.getString(R.string.default_reading_font_summary) : customFont.name);
+            if (!customFont.isDefault()) {
+                textView.setTypeface(customFont.getTypeFace(context));
+            } else
+                textView.setTypeface(Typeface.DEFAULT);
+            return textView;
+        }
     }
 
     @Override
@@ -260,7 +291,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         ContentResolver cr = getContext().getContentResolver();
         try (InputStream is = cr.openInputStream(uri);
              // Copy selected font file to library directory
-             FileOutputStream fos = new FileOutputStream(new File(Config.FONT_LOCATION + filename))) {
+             FileOutputStream fos = new FileOutputStream(new File(ExtraFontSupport.EXTERNAL_FONT_LOCATION + filename))) {
             if (is == null) {
                 Log.d(TAG, "handleSelectedFontFile: Unreadable source " + uri.toString());
                 return;

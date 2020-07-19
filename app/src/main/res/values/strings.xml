@@ -153,7 +153,7 @@
     <string name="reading_font">Font cho trang truyện</string>
     <string name="key_reading_font">key_reading_font</string>
     <string name="default_reading_font_summary">Mặc định theo chủ đề</string>
-    <string name="reading_font_select_dialog_caution">Hãy chọn phông chữ theo ý thích</string>
+    <string name="reading_font_select_dialog_caution">Hãy chọn phông chữ theo ý thích.</string>
     <string name="reading_font_select_dialog_select_font">Chọn font khác</string>
     <string name="downloading_starting_images">Bắt đầu tải ảnh của %1$s</string>
     <string name="biblio">Thư viện</string>
