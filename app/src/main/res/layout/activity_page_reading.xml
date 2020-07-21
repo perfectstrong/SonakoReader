@@ -113,8 +113,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/darkBackground"
-        android:fitsSystemWindows="true">
+        android:background="@color/darkBackground">
 
         <androidx.core.widget.NestedScrollView
             android:layout_gravity="top"
@@ -131,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/toc_title"
-                    android:textColor="@color/lightBackground"
+                    android:textColor="#F0F0F0"
                     android:textSize="@dimen/title" />
 
                 <View
@@ -145,7 +144,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/start_downloading"
-                    android:textColor="@color/lightBackground"
+                    android:textColor="#F0F0F0"
                     android:textSize="@dimen/subtitle" />
 
                 <LinearLayout
@@ -170,7 +169,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/biblio"
-                    android:textColor="@color/lightBackground"
+                    android:textColor="#F0F0F0"
                     android:textSize="@dimen/title" />
 
                 <View
@@ -184,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/start_downloading"
-                    android:textColor="@color/lightBackground"
+                    android:textColor="#F0F0F0"
                     android:textSize="@dimen/subtitle" />
 
                 <LinearLayout

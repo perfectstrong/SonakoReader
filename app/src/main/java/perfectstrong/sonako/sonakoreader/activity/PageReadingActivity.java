@@ -3,6 +3,7 @@ package perfectstrong.sonako.sonakoreader.activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -145,7 +146,9 @@ public class PageReadingActivity extends SonakoActivity {
 
             @Override
             public void decorateView() {
-                ((TextView) itemView.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
+                TextView textView = itemView.findViewById(R.id.biblio_item_page_title);
+                textView.setText(item.getTitle());
+                textView.setTextColor(Color.WHITE);
             }
         }
     }
@@ -167,7 +170,9 @@ public class PageReadingActivity extends SonakoActivity {
 
             @Override
             protected void decorateView() {
-                ((TextView) itemView.findViewById(R.id.biblio_item_page_title)).setText(item.getTitle());
+                TextView textView = itemView.findViewById(R.id.biblio_item_page_title);
+                textView.setText(item.getTitle());
+                textView.setTextColor(Color.WHITE);
             }
 
             @Override
