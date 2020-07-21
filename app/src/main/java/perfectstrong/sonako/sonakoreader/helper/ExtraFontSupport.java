@@ -31,6 +31,15 @@ public final class ExtraFontSupport {
             this.isExternal = isExternal;
         }
 
+        /**
+         * For internal fonts
+         *
+         * @param name full name with extension of font file
+         */
+        public CustomFont(String name) {
+            this(name, false);
+        }
+
         public boolean isDefault() {
             return Objects.equals(this, CustomFont.DEFAULT);
         }
@@ -72,17 +81,16 @@ public final class ExtraFontSupport {
         }
     }
 
-    private static List<CustomFont> AVAILABLE_INTERNAL_CHOICES;
+    private static List<CustomFont> AVAILABLE_INTERNAL_CHOICES = Collections.unmodifiableList(Arrays.asList(
+            new CustomFont("roboto_medium.ttf"),
+            new CustomFont("literatabook_medium.otf"),
+            new CustomFont("garamond.otf"),
+            new CustomFont("koho.ttf"),
+            new CustomFont("charm.ttf"),
+            new CustomFont("latino_mono.otf")
+    ));
 
     public static List<CustomFont> getAvailableInternalChoices() {
         return AVAILABLE_INTERNAL_CHOICES;
-    }
-
-    static {
-        AVAILABLE_INTERNAL_CHOICES = Collections.unmodifiableList(Arrays.asList(
-                new CustomFont("robotoslab_regular.ttf", false),
-                new CustomFont("oswald_regular.ttf", false)
-                // TODO
-        ));
     }
 }
