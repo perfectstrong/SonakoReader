@@ -502,15 +502,11 @@ public class PageReadingActivity extends SonakoActivity {
         private void loadCustomFont() {
             // Load custom font
             ExtraFontSupport.CustomFont customFont = Utils.getCurrentFont();
-            if (!customFont.isDefault()) {
-                Log.d(TAG, "Loading custom font: " + customFont.getEncodedName());
-                executeJS(this.view,
-                        String.format("(function loadCustomFonts() { var currentFontFileUrl = \"%s\"; var currentSkin = \"%s\"; var customFontStyleElement = document.querySelector('style#custom-font'); if (!customFontStyleElement) { customFontStyleElement = document.createElement('style'); customFontStyleElement.type = 'text/css'; customFontStyleElement.id = 'custom-font'; document.head.append(customFontStyleElement); } if (currentFontFileUrl === \"null\") customFontStyleElement.innerHTML = '*{font-family: ' + currentSkin + ', sans-serif;}'; else customFontStyleElement.innerHTML = '@font-face {font-family: \"custom\";src: url(\"' + currentFontFileUrl + '\");}*{font-family: custom, sans-serif;}'; })();", customFont.getUrl(), Utils.getCurrentSkin()),
-                        null
-                );
-            } else {
-                Log.d(TAG, "Using default theme font");
-            }
+            Log.d(TAG, "Loading custom font: " + customFont.getEncodedName());
+            executeJS(this.view,
+                    String.format("(function loadCustomFont() { var currentFontFileUrl = \"%s\"; var customFontStyleElement = document.querySelector('style#custom-font'); if (!customFontStyleElement) { customFontStyleElement = document.createElement('style'); customFontStyleElement.type = 'text/css'; customFontStyleElement.id = 'custom-font'; document.head.append(customFontStyleElement); } if (currentFontFileUrl === \"null\") customFontStyleElement.innerHTML = '*{font-family: default, sans-serif;}'; else customFontStyleElement.innerHTML = '@font-face {font-family: \"custom\";src: url(\"' + currentFontFileUrl + '\");}*{font-family: custom, sans-serif;}'; })();", customFont.getUrl()),
+                    null
+            );
         }
 
         private final String KEY_VALUE_DELIMITER = "______";

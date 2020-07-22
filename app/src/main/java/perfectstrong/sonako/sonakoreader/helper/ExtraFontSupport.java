@@ -76,8 +76,7 @@ public final class ExtraFontSupport {
         public static final CustomFont DEFAULT = new CustomFont(null, false);
 
         public String getUrl() {
-            assert name != null;
-            return isExternal ? EXTERNAL_FONT_LOCATION + name : INTERNAL_FONT_LOCATION + name;
+            return isDefault() ? null : isExternal ? EXTERNAL_FONT_LOCATION + name : INTERNAL_FONT_LOCATION + name;
         }
     }
 

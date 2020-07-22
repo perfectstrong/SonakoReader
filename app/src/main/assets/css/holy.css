@@ -1,10 +1,10 @@
 @font-face {
-  font-family: "holy";
+  font-family: "default";
   src: url("file:///android_asset/fonts/literatabook_medium.otf");
 }
 
 * {
-    font-family: holy, serif;
+    font-family: default, serif;
 }
 
 body {
