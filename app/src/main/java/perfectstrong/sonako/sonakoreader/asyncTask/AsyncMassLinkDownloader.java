@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
@@ -12,7 +14,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
 import perfectstrong.sonako.sonakoreader.R;
 import perfectstrong.sonako.sonakoreader.helper.Utils;
 
@@ -37,8 +38,12 @@ public class AsyncMassLinkDownloader extends AsyncTask<Void, Void, List<String>>
                     "UTF-8")
                     .select("a[data-ns='0']")
                     .eachAttr("title");
-            Log.d(TAG, links.toString());
-            return links;
+            List<String> filteredLinks = new ArrayList<>(links.size());
+            for (String link : links) {
+                if (Utils.isMainpage(link))
+                    filteredLinks.add(link);
+            }
+            return filteredLinks;
         } catch (IOException e) {
             Log.e(TAG, "Error on parsing " + title, e);
             return null;
