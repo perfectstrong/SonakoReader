@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,6 +83,7 @@ public class PageDownloadService extends IntentService {
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManagerCompat notificationManager;
     private final Pattern internalLinkRegex = Pattern.compile("/(\\w+/)?wiki/(.*)");
+    private final Map<String, Element> mapUrlsWithCorrespondingImgElement = new ConcurrentHashMap<>();
 
     public PageDownloadService() {
         super(TAG);
@@ -143,6 +145,7 @@ public class PageDownloadService extends IntentService {
                           PendingIntent pendingIntent,
                           boolean onProgress,
                           int importance) {
+        Log.d(TAG, title + ": " + msg);
         if (intentId == 0)
             mHandler.post(() -> Toast.makeText(
                     this,
@@ -216,14 +219,14 @@ public class PageDownloadService extends IntentService {
                 }
                 if (downloadFailedImages) {
                     loadImageLinksFromCachedText();
-                    downloadImages();
                 } else {
                     downloadText();
-                    preprocess(); // Including caching temporarily image links from text
+                    assert tag != null;
                     saveLocation = Utils.getSaveDirForTag(tag); // tag shall be not null
-                    downloadImages();
+                    preprocessText(); // Including caching temporarily image links from text
                     cacheText();
                 }
+                downloadImages();
             }
             // Reading intent to open
             Intent readingIntent = new Intent(this, PageReadingActivity.class);
@@ -311,7 +314,7 @@ public class PageDownloadService extends IntentService {
         }
     }
 
-    private void preprocess() {
+    private void preprocessText() {
         publishProgress(getString(R.string.preprocessing_text, title));
         doc = Jsoup.parse(text.replaceAll("\\\\\"", "\""));
         // Retain local navigator
@@ -362,21 +365,49 @@ public class PageDownloadService extends IntentService {
             }
         }
         // Fix and get all images' names
+        File dir = new File(saveLocation);
+        if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
+            dir.mkdirs();
         imagesLinks = new ArrayList<>();
         for (Element img : doc.getElementsByTag("img")) {
-            String src = img.attr("src");
-            if (src.startsWith("http:"))
-                src = src.replaceFirst("http", "https");
-            if (Utils.isInternalImage(src)) // direct link from wikia
-                src = src.replaceAll("/revision.*", "");
+            String urlSrc = img.attr("src");
+            if (urlSrc.startsWith("http:"))
+                urlSrc = urlSrc.replaceFirst("http", "https");
+            if (Utils.isInternalImage(urlSrc)) // direct link from wikia
+                urlSrc = urlSrc.replaceAll("/revision.*", "");
             img.removeAttr("width"); // Let viewer client decide later
             img.removeAttr("height"); // Let viewer client decide later
-            String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(src)));
+            String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(urlSrc)));
+            img.attr("data-name", imgName);
+            img.attr("data-src", urlSrc);
+            // Calculate the local src attribute
             if (!imgName.equals("")) {
-                imagesLinks.add(img); // Caching temporarily
-                img.attr("data-name", imgName);
-                img.attr("data-src", src);
-                img.attr("src", "");
+                File imgFile = new File(dir, imgName);
+                String imgNameAsWebp; // Check whether the webp version existed
+                if (imgName.lastIndexOf(".") > -1)
+                    // Replace extension
+                    imgNameAsWebp = imgName.substring(0, imgName.lastIndexOf(".")) + ".webp";
+                else
+                    imgNameAsWebp = imgName + ".webp";
+                if (!forceRefreshImages) {
+                    if (!imgFile.exists()) { // If file has not been cached
+                        if (new File(dir, imgNameAsWebp).exists()) {
+                            // Refer to cached image
+                            img.attr("src", imgNameAsWebp);
+                        } else {
+                            // Else refer in advance to the img that'll be downloaded later
+                            img.attr("src",
+                                    Utils.isWebpPreferred() ? imgNameAsWebp : imgName);
+                        }
+                    } else {
+                        img.attr("src", imgName);
+                    }
+                } else {
+                    img.attr("src",
+                            Utils.isWebpPreferred() ? imgNameAsWebp : imgName);
+                }
+
+                imagesLinks.add(img); // Caching temporarily for later downloading
             }
         }
         // Fix empty tags
@@ -455,32 +486,16 @@ public class PageDownloadService extends IntentService {
                 .setParentPath(saveLocation)
                 .setWifiRequired(Utils.isNotAuthorizedDownloadingOverCellularConnection(this))
                 .commit();
-        Map<String, List<String>> commonHeaders = new HashMap<>();
-        if (Utils.isWebpPreferred()) // Check webp
-            commonHeaders.put("Accept", Arrays.asList("image/webp", "image/*;q=0.8"));
-        final Map<String, Element> mapUrlsWithCorrespondingImgElement = new HashMap<>();
+        Map<String, List<String>> webpHeaders = new HashMap<>();
+        webpHeaders.put("Accept", Arrays.asList("image/webp", "image/*;q=0.8"));
+        Map<String, List<String>> emptyHeaders = new HashMap<>();
         for (Element img : imagesLinks) {
-            if (!img.hasAttr("data-name")) continue;
-            String imageName = img.attr("data-name");
+            if (!img.hasAttr("data-src") || !img.hasAttr("src")) continue;
+            String imageName = img.attr("src");
             String url = img.attr("data-src");
-            if (url == null) continue; // Skip null link
             File file = new File(dir, imageName);
-            if (!forceRefreshImages) {
-                // Already cached original
-                if (file.exists())
-                    continue;
-                // Already cached webp
-                String imgWebp;
-                if (imageName.lastIndexOf(".") > -1)
-                    imgWebp = imageName.substring(0, imageName.lastIndexOf(".")) + ".webp";
-                else
-                    imgWebp = imageName + ".webp";
-                if (new File(dir, imgWebp).exists()) {
-                    // Refer to cached image
-                    img.attr("src", imgWebp);
-                    continue;
-                }
-            }
+            // Already cached original
+            if (!forceRefreshImages && file.exists()) continue;
             boolean isInternalImage = Utils.isInternalImage(url);
             // If user allows, download external images as it is
             // Only download not cached images if not forced
@@ -489,8 +504,10 @@ public class PageDownloadService extends IntentService {
                 // Queue task to downloading context
                 taskMassDownloadBuilder.bind(
                         new DownloadTask.Builder(url, dir)
-                                .setFilenameFromResponse(true)
-                                .setHeaderMapFields(commonHeaders));
+                                .setFilenameFromResponse(false)
+                                .setFilename(imageName)
+                                .setHeaderMapFields(imageName.endsWith(".webp") ?
+                                        webpHeaders : emptyHeaders));
                 mapUrlsWithCorrespondingImgElement.put(url, img);
             }
         }
@@ -508,8 +525,7 @@ public class PageDownloadService extends IntentService {
                     Log.w(TAG, "downloadImages: Failed for " + url, realCause);
                 else {
                     if (mapUrlsWithCorrespondingImgElement.containsKey(url)) {
-                        Objects.requireNonNull(mapUrlsWithCorrespondingImgElement.get(url))
-                                .attr("src", task.getFilename());
+                        mapUrlsWithCorrespondingImgElement.remove(url);
                         publishProgress(getString(R.string.download_finish, task.getFilename()));
                     }
                 }

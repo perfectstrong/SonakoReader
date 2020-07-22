@@ -318,6 +318,7 @@ public class PageReadingActivity extends SonakoActivity {
             case R.id.action_refresh_missing_images:
                 Log.d(TAG, "Refresh missing images of " + title);
                 Utils.openOrDownload(title, tag, PageDownloadService.ACTION.REFRESH_MISSING_IMAGES, this);
+                break;
             case R.id.action_settings:
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
