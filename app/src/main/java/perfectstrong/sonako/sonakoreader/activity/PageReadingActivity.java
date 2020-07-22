@@ -3,7 +3,6 @@ package perfectstrong.sonako.sonakoreader.activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -145,7 +144,7 @@ public class PageReadingActivity extends SonakoActivity {
         public RelatedPageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new RelatedPageListAdapter.RelatedPageViewHolder(
                     LayoutInflater.from((parent.getContext()))
-                            .inflate(R.layout.biblio_chapter_basic_view, parent, false));
+                            .inflate(R.layout.page_reading_navigation_table_item, parent, false));
         }
 
         protected class RelatedPageViewHolder extends SonakoListAdapter<CachePage, RelatedPageListAdapter.RelatedPageViewHolder>.ItemViewHolder {
@@ -156,9 +155,8 @@ public class PageReadingActivity extends SonakoActivity {
 
             @Override
             public void decorateView() {
-                TextView textView = itemView.findViewById(R.id.biblio_item_page_title);
+                TextView textView = itemView.findViewById(R.id.navigation_item_title);
                 textView.setText(item.getTitle());
-                textView.setTextColor(Color.WHITE);
             }
         }
     }
@@ -170,7 +168,7 @@ public class PageReadingActivity extends SonakoActivity {
         public TOCHeaderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return new TOCListAdapter.TOCHeaderViewHolder(
                     LayoutInflater.from((parent.getContext()))
-                            .inflate(R.layout.biblio_chapter_basic_view, parent, false));
+                            .inflate(R.layout.page_reading_navigation_table_item, parent, false));
         }
 
         protected class TOCHeaderViewHolder extends SonakoListAdapter<TOCHeader, TOCListAdapter.TOCHeaderViewHolder>.ItemViewHolder {
@@ -180,9 +178,8 @@ public class PageReadingActivity extends SonakoActivity {
 
             @Override
             protected void decorateView() {
-                TextView textView = itemView.findViewById(R.id.biblio_item_page_title);
+                TextView textView = itemView.findViewById(R.id.navigation_item_title);
                 textView.setText(item.getTitle());
-                textView.setTextColor(Color.WHITE);
             }
 
             @Override

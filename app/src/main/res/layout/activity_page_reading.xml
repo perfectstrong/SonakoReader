@@ -110,10 +110,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_table"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        android:background="@color/darkBackground">
+        android:background="@color/darkBackground"
+        android:fitsSystemWindows="false">
 
         <androidx.core.widget.NestedScrollView
             android:layout_gravity="top"
@@ -130,6 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/toc_title"
+                    android:layout_margin="2dp"
                     android:textColor="#F0F0F0"
                     android:textSize="@dimen/title" />
 
@@ -143,6 +146,7 @@
                     android:id="@+id/list_toc_loading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
                     android:text="@string/start_downloading"
                     android:textColor="#F0F0F0"
                     android:textSize="@dimen/subtitle" />
@@ -168,6 +172,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
                     android:text="@string/biblio"
                     android:textColor="#F0F0F0"
                     android:textSize="@dimen/title" />
@@ -182,6 +187,7 @@
                     android:id="@+id/list_related_pages_loading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
                     android:text="@string/start_downloading"
                     android:textColor="#F0F0F0"
                     android:textSize="@dimen/subtitle" />
