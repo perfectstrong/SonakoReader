@@ -35,6 +35,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.navigation.NavigationView;
+
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ public class PageReadingActivity extends SonakoActivity {
         }
         setupTOCList();
         setupRelatedPageList();
+        tidyUpRelatedPageList();
     }
 
     private void setupTOCList() {
@@ -125,6 +128,13 @@ public class PageReadingActivity extends SonakoActivity {
                                 adapter.setDatalist(cachePages);
                             });
 
+        }
+    }
+
+    private void tidyUpRelatedPageList() {
+        NavigationView navigationView = findViewById(R.id.navigation_table);
+        if (navigationView != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            navigationView.setOnApplyWindowInsetsListener((v, insets) -> insets);
         }
     }
 
