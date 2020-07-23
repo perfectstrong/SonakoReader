@@ -36,10 +36,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +73,7 @@ public class PageDownloadService extends IntentService {
     private boolean forceRefreshImages;
     private WikiClient wiki;
     private String text;
-    private List<Element> imagesLinks;
+    private Set<ImageLink> imageLinks = new HashSet<>();
     private Handler mHandler;
 
     private static final String FLAG_DOWNLOAD = Config.APP_PREFIX + ".flag.download";
@@ -83,7 +85,6 @@ public class PageDownloadService extends IntentService {
     private NotificationCompat.Builder notificationBuilder;
     private NotificationManagerCompat notificationManager;
     private final Pattern internalLinkRegex = Pattern.compile("/(\\w+/)?wiki/(.*)");
-    private final Map<String, Element> mapUrlsWithCorrespondingImgElement = new ConcurrentHashMap<>();
 
     public PageDownloadService() {
         super(TAG);
@@ -228,18 +229,35 @@ public class PageDownloadService extends IntentService {
                 }
                 downloadImages();
             }
-            // Reading intent to open
-            Intent readingIntent = new Intent(this, PageReadingActivity.class);
-            Bundle bundle1 = new Bundle();
-            bundle1.putString(Config.EXTRA_TITLE, title);
-            bundle1.putString(Config.EXTRA_TAG, tag);
-            readingIntent.putExtras(bundle1);
-            announce(title,
-                    getString(R.string.download_finish, title),
-                    intentId,
-                    PendingIntent.getActivity(this, intentId, readingIntent, 0),
-                    false,
-                    NotificationCompat.PRIORITY_MAX);
+            // Wait till downloaded all images, even failed
+            long DOWNLOAD_TIMEOUT = 10000;
+            long CURRENT_DOWNLOAD_TIMEOUT = DOWNLOAD_TIMEOUT;
+            int CURRENT_REMAINING_DOWNLOAD_TASKS = imageLinks.size();
+            while (!imageLinks.isEmpty() && CURRENT_DOWNLOAD_TIMEOUT > 0) {
+                long CHECK_INTERVAL = 100;
+                Thread.sleep(CHECK_INTERVAL);
+                CURRENT_DOWNLOAD_TIMEOUT -= CHECK_INTERVAL;
+                if (imageLinks.size() < CURRENT_REMAINING_DOWNLOAD_TASKS) {
+                    CURRENT_REMAINING_DOWNLOAD_TASKS = imageLinks.size();
+                    CURRENT_DOWNLOAD_TIMEOUT = DOWNLOAD_TIMEOUT;
+                }
+            }
+            if (imageLinks.isEmpty()) {
+                // Reading intent to open
+                Intent readingIntent = new Intent(this, PageReadingActivity.class);
+                Bundle bundle1 = new Bundle();
+                bundle1.putString(Config.EXTRA_TITLE, title);
+                bundle1.putString(Config.EXTRA_TAG, tag);
+                readingIntent.putExtras(bundle1);
+                announce(title,
+                        getString(R.string.download_finish, title),
+                        intentId,
+                        PendingIntent.getActivity(this, intentId, readingIntent, 0),
+                        false,
+                        NotificationCompat.PRIORITY_MAX);
+            } else {
+                throw new TimeoutException("Waited too much");
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
             announce(title, getString(R.string.error_on_downloading, title), 0, null, false, NotificationCompat.PRIORITY_MAX);
@@ -251,20 +269,17 @@ public class PageDownloadService extends IntentService {
         if (tag == null)
             throw new IOException(getString(R.string.no_cached, title));
         publishProgress(getString(R.string.analyzing_text, title));
-        imagesLinks = new ArrayList<>();
         Document doc = Jsoup.parse(
                 Utils.getTextFile(title, tag),
                 "UTF-8");
         for (Element img : doc.getElementsByTag("img")) {
-            if (img.hasAttr("data-name")) {
-                imagesLinks.add(img);
-            } else {
-                String imgName = Utils.sanitize(
-                        Utils.getFileNameFromURL(Utils.decode(img.attr("src"))));
-                if (!imgName.equals("")) {
-                    img.attr("data-name", imgName);
-                    imagesLinks.add(img);
-                }
+            if (!img.hasAttr("src") || img.attr("src").length() == 0)
+                continue;
+            try {
+                ImageLink imageLink = new ImageLink(img.attr("src"), img.attr("data-name"));
+                imageLinks.add(imageLink);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "Invalid src or data-name attribute for img element");
             }
         }
     }
@@ -368,8 +383,8 @@ public class PageDownloadService extends IntentService {
         File dir = new File(saveLocation);
         if (!dir.exists()) //noinspection ResultOfMethodCallIgnored
             dir.mkdirs();
-        imagesLinks = new ArrayList<>();
         for (Element img : doc.getElementsByTag("img")) {
+            if (!img.hasAttr("src") || img.attr("src").length() == 0) continue;
             String urlSrc = img.attr("src");
             if (urlSrc.startsWith("http:"))
                 urlSrc = urlSrc.replaceFirst("http", "https");
@@ -377,38 +392,44 @@ public class PageDownloadService extends IntentService {
                 urlSrc = urlSrc.replaceAll("/revision.*", "");
             img.removeAttr("width"); // Let viewer client decide later
             img.removeAttr("height"); // Let viewer client decide later
-            String imgName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(urlSrc)));
+            ImageLink imageLink;
+            try {
+                imageLink = new ImageLink(urlSrc);
+            } catch (IllegalArgumentException e) {
+                Log.w(TAG, "Invalid src attribute for img element: " + urlSrc);
+                continue;
+            }
+            String imgName = imageLink.getImageName();
             img.attr("data-name", imgName);
             img.attr("data-src", urlSrc);
             // Calculate the local src attribute
-            if (!imgName.equals("")) {
-                File imgFile = new File(dir, imgName);
-                String imgNameAsWebp; // Check whether the webp version existed
-                if (imgName.lastIndexOf(".") > -1)
-                    // Replace extension
-                    imgNameAsWebp = imgName.substring(0, imgName.lastIndexOf(".")) + ".webp";
-                else
-                    imgNameAsWebp = imgName + ".webp";
-                if (!forceRefreshImages) {
-                    if (!imgFile.exists()) { // If file has not been cached
-                        if (new File(dir, imgNameAsWebp).exists()) {
-                            // Refer to cached image
-                            img.attr("src", imgNameAsWebp);
-                        } else {
-                            // Else refer in advance to the img that'll be downloaded later
-                            img.attr("src",
-                                    Utils.isWebpPreferred() ? imgNameAsWebp : imgName);
-                        }
+            File imgFile = new File(dir, imgName);
+            String imgNameAsWebp; // Check whether the webp version existed
+            if (imgName.lastIndexOf(".") > -1)
+                // Replace extension
+                imgNameAsWebp = imgName.substring(0, imgName.lastIndexOf(".")) + ".webp";
+            else
+                imgNameAsWebp = imgName + ".webp";
+            String finalImageName = Utils.isWebpPreferred() ? imgNameAsWebp : imgName;
+            if (!forceRefreshImages) {
+                if (!imgFile.exists()) { // If file has not been cached
+                    if (new File(dir, imgNameAsWebp).exists()) {
+                        // Refer to cached image
+                        img.attr("src", imgNameAsWebp);
+                        finalImageName = imgNameAsWebp;
                     } else {
-                        img.attr("src", imgName);
+                        // Else refer in advance to the img that'll be downloaded later
+                        img.attr("src", finalImageName);
                     }
                 } else {
-                    img.attr("src",
-                            Utils.isWebpPreferred() ? imgNameAsWebp : imgName);
+                    img.attr("src", imgName);
+                    finalImageName = imgName;
                 }
-
-                imagesLinks.add(img); // Caching temporarily for later downloading
+            } else {
+                img.attr("src", finalImageName);
             }
+            imageLink.setImageName(finalImageName);
+            imageLinks.add(imageLink); // Caching temporarily for later downloading
         }
         // Fix empty tags
         for (Element element : doc.getElementsByTag("div")) {
@@ -489,10 +510,9 @@ public class PageDownloadService extends IntentService {
         Map<String, List<String>> webpHeaders = new HashMap<>();
         webpHeaders.put("Accept", Arrays.asList("image/webp", "image/*;q=0.8"));
         Map<String, List<String>> emptyHeaders = new HashMap<>();
-        for (Element img : imagesLinks) {
-            if (!img.hasAttr("data-src") || !img.hasAttr("src")) continue;
-            String imageName = img.attr("src");
-            String url = img.attr("data-src");
+        for (ImageLink img : imageLinks) {
+            String imageName = img.getImageName();
+            String url = img.getUrlSrc();
             File file = new File(dir, imageName);
             // Already cached original
             if (!forceRefreshImages && file.exists()) continue;
@@ -508,7 +528,6 @@ public class PageDownloadService extends IntentService {
                                 .setFilename(imageName)
                                 .setHeaderMapFields(imageName.endsWith(".webp") ?
                                         webpHeaders : emptyHeaders));
-                mapUrlsWithCorrespondingImgElement.put(url, img);
             }
         }
         taskMassDownloadBuilder.build().startOnParallel(new DownloadListener2() {
@@ -524,11 +543,9 @@ public class PageDownloadService extends IntentService {
                 if (realCause != null)
                     Log.w(TAG, "downloadImages: Failed for " + url, realCause);
                 else {
-                    if (mapUrlsWithCorrespondingImgElement.containsKey(url)) {
-                        mapUrlsWithCorrespondingImgElement.remove(url);
-                        publishProgress(getString(R.string.download_finish, task.getFilename()));
-                    }
+                    publishProgress(getString(R.string.download_finish, task.getFilename()));
                 }
+                imageLinks.remove(new ImageLink(url, task.getFilename()));
             }
         });
     }
@@ -539,18 +556,18 @@ public class PageDownloadService extends IntentService {
         int maxImageWidth = Utils.getPreferredSize();
         Log.d(TAG, "maxImageWidth = " + maxImageWidth);
         List<String> wikiImgList = new ArrayList<>();
-        for (Element img : imagesLinks) {
-            String src = img.attr("data-src");
-            if (Utils.isInternalImage(src)) {
-                wikiImgList.add(img.attr("data-name"));
-            }
+        for (ImageLink link : imageLinks) {
+            if (Utils.isInternalImage(link.getUrlSrc()))
+                wikiImgList.add(link.getUrlSrc());
         }
         // Image name with resizing url
         Map<String, String> resizedImgLinks = wiki.resizeToWidth(maxImageWidth, wikiImgList);
-        for (Element img : imagesLinks) {
-            String imgName = img.attr("data-name");
-            if (resizedImgLinks.containsKey(imgName))
-                img.attr("data-src", resizedImgLinks.get(imgName));
+        for (ImageLink link : imageLinks) {
+            String imageName = link.getImageName();
+            if (resizedImgLinks.containsKey(imageName)) {
+                if (resizedImgLinks.get(imageName) != null)
+                    link.setUrlSrc(Objects.requireNonNull(resizedImgLinks.get(imageName)));
+            }
         }
     }
 
@@ -600,6 +617,64 @@ public class PageDownloadService extends IntentService {
                 handler.post(() -> PageDownloadFragment.getInstance().removeJob((String) key));
             }
             return super.remove(key);
+        }
+    }
+
+    private static final class ImageLink {
+        @NonNull
+        private String urlSrc;
+        @NonNull
+        private String imageName;
+
+        public ImageLink(@NonNull String urlSrc, @Nullable String imageName) {
+            if (urlSrc.length() == 0)
+                throw new IllegalArgumentException("Url source should not be empty");
+            this.urlSrc = urlSrc;
+            if (imageName == null)
+                imageName = Utils.sanitize(Utils.getFileNameFromURL(Utils.decode(urlSrc)));
+            if (imageName.length() == 0)
+                throw new IllegalArgumentException("Image name should not be empty");
+            this.imageName = imageName;
+        }
+
+        public ImageLink(@NonNull String urlSrc) {
+            this(urlSrc, null);
+        }
+
+        @NonNull
+        public String getImageName() {
+            return imageName;
+        }
+
+        @NonNull
+        public String getUrlSrc() {
+            return urlSrc;
+        }
+
+        public void setImageName(@NonNull String newImageName) {
+            if (newImageName.length() == 0)
+                throw new IllegalArgumentException("Image name should not be empty");
+            this.imageName = newImageName;
+        }
+
+        public void setUrlSrc(@NonNull String newUrlSrc) {
+            if (newUrlSrc.length() == 0)
+                throw new IllegalArgumentException("Url source should not be empty");
+            this.urlSrc = newUrlSrc;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ImageLink imageLink = (ImageLink) o;
+            return imageName.equals(imageLink.imageName) &&
+                    urlSrc.equals(imageLink.urlSrc);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(imageName, urlSrc);
         }
     }
 }
