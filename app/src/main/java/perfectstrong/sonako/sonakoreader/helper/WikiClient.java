@@ -1,5 +1,7 @@
 package perfectstrong.sonako.sonakoreader.helper;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ import okhttp3.Response;
  */
 public class WikiClient {
 
+    private static final String TAG = WikiClient.class.getSimpleName();
     private final String USER_AGENT;
     private final OkHttpClient okHttpClient;
     private final HttpUrl apiEndpoint;
@@ -315,6 +318,7 @@ public class WikiClient {
                     );
                 }
             } catch (IOException | JSONException e) {
+                Log.e(TAG, "Request failed for " + titlesConcat);
                 e.printStackTrace();
                 throw e;
             } finally {
